@@ -1,11 +1,20 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Utilitas Hub">
+	<div class="p-5 md:p-10 flex items-center justify-center min-h-screen">
+		<div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-4xl text-center">
+			<h1 class="text-green-700 text-3xl font-bold mb-4">Selamat Datang di Utilitas Hub</h1>
+			<p class="text-slate-600 text-lg mb-6">Kumpulan alat bantu dan kalkulator keuangan</p>
+			<div class="flex flex-col sm:flex-row gap-4 justify-center">
+				<a href="/fire" class="bg-green-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-800 transition-colors">
+					Kalkulator FIRE
+				</a>
+				<a href="/kpr" class="border-2 border-green-700 text-green-700 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
+					Kalkulator KPR
+				</a>
+			</div>
+		</div>
+	</div>
 </Layout>

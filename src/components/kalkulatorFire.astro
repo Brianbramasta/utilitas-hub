@@ -1,0 +1,157 @@
+---
+// Di dalam area pagar (---) ini adalah Frontmatter Astro.
+// Anda bisa menulis kode JavaScript yang berjalan di server di sini jika dibutuhkan.
+---
+
+<div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-4xl mx-auto my-10">
+    <h2 class="text-green-700 text-center mt-0 mb-8 border-b border-green-600 pb-4 text-2xl font-bold">Kalkulator Angka FIRE (Financial Independence, Retire Early)</h2>
+    
+    <div class="flex flex-col md:flex-row gap-6 mb-6">
+        <div class="flex-1 flex flex-col">
+            <label for="currentAge" class="font-semibold mb-2 text-base text-slate-700">Usia Saat Ini:</label>
+            <input type="number" id="currentAge" value="26" min="1" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+        </div>
+        <div class="flex-1 flex flex-col">
+            <label for="targetAge" class="font-semibold mb-2 text-base text-slate-700">Target Usia FIRE:</label>
+            <input type="number" id="targetAge" value="44" min="2" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+        </div>
+    </div>
+
+    <div class="flex flex-col mb-6">
+        <label for="monthlyExpense" class="font-semibold mb-2 text-base text-slate-700">Pengeluaran Bulanan Saat Ini (Rp):</label>
+        <input type="text" id="monthlyExpense" value="2000000" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+    </div>
+
+    <div class="flex flex-col mb-6">
+        <label for="currentNetWorth" class="font-semibold mb-2 text-base text-slate-700">Total Investasi Saat Ini (Rp):</label>
+        <input type="text" id="currentNetWorth" value="100000000" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+    </div>
+
+    <div class="flex flex-col md:flex-row gap-6 mb-8">
+        <div class="flex-1 flex flex-col">
+            <label for="investmentReturn" class="font-semibold mb-2 text-base text-slate-700">Imbal Hasil Investasi (%/thn):</label>
+            <input type="number" id="investmentReturn" value="7" step="0.1" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+        </div>
+        <div class="flex-1 flex flex-col">
+            <label for="inflation" class="font-semibold mb-2 text-base text-slate-700">Estimasi Inflasi (%/thn):</label>
+            <input type="number" id="inflation" value="4" step="0.1" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+        </div>
+    </div>
+
+    <button id="btnHitung" class="w-full bg-green-700 text-white border-none py-4 text-xl font-bold rounded-lg cursor-pointer hover:bg-green-800 transition-colors">Hitung Target FIRE</button>
+
+    <div class="mt-8 p-6 bg-green-50 border-l-4 border-green-700 rounded hidden" id="resultBox">
+        <h3 class="mt-0 mb-6 text-green-700 text-xl font-bold">Hasil Analisis Finansial:</h3>
+        
+        <div class="flex justify-between items-center py-3 text-lg border-b border-dashed border-green-300">
+            <span class="text-slate-700">Sisa Waktu Mengumpul Aset: tahun</span>
+            <span class="font-bold text-green-800 text-xl" id="resYearsToRetire">0</span>
+        </div>
+        
+        <div class="flex justify-between items-center py-3 text-lg border-b border-dashed border-green-300">
+            <span class="text-slate-700">Target Dana FIRE (Masa Kini):</span>
+            <span class="font-bold text-green-800 text-xl" id="resFirePresent">Rp 0</span>
+        </div>
+        
+        <div class="flex justify-between items-center py-3 text-lg border-b border-dashed border-green-300">
+            <span class="text-slate-700">Target Dana FIRE (+Inflasi):</span>
+            <span class="font-bold text-green-800 text-xl" id="resFireFuture">Rp 0</span>
+        </div>
+        
+        <div class="flex justify-between items-center py-3 text-lg font-bold bg-green-200 rounded-lg mt-4">
+            <span class="text-slate-800">Tabungan Bulanan yang Diperlukan:</span>
+            <span class="font-bold text-blue-800 text-xl" id="resMonthlySaving">Rp 0</span>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPT JAVASCRIPT JALAN DI BROWSER -->
+<script>
+    function formatRupiah(angka: number): string {
+        return "Rp " + Math.round(angka).toLocaleString('id-ID', { useGrouping: true, maximumFractionDigits: 0 });
+    }
+
+    function formatInputRupiah(input: HTMLInputElement): void {
+        let value = input.value.replace(/[^0-9]/g, '');
+        if (value) {
+            const num = parseInt(value);
+            input.value = num.toLocaleString('id-ID', { useGrouping: true, maximumFractionDigits: 0 });
+        }
+    }
+
+    function unformatRupiah(value: string): number {
+        return parseInt(value.replace(/[^0-9]/g, '')) || 0;
+    }
+
+    function hitungFIRE() {
+        const currentAgeEl = document.getElementById('currentAge') as HTMLInputElement | null;
+        const targetAgeEl = document.getElementById('targetAge') as HTMLInputElement | null;
+        const monthlyExpenseEl = document.getElementById('monthlyExpense') as HTMLInputElement | null;
+        const currentNetWorthEl = document.getElementById('currentNetWorth') as HTMLInputElement | null;
+        const investmentReturnEl = document.getElementById('investmentReturn') as HTMLInputElement | null;
+        const inflationEl = document.getElementById('inflation') as HTMLInputElement | null;
+        const resYearsToRetireEl = document.getElementById('resYearsToRetire') as HTMLElement | null;
+        const resFirePresentEl = document.getElementById('resFirePresent') as HTMLElement | null;
+        const resFireFutureEl = document.getElementById('resFireFuture') as HTMLElement | null;
+        const resMonthlySavingEl = document.getElementById('resMonthlySaving') as HTMLElement | null;
+        const resultBoxEl = document.getElementById('resultBox') as HTMLElement | null;
+
+        if (!currentAgeEl || !targetAgeEl || !monthlyExpenseEl || !currentNetWorthEl || 
+            !investmentReturnEl || !inflationEl || !resYearsToRetireEl || 
+            !resFirePresentEl || !resFireFutureEl || !resMonthlySavingEl || !resultBoxEl) {
+            return;
+        }
+
+        const usiaSekarang = parseInt(currentAgeEl.value);
+        const usiaTarget = parseInt(targetAgeEl.value);
+        const pengeluaranBulanan = unformatRupiah(monthlyExpenseEl.value);
+        const asetSekarang = unformatRupiah(currentNetWorthEl.value);
+        const returnInvestasi = parseFloat(investmentReturnEl.value) / 100;
+        const inflasi = parseFloat(inflationEl.value) / 100;
+
+        if (usiaTarget <= usiaSekarang) {
+            alert("Target usia pensiun harus lebih besar dari usia saat ini!");
+            return;
+        }
+
+        const sisaTahun = usiaTarget - usiaSekarang;
+        const pengeluaranTahunan = pengeluaranBulanan * 12;
+
+        const targetFireHariIni = pengeluaranTahunan * 25;
+        const targetFireMasaDepan = targetFireHariIni * Math.pow((1 + inflasi), sisaTahun);
+        const nilaiAsetMasaDepan = asetSekarang * Math.pow((1 + returnInvestasi), sisaTahun);
+        const sisaKekuranganDana = targetFireMasaDepan - nilaiAsetMasaDepan;
+
+        let tabunganBulananWajib = 0;
+        if (sisaKekuranganDana > 0) {
+            const rateBulanan = returnInvestasi / 12;
+            const totalBulan = sisaTahun * 12;
+            tabunganBulananWajib = sisaKekuranganDana / (((Math.pow(1 + rateBulanan, totalBulan)) - 1) / rateBulanan);
+        }
+
+        resYearsToRetireEl.innerText = sisaTahun.toString();
+        resFirePresentEl.innerText = formatRupiah(targetFireHariIni);
+        resFireFutureEl.innerText = formatRupiah(targetFireMasaDepan);
+        resMonthlySavingEl.innerText = formatRupiah(tabunganBulananWajib > 0 ? tabunganBulananWajib : 0);
+
+        resultBoxEl.classList.remove('hidden');
+    }
+
+    const monthlyExpenseElInit = document.getElementById('monthlyExpense') as HTMLInputElement | null;
+    const currentNetWorthElInit = document.getElementById('currentNetWorth') as HTMLInputElement | null;
+    const btnHitung = document.getElementById('btnHitung') as HTMLButtonElement | null;
+
+    if (monthlyExpenseElInit) {
+        formatInputRupiah(monthlyExpenseElInit);
+        monthlyExpenseElInit.addEventListener('input', () => formatInputRupiah(monthlyExpenseElInit));
+    }
+
+    if (currentNetWorthElInit) {
+        formatInputRupiah(currentNetWorthElInit);
+        currentNetWorthElInit.addEventListener('input', () => formatInputRupiah(currentNetWorthElInit));
+    }
+
+    if (btnHitung) {
+        btnHitung.addEventListener('click', hitungFIRE);
+    }
+</script>

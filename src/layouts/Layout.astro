@@ -1,23 +1,121 @@
+---
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	no_sidebar?: boolean;
+}
+
+const { title = "Utilitas Hub", no_sidebar = false } = Astro.props;
+---
+
 <!doctype html>
-<html lang="en">
+<html lang="id">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>{title}</title>
 	</head>
-	<body>
-		<slot />
+	<body class="m-0 w-full min-h-screen bg-green-50 font-sans">
+		<div class="flex min-h-screen">
+			{!no_sidebar && (
+				<>
+					<!-- Mobile Menu Toggle -->
+					<button id="mobileMenuToggle" class="fixed top-4 left-4 z-50 md:hidden bg-green-700 text-white p-3 rounded-lg shadow-lg">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+						</svg>
+					</button>
+
+					<!-- Sidebar Overlay (Mobile) -->
+					<div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden md:hidden"></div>
+
+					<!-- Sidebar -->
+					<aside id="sidebar" class="fixed md:sticky md:top-0 z-40 w-64 min-h-screen bg-white shadow-xl transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out">
+						<div class="p-4 border-b border-gray-200 flex items-center justify-between">
+							<h1 id="sidebarTitle" class="text-xl font-bold text-green-700 transition-opacity duration-300">Utilitas Hub</h1>
+							<button id="minimizeBtn" class="hidden md:flex items-center justify-center p-2 rounded-lg hover:bg-green-50 text-gray-600 hover:text-green-700 transition-colors">
+								<svg xmlns="http://www.w3.org/2000/svg" id="minimizeIcon" class="h-5 w-5 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+								</svg>
+							</button>
+						</div>
+						<nav class="p-4">
+							<ul class="space-y-2">
+								<li>
+									<a href="/fire" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors">
+										<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+										</svg>
+										<span class="sidebar-text ml-3 whitespace-nowrap transition-opacity duration-300">Fire</span>
+									</a>
+								</li>
+								<li>
+									<a href="/kpr" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors">
+										<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+										</svg>
+										<span class="sidebar-text ml-3 whitespace-nowrap transition-opacity duration-300">KPR</span>
+									</a>
+								</li>
+							</ul>
+						</nav>
+					</aside>
+				</>
+			)}
+
+			<!-- Main Content -->
+			<main class="flex-1">
+				<slot />
+			</main>
+		</div>
+
+		<script>
+			const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+			const sidebar = document.getElementById('sidebar');
+			const sidebarOverlay = document.getElementById('sidebarOverlay');
+			const minimizeBtn = document.getElementById('minimizeBtn');
+			const minimizeIcon = document.getElementById('minimizeIcon');
+			const sidebarTitle = document.getElementById('sidebarTitle');
+			const sidebarTexts = document.querySelectorAll('.sidebar-text');
+			
+			let isMinimized = false;
+
+			function toggleSidebar() {
+				sidebar?.classList.toggle('-translate-x-full');
+				sidebarOverlay?.classList.toggle('hidden');
+			}
+
+			function toggleMinimize() {
+				isMinimized = !isMinimized;
+				
+				if (sidebar) {
+					sidebar.classList.toggle('w-64', !isMinimized);
+					sidebar.classList.toggle('w-20', isMinimized);
+				}
+				
+				if (sidebarTitle) {
+					sidebarTitle.classList.toggle('opacity-0', isMinimized);
+					sidebarTitle.classList.toggle('opacity-100', !isMinimized);
+				}
+				
+				if (minimizeIcon) {
+					minimizeIcon.style.transform = isMinimized ? 'rotate(180deg)' : 'rotate(0deg)';
+				}
+				
+				sidebarTexts.forEach(text => {
+					text.classList.toggle('opacity-0', isMinimized);
+					text.classList.toggle('opacity-100', !isMinimized);
+					text.classList.toggle('w-0', isMinimized);
+				});
+			}
+
+			mobileMenuToggle?.addEventListener('click', toggleSidebar);
+			sidebarOverlay?.addEventListener('click', toggleSidebar);
+			minimizeBtn?.addEventListener('click', toggleMinimize);
+		</script>
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
