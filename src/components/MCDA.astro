@@ -1,0 +1,417 @@
+---
+// Jika kamu memiliki layout eksternal, kamu bisa mengimportnya di sini
+// import Layout from '../layouts/Layout.astro';
+---
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCDA Calculator - Metode SAW (Fully Dynamic)</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-zinc-900 text-zinc-100 font-sans p-5 antialiased">
+
+<div class="max-w-5xl mx-auto">
+    <div class="text-center mt-4 mb-8">
+        <h1 class="text-3xl font-extrabold text-black mt-3">Kalkulator MCDA (Metode SAW)</h1>
+        <p class="text-black mt-1 font-medium">Ubah, tambah, atau hapus baris & kolom langsung pada matriks di bawah ini.</p>
+    </div>
+
+    <div class="bg-zinc-850 p-6 rounded-xl border border-zinc-800 mb-6 shadow-xl" id="input-section">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-6">
+            <h2 class="text-xl font-bold text-black">Matriks Penilaian Keputusan</h2>
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-zinc-800 text-zinc-400 border border-zinc-700" id="weight-counter">
+                Total Bobot: <span id="total-weight-val" class="font-mono">0.00</span> / 1.00
+            </span>
+        </div>
+        
+        <div class="overflow-x-auto rounded-lg border border-zinc-800 mb-4">
+            <table class="w-full border-collapse text-sm text-zinc-300" id="mcda-table">
+                <thead>
+                    <tr id="matrix-head" class="bg-zinc-800 text-white font-semibold">
+                        <th class="p-3 border border-zinc-800 text-left font-bold min-w-[200px]">Kriteria Utama</th>
+                        <th class="p-3 border border-zinc-800 text-center font-bold w-24">Bobot (W)</th>
+                        <th class="p-3 border border-zinc-800 text-center font-bold w-28">Sifat</th>
+                        <th class="p-3 border border-zinc-800 text-center w-16 bg-zinc-900/50" id="th-action-add">
+                            <button id="btn-add-alternative" class="bg-zinc-700 hover:bg-zinc-600 text-white text-xs py-1 px-2 rounded cursor-pointer transition font-bold" title="Tambah Opsi (Kolom)">+ Kolom</button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="matrix-body" class="divide-y divide-zinc-800 bg-zinc-900">
+                </tbody>
+                <tfoot>
+                    <tr id="matrix-foot" class="bg-zinc-800/50 font-bold text-white hidden">
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="mb-6">
+            <button id="btn-add-criteria" class="border border-dashed border-zinc-700 hover:border-zinc-500 text-zinc-600 hover:text-black text-xs py-2.5 px-4 rounded-lg cursor-pointer w-full transition font-medium">
+                + Tambah Baris Kriteria Baru
+            </button>
+        </div>
+        
+        <button id="btn-calculate" class="bg-emerald-600 hover:bg-emerald-500 text-white py-3 px-5 rounded-lg font-bold cursor-pointer w-full transition duration-200 shadow-md">Proses & Hitung Rekomendasi</button>
+    </div>
+
+    <div class="bg-zinc-850 p-6 rounded-xl border border-zinc-800 mb-6 shadow-xl hidden" id="result-section">
+        <h2 class="text-xl font-bold text-white mb-4 text-center">Hasil Peringkat Alternatif</h2>
+        <div id="ranking-list" class="flex flex-col gap-3"></div>
+    </div>
+</div>
+
+<script>
+    // State Tracker internal untuk jumlah baris dan kolom yang aktif
+    let criteriaCount = 0;
+    let alternativeCount = 0;
+
+    // Inisialisasi awal saat DOM siap
+    addAlternative();
+    addAlternative();
+    
+    addCriteria();
+    addCriteria();
+    addCriteria();
+
+    // Event Listeners untuk menggantikan inline onclick atribut (Best Practice di Astro/Modern JS)
+    document.getElementById('btn-add-alternative')?.addEventListener('click', addAlternative);
+    document.getElementById('btn-add-criteria')?.addEventListener('click', addCriteria);
+    document.getElementById('btn-calculate')?.addEventListener('click', calculateMCDA);
+
+    // Mendaftarkan fungsi ke objek window agar fungsi rekursif dinamis (seperti tombol hapus yang di-generate lewat string) tetap dapat diakses
+    Object.assign(window, {
+        removeAlternative,
+        removeCriteria,
+        validateWeights,
+        validateMatrixValue
+    });
+
+    // Fungsi menambah kolom alternatif
+    function addAlternative() {
+        alternativeCount++;
+        const charCode = 64 + alternativeCount; 
+        const altLabel = `Opsi ${String.fromCharCode(charCode)}`;
+
+        // 1. Tambah header kolom baru sebelum kolom "+ Kolom"
+        const thAdd = document.getElementById('th-action-add');
+        const newTh = document.createElement('th');
+        newTh.className = "p-3 border border-zinc-800 text-center min-w-[140px] relative group container-alt-head";
+        newTh.id = `th-alt-${alternativeCount}`;
+        newTh.innerHTML = `
+            <div class="flex items-center justify-between gap-1">
+                <input type="text" class="alt-name bg-transparent font-bold text-center border-b border-zinc-700 focus:border-zinc-500 outline-none w-full text-white" value="${altLabel}">
+                <button onclick="window.removeAlternative(${alternativeCount})" class="text-red-400 hover:text-red-300 font-bold text-xs p-0.5 transition absolute right-1 top-1" title="Hapus Kolom">×</button>
+            </div>
+        `;
+        if (thAdd?.parentNode) {
+            thAdd.parentNode.insertBefore(newTh, thAdd);
+        }
+
+        // 2. Tambah sel input nilai di setiap baris kriteria yang sudah eksis
+        const rows = document.querySelectorAll('#matrix-body tr');
+        rows.forEach((row) => {
+            const critId = row.id.split('-')[2];
+            const tdAdd = row.querySelector('.td-action-del');
+            const newTd = document.createElement('td');
+            newTd.className = `p-3 border border-zinc-800 text-center cell-alt-${alternativeCount}`;
+            newTd.innerHTML = `
+                <input type="number" class="matrix-value bg-zinc-800 border border-zinc-700 text-center font-medium rounded p-1 w-16 text-white outline-none" data-alt="${alternativeCount}" data-crit="${critId}" value="3" min="1" max="5" oninput="window.validateMatrixValue(this)">
+            `;
+            row.insertBefore(newTd, tdAdd);
+        });
+
+        resetFoot();
+    }
+
+    // Fungsi menghapus kolom alternatif terakhir/spesifik
+    function removeAlternative(id: number) {
+        if (document.querySelectorAll('.container-alt-head').length <= 1) {
+            alert("Minimal harus menyisakan 1 Opsi/Alternatif.");
+            return;
+        }
+        // Hapus header
+        const altHeader = document.getElementById(`th-alt-${id}`);
+        if (altHeader) altHeader.remove();
+        // Hapus seluruh sel nilai yang sejalur dengan kolom alternatif ini
+        document.querySelectorAll(`.cell-alt-${id}`).forEach(el => el.remove());
+        
+        resetFoot();
+        reIndexAlternativeAttributes();
+    }
+
+    // Menata ulang penomoran data-attribute pasca penghapusan kolom tengah
+    function reIndexAlternativeAttributes() {
+        const ths = document.querySelectorAll('.container-alt-head');
+        alternativeCount = ths.length;
+        
+        ths.forEach((th, idx) => {
+            const newId = idx + 1;
+            th.id = `th-alt-${newId}`;
+            const btn = th.querySelector('button');
+            if(btn) btn.setAttribute('onclick', `window.removeAlternative(${newId})`);
+            
+            const inputs = document.querySelectorAll(`#matrix-body tr`);
+            inputs.forEach(row => {
+                const td = row.children[newId + 2]; // Offset karena kolom kriteria, bobot, sifat
+                td.className = `p-3 border border-zinc-800 text-center cell-alt-${newId}`;
+                const inp = td.querySelector('.matrix-value');
+                if(inp) inp.setAttribute('data-alt', newId.toString());
+            });
+        });
+    }
+
+    // Fungsi menambah baris kriteria
+    function addCriteria() {
+        criteriaCount++;
+        const body = document.getElementById('matrix-body');
+        const row = document.createElement('tr');
+        row.id = `tr-crit-${criteriaCount}`;
+        row.className = "hover:bg-zinc-800/30 group";
+
+        let html = `
+            <td class="p-3 border border-zinc-800">
+                <input type="text" class="c-name bg-transparent font-semibold border-b border-dashed border-zinc-700 focus:border-zinc-500 outline-none w-full text-zinc-100" value="Kriteria Utama ${criteriaCount}">
+            </td>
+            <td class="p-3 border border-zinc-800 text-center">
+                <input type="number" class="c-weight bg-zinc-800 border border-zinc-700 text-center font-semibold rounded p-1 w-16 text-white outline-none" value="0.20" min="0" max="1" step="0.01" oninput="window.validateWeights(this)">
+            </td>
+            <td class="p-3 border border-zinc-800 text-center">
+                <select class="c-type bg-zinc-800 border border-zinc-700 rounded p-1 text-xs text-white outline-none focus:border-zinc-500">
+                    <option value="benefit">Benefit</option>
+                    <option value="cost">Cost</option>
+                </select>
+            </td>
+        `;
+
+        // Loop sebanyak kolom alternatif yang saat ini aktif
+        const currentAlts = document.querySelectorAll('.container-alt-head');
+        currentAlts.forEach((th, idx) => {
+            const altId = idx + 1;
+            html += `
+                <td class="p-3 border border-zinc-800 text-center cell-alt-${altId}">
+                    <input type="number" class="matrix-value bg-zinc-800 border border-zinc-700 text-center font-medium rounded p-1 w-16 text-white outline-none" data-alt="${altId}" data-crit="${criteriaCount}" value="3" min="1" max="5" oninput="window.validateMatrixValue(this)">
+                </td>
+            `;
+        });
+
+        // Kolom aksi tombol hapus baris
+        html += `
+            <td class="p-3 border border-zinc-800 text-center bg-zinc-900/50 td-action-del w-16">
+                <button onclick="window.removeCriteria(${criteriaCount})" class="text-red-400 hover:text-red-300 font-semibold text-xs  transition cursor-pointer">Hapus</button>
+            </td>
+        `;
+
+        row.innerHTML = html;
+        if (body) body.appendChild(row);
+
+        updateTotalWeightDisplay();
+        resetFoot();
+    }
+
+    // Fungsi menghapus baris kriteria
+    function removeCriteria(id: number) {
+        if (document.querySelectorAll('#matrix-body tr').length <= 1) {
+            alert("Minimal harus menyisakan 1 parameter Kriteria.");
+            return;
+        }
+        const rowToRemove = document.getElementById(`tr-crit-${id}`);
+        if (rowToRemove) rowToRemove.remove();
+        updateTotalWeightDisplay();
+        resetFoot();
+        reIndexCriteriaAttributes();
+    }
+
+    // Mengoreksi susunan index kriteria pasca hapus baris tengah
+    function reIndexCriteriaAttributes() {
+        const rows = document.querySelectorAll('#matrix-body tr');
+        rows.forEach((row, idx) => {
+            const newCritId = idx + 1;
+            row.id = `tr-crit-${newCritId}`;
+            const deleteBtn = row.querySelector('.td-action-del button');
+            if (deleteBtn) {
+                deleteBtn.setAttribute('onclick', `window.removeCriteria(${newCritId})`);
+            }
+            
+            row.querySelectorAll('.matrix-value').forEach(inp => {
+                inp.setAttribute('data-crit', newCritId.toString());
+            });
+        });
+    }
+
+    function resetFoot() {
+        document.getElementById('matrix-foot')?.classList.add('hidden');
+        document.getElementById('result-section')?.classList.add('hidden');
+    }
+
+    function validateWeights(currentInput: any) {
+        const weightInputs = document.querySelectorAll('.c-weight');
+        let total = 0;
+        weightInputs.forEach(input => { total += parseFloat((input as HTMLInputElement).value) || 0; });
+
+        if (total > 1) {
+            let currentTotalWithoutThis = 0;
+            weightInputs.forEach(input => { if (input !== currentInput) currentTotalWithoutThis += parseFloat((input as HTMLInputElement).value) || 0; });
+            const allowed = 1 - currentTotalWithoutThis;
+            currentInput.value = allowed > 0 ? allowed.toFixed(2) : 0;
+        }
+        updateTotalWeightDisplay();
+    }
+
+    function updateTotalWeightDisplay() {
+        const weightInputs = document.querySelectorAll('.c-weight');
+        let total = 0;
+        weightInputs.forEach(input => { total += parseFloat((input as HTMLInputElement).value) || 0; });
+        
+        const totalWeightVal = document.getElementById('total-weight-val');
+        if(totalWeightVal) totalWeightVal.innerText = total.toFixed(2);
+        
+        const counterBadge = document.getElementById('weight-counter');
+        if (counterBadge) {
+            if (Math.abs(total - 1.0) < 0.001) {
+                counterBadge.className = "text-xs font-semibold px-2.5 py-1 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800";
+            } else {
+                counterBadge.className = "text-xs font-semibold px-2.5 py-1 rounded-md bg-zinc-800 text-zinc-400 border border-zinc-700";
+            }
+        }
+    }
+
+    function validateMatrixValue(input: any) {
+        let val = parseInt(input.value);
+        if (isNaN(val)) return;
+        if (val > 5) input.value = 5;
+        if (val < 1) input.value = 1;
+    }
+
+    function calculateMCDA() {
+        const numC = document.querySelectorAll('#matrix-body tr').length;
+        const numA = document.querySelectorAll('.container-alt-head').length;
+
+        const weights: number[] = [];
+        const types: string[] = [];
+        let totalWeight = 0;
+
+        // 1. Ambil semua bobot kriteria
+        document.querySelectorAll('.c-weight').forEach(input => {
+            const w = parseFloat((input as HTMLInputElement).value) || 0;
+            weights.push(w);
+            totalWeight += w;
+        });
+        
+        if (totalWeight === 0) {
+            alert("Total bobot kriteria tidak boleh bernilai kosong.");
+            return;
+        }
+
+        // 2. Ambil tipe/sifat kriteria & ubah ke huruf kecil
+        document.querySelectorAll('.c-type').forEach(select => {
+            types.push((select as HTMLSelectElement).value.trimEnd().toLowerCase()); 
+        });
+
+        // Ambil nama-nama opsi/alternatif
+        const altNames: string[] = [];
+        document.querySelectorAll('.alt-name').forEach((input, idx) => {
+            altNames.push((input as HTMLInputElement).value.trimEnd() || `Opsi ${String.fromCharCode(64 + idx + 1)}`);
+        });
+
+        // 3. Susun matriks nilai mentah: matrix[altIdx][critIdx]
+        const matrix = Array.from({ length: numA }, () => Array(numC).fill(0));
+        document.querySelectorAll('.matrix-value').forEach(input => {
+            const altIdx = parseInt(input.getAttribute('data-alt') ?? '0') - 1;
+            const critIdx = parseInt(input.getAttribute('data-crit') ?? '0') - 1;
+            if (matrix[altIdx] !== undefined && matrix[altIdx][critIdx] !== undefined) {
+                matrix[altIdx][critIdx] = parseFloat((input as HTMLInputElement).value) || 0; 
+            }
+        });
+
+        // 4. Cari nilai Max dan Min untuk setiap Kriteria
+        const colMax = Array(numC).fill(-Infinity);
+        const colMin = Array(numC).fill(Infinity);
+
+        for (let j = 0; j < numC; j++) {
+            for (let i = 0; i < numA; i++) {
+                if (matrix[i][j] > colMax[j]) colMax[j] = matrix[i][j];
+                if (matrix[i][j] < colMin[j]) colMin[j] = matrix[i][j];
+            }
+        }
+
+        // 5. Hitung Skor Akhir menggunakan rumus Normalisasi SAW
+        const finalScores = [];
+        for (let i = 0; i < numA; i++) {
+            let totalScore = 0;
+            for (let j = 0; j < numC; j++) {
+                let normValue = 0;
+                
+                if (types[j] === 'benefit') {
+                    normValue = colMax[j] > 0 ? matrix[i][j] / colMax[j] : 0;
+                } else if (types[j] === 'cost') {
+                    normValue = matrix[i][j] > 0 ? colMin[j] / matrix[i][j] : 0;
+                }
+                
+                totalScore += normValue * weights[j];
+            }
+            
+            const preciseScore = Math.round((totalScore + Number.EPSILON) * 10000) / 10000;
+            finalScores.push({ name: altNames[i], score: preciseScore });
+        }
+
+        // 6. Render FOOTER hasil total skor akhir
+        const foot = document.getElementById('matrix-foot');
+        if (foot) {
+            foot.classList.remove('hidden');
+            let footHtml = `
+                <td class="p-3 border border-zinc-800 text-left font-bold tracking-wide uppercase">TOTAL SKOR AKHIR</td>
+                <td class="p-3 border border-zinc-800 text-center font-bold">${totalWeight.toFixed(1)}</td>
+                <td class="p-3 border border-zinc-800 text-center font-bold text-zinc-500">-</td>
+            `;
+            finalScores.forEach(item => {
+                footHtml += `<td class="p-3 border border-zinc-800 text-center font-black text-white text-base">${item.score.toFixed(3)}</td>`;
+            });
+            footHtml += `<td class="p-3 border border-zinc-800 bg-zinc-900/50"></td>`;
+            foot.innerHTML = footHtml;
+        }
+
+        // 7. Render List Rekomendasi Peringkat
+        const sortedScores = [...finalScores].sort((a, b) => b.score - a.score);
+        const rankListDiv = document.getElementById('ranking-list');
+        if (rankListDiv) {
+            rankListDiv.innerHTML = '';
+
+            sortedScores.forEach((item, index) => {
+                const isWinner = index === 0;
+                const itemClass = isWinner 
+                    ? "flex justify-between items-center p-4 border rounded-xl bg-zinc-800 text-white border-zinc-700 font-bold shadow-md ring-2 ring-zinc-500/30" 
+                    : "flex justify-between items-center p-4 border rounded-xl bg-zinc-900 text-zinc-400 border-zinc-800 shadow-xs";
+                
+                const badgeClass = isWinner 
+                    ? "bg-white text-zinc-900 text-[10px] px-2 py-0.5 rounded font-black tracking-wider uppercase"
+                    : "bg-zinc-800 text-zinc-500 text-[10px] px-2 py-0.5 rounded font-bold tracking-wider uppercase";
+
+                const icon = index === 0 ? '🏆 ' : '';
+
+                rankListDiv.innerHTML += `
+                    <div class="${itemClass}">
+                        <div class="flex items-center gap-3">
+                            <span class="${badgeClass}">Rank ${index + 1}</span>
+                            <span class="text-zinc-100">${icon}${item.name}</span>
+                        </div>
+                        <div class="text-right">
+                            <strong class="font-mono text-xl text-white">${item.score.toFixed(3)}</strong><strong class="text-xs text-zinc-500"> / 1.000</strong>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        const resultSection = document.getElementById('result-section');
+        if (resultSection) {
+            resultSection.classList.remove('hidden');
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>
+
+</body>
+</html>
