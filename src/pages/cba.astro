@@ -6,5 +6,57 @@ import CBA from '../components/CBA.astro';
 <Layout title="CBA - Utilitas Hub">
 	<div class="p-5 md:p-10">
 		<CBA />
+		
+		<section class="mt-10 max-w-4xl mx-auto">
+			<h2 class="text-2xl font-bold mb-6 text-gray-800">FAQ - CBA (Cost-Benefit Analysis) Value</h2>
+			
+			<div class="space-y-4">
+				<details class="bg-white rounded-lg shadow-md border border-gray-200 group">
+					<summary class="cursor-pointer p-4 font-semibold text-gray-800 hover:bg-gray-50 flex justify-between items-center">
+						Apa itu CBA Value?
+						<span class="transform group-open:rotate-180 transition-transform">▼</span>
+					</summary>
+					<div class="p-4 pt-0 text-gray-600">
+						<p>CBA Value adalah metode pengambilan keputusan yang berfokus pada satu atau beberapa opsi tindakan, dengan cara membedah dan menimbang seluruh potensi Benefit (Dampak Positif/Keuntungan) dan Cost (Dampak Negatif/Kerugian/Risiko) yang melekat pada opsi tersebut.</p>
+						<p class="mt-2">Dalam analisis personal, metode ini disempurnakan dengan memperhitungkan faktor realita menggunakan rumus daya pengaruh (Value) dan kemungkinan terjadinya (Probability).</p>
+					</div>
+				</details>
+
+				<details class="bg-white rounded-lg shadow-md border border-gray-200 group">
+					<summary class="cursor-pointer p-4 font-semibold text-gray-800 hover:bg-gray-50 flex justify-between items-center">
+						Kapan CBA Value Digunakan?
+						<span class="transform group-open:rotate-180 transition-transform">▼</span>
+					</summary>
+					<div class="p-4 pt-0 text-gray-600">
+						<ul class="list-disc list-inside space-y-2">
+							<li>Ketika Anda ingin menguji kelayakan suatu tindakan secara mendalam (apakah keputusan ini worth it atau tidak?).</li>
+							<li>Ketika Anda ingin menenangkan pikiran dari overthinking dengan cara merasionalkan ketakutan (cost) dan harapan (benefit) ke dalam angka objektif.</li>
+							<li>Ketika Anda ingin melihat hasil bersih (Net Score) dari sebuah skenario tindakan tunggal.</li>
+						</ul>
+					</div>
+				</details>
+
+				<details class="bg-white rounded-lg shadow-md border border-gray-200 group">
+					<summary class="cursor-pointer p-4 font-semibold text-gray-800 hover:bg-gray-50 flex justify-between items-center">
+						Alur Kerja Umum CBA Value
+						<span class="transform group-open:rotate-180 transition-transform">▼</span>
+					</summary>
+					<div class="p-4 pt-0 text-gray-600">
+						<ol class="list-decimal list-inside space-y-2">
+							<li><strong>Identifikasi Opsi:</strong> Menentukan tindakan spesifik yang ingin dianalisis.</li>
+							<li><strong>Mendaftar Faktor:</strong> Menuliskan seluruh elemen Benefit dan Cost yang mungkin terjadi secara mendetail.</li>
+							<li><strong>Menilai Value (1-5):</strong> Memberikan nilai seberapa besar dampak faktor tersebut jika benar-benar terjadi (1 = dampaknya sangat kecil, 5 = dampaknya sangat besar).</li>
+							<li><strong>Menilai Probability (0-1):</strong> Memperkirakan seberapa besar peluang hal tersebut akan terjadi di dunia nyata (0 = mustahil, 1 = pasti terjadi).</li>
+							<li><strong>Kalkulasi Akhir:</strong>
+								<ul class="list-disc list-inside ml-6 mt-2">
+									<li>Skor Komponen = Value × Probability</li>
+									<li>Net Value Score = Total Skor Benefit - Total Skor Cost</li>
+								</ul>
+							</li>
+						</ol>
+					</div>
+				</details>
+			</div>
+		</section>
 	</div>
 </Layout>
