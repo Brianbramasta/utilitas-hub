@@ -1,0 +1,327 @@
+---
+// Anda bisa mengimport layout global di sini jika perlu
+// import Layout from '../layouts/Layout.astro';
+---
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cost-Benefit Analysis (CBA) Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-white text-zinc-800 font-sans p-5 antialiased">
+
+<div class="max-w-6xl mx-auto">
+    <div class="text-center mt-4 mb-8">
+        <span class="text-xs font-bold uppercase tracking-widest bg-zinc-100 text-zinc-600 px-3 py-1 rounded-full border border-zinc-200">Decision Analysis Tool</span>
+        <h1 class="text-3xl font-extrabold text-zinc-950 mt-3">Kalkulator Cost-Benefit Analysis (CBA)</h1>
+        <p class="text-zinc-500 mt-1 font-medium">Bandingkan opsi keputusan berdasarkan bobot dampak (Value) dan probabilitas terjadinya (Probability).</p>
+    </div>
+
+    <div class="space-y-8" id="cba-workspace">
+        </div>
+
+    <div class="mt-6 flex flex-col sm:flex-row gap-4">
+        <button id="btn-add-option" class="border border-dashed border-zinc-300 hover:border-zinc-400 bg-zinc-50/50 text-zinc-600 hover:text-zinc-950 text-sm py-3 px-4 rounded-xl cursor-pointer flex-1 transition font-medium text-center">
+            + Tambah Opsi Keputusan Baru
+        </button>
+        <button id="btn-calculate" class="bg-zinc-900 hover:bg-zinc-800 text-white py-3 px-8 rounded-xl font-bold cursor-pointer transition duration-200 shadow-md sm:w-auto w-full">
+            Hitung & Bandingkan Hasil
+        </button>
+    </div>
+
+    <div class="bg-zinc-50 p-6 rounded-xl border border-zinc-200 mt-8 shadow-sm hidden" id="result-section">
+        <h2 class="text-xl font-bold text-zinc-950 mb-4 text-center">Rekomendasi Keputusan Terbaik</h2>
+        <div id="ranking-list" class="flex flex-col gap-3"></div>
+    </div>
+</div>
+
+<script>
+    // State global aplikasi menggunakan variabel biasa
+    let optionCounter = 0;
+
+    // Inisialisasi awal tanpa dummy data (bersih) saat DOM siap
+    document.addEventListener('DOMContentLoaded', () => {
+        // Otomatis buat 1 opsi kosong pertama agar halaman tidak kosong melongpong
+        addNewOptionBlank();
+
+        // Pasang Event Listener Tombol Utama
+        const addOptionBtn = document.getElementById('btn-add-option');
+        if (addOptionBtn) {
+            addOptionBtn.addEventListener('click', () => addNewOptionBlank());
+        }
+        const calculateBtn = document.getElementById('btn-calculate');
+        if (calculateBtn) {
+            calculateBtn.addEventListener('click', calculateCBA);
+        }
+    });
+
+    // Ekspos fungsi manipulasi ke scope window global agar bisa dipanggil dari inline attribute HTML
+    (window as any).addItemRow = function(optionId: number, type: string) {
+        const tbody = document.getElementById(`tbody-${type}-${optionId}`);
+        if (tbody) {
+            tbody.appendChild(createRowHTML('', 3, 0.5));
+        }
+    };
+
+    (window as any).removeItemRow = function(button: HTMLElement) {
+        const row = button.closest('tr');
+        const tbody = row ? row.closest('tbody') : null;
+        if (tbody && tbody.querySelectorAll('tr').length <= 1) {
+            alert("Minimal harus ada 1 baris analisis.");
+            return;
+        }
+        if (row) row.remove();
+    };
+
+    (window as any).deleteOption = function(optionId: number) {
+        if (document.querySelectorAll('.option-card').length <= 1) {
+            alert("Minimal harus menyisakan 1 Opsi Keputusan.");
+            return;
+        }
+        if (confirm("Apakah Anda yakin ingin menghapus opsi ini?")) {
+            const card = document.getElementById(`option-card-${optionId}`);
+            if (card) card.remove();
+            hideResultSection();
+        }
+    };
+
+    (window as any).calculateItemScore = function(input: HTMLInputElement) {
+        const row = input.closest('tr');
+        if (!row) return;
+        
+        const valInp = row.querySelector('.item-value');
+        const probInp = row.querySelector('.item-probability');
+        const scoreEl = row.querySelector('.item-score');
+
+        const valInpEl = valInp as HTMLInputElement;
+        const probInpEl = probInp as HTMLInputElement;
+        let val = parseFloat(valInpEl.value) || 0;
+        let prob = parseFloat(probInpEl.value) || 0;
+
+        // Validasi batasan input nilai
+        if (val > 5) { val = 5; valInpEl.value = '5'; }
+        if (val < 1) { val = 1; valInpEl.value = '1'; }
+        if (prob > 1) { prob = 1; probInpEl.value = '1'; }
+        if (prob < 0) { prob = 0; probInpEl.value = '0'; }
+
+        const score = val * prob;
+        if (scoreEl) (scoreEl as HTMLElement).innerText = score.toFixed(2);
+    };
+
+    function hideResultSection() {
+        const resultSection = document.getElementById('result-section');
+        if (resultSection) resultSection.classList.add('hidden');
+    }
+
+    // Fungsi pembuat baris input baru berupa elemen TR
+    function createRowHTML(desc = '', val = 3, prob = 0.5) {
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-zinc-100 hover:bg-zinc-50/50";
+        
+        const score = val * prob;
+
+        tr.innerHTML = `
+            <td class="p-2">
+                <input type="text" class="item-desc bg-transparent border-b border-zinc-200 focus:border-zinc-400 outline-none w-full text-zinc-800 text-xs sm:text-sm" value="${desc}" placeholder="Nama komponen analisis...">
+            </td>
+            <td class="p-2 w-20">
+                <input type="number" class="item-value bg-zinc-50 border border-zinc-200 text-center rounded p-1 w-full text-zinc-800 outline-none text-xs sm:text-sm focus:border-zinc-400" value="${val}" min="1" max="5" step="1" oninput="window.calculateItemScore(this)">
+            </td>
+            <td class="p-2 w-24">
+                <input type="number" class="item-probability bg-zinc-50 border border-zinc-200 text-center rounded p-1 w-full text-zinc-800 outline-none text-xs sm:text-sm focus:border-zinc-400" value="${prob.toFixed(2)}" min="0" max="1" step="0.1" oninput="window.calculateItemScore(this)">
+            </td>
+            <td class="p-2 w-20 text-right font-mono text-xs sm:text-sm font-bold text-zinc-600 item-score">
+                ${score.toFixed(2)}
+            </td>
+            <td class="p-2 w-12 text-center">
+                <button onclick="window.removeItemRow(this)" class="text-zinc-400 hover:text-red-500 transition cursor-pointer font-bold text-sm" title="Hapus Baris">×</button>
+            </td>
+        `;
+        return tr;
+    }
+
+    // Render komponen kartu opsi ke workspace DOM
+    function renderOptionCard(title: string, benefits: string[], costs: string[]) {
+        optionCounter++;
+        const workspace = document.getElementById('cba-workspace');
+        if (!workspace) return;
+
+        const card = document.createElement('div');
+        card.id = `option-card-${optionCounter}`;
+        card.className = "bg-white p-4 sm:p-6 rounded-xl border border-zinc-200 shadow-xs option-card relative group";
+
+        card.innerHTML = `
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4 pb-2 border-b border-zinc-100">
+                <input type="text" class="option-name bg-transparent font-extrabold text-lg sm:text-xl border-b border-transparent focus:border-zinc-400 outline-none text-zinc-900 w-full sm:w-2/3" value="${title}">
+                <button onclick="window.deleteOption(${optionCounter})" class="text-xs text-red-600 hover:bg-red-50 border border-red-200 px-2.5 py-1 rounded-md cursor-pointer transition sm:opacity-0 group-hover:opacity-100 self-start sm:self-center">
+                    Hapus Opsi
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center bg-emerald-50 border border-emerald-100 p-2 rounded-lg">
+                        <h3 class="text-sm font-bold text-emerald-700 uppercase tracking-wider">🟢 Potensi Benefit (Keuntungan)</h3>
+                        <button onclick="window.addItemRow(${optionCounter}, 'benefit')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] py-1 px-2 rounded cursor-pointer transition font-bold">+ Benefit</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="text-[11px] text-zinc-400 uppercase tracking-wider border-b border-zinc-100">
+                                    <th class="p-2 font-semibold">Faktor Kebaikan</th>
+                                    <th class="p-2 text-center font-semibold">Value (1-5)</th>
+                                    <th class="p-2 text-center font-semibold">Prob (0-1)</th>
+                                    <th class="p-2 text-right font-semibold">Skor</th>
+                                    <th class="p-2"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-benefit-${optionCounter}"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center bg-red-50 border border-red-100 p-2 rounded-lg">
+                        <h3 class="text-sm font-bold text-red-700 uppercase tracking-wider">🔴 Potensi Cost (Konsekuensi / Risiko)</h3>
+                        <button onclick="window.addItemRow(${optionCounter}, 'cost')" class="bg-red-600 hover:bg-red-700 text-white text-[11px] py-1 px-2 rounded cursor-pointer transition font-bold">+ Cost</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="text-[11px] text-zinc-400 uppercase tracking-wider border-b border-zinc-100">
+                                    <th class="p-2 font-semibold">Faktor Kerugian</th>
+                                    <th class="p-2 text-center font-semibold">Value (1-5)</th>
+                                    <th class="p-2 text-center font-semibold">Prob (0-1)</th>
+                                    <th class="p-2 text-right font-semibold">Skor</th>
+                                    <th class="p-2"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-cost-${optionCounter}"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        workspace.appendChild(card);
+
+        // Isi baris data benefit awal
+        const tbodyBenefit = document.getElementById(`tbody-benefit-${optionCounter}`);
+        if (tbodyBenefit) {
+            benefits.forEach(b => tbodyBenefit.appendChild(createRowHTML(b, 3, 0.5)));
+        }
+
+        // Isi baris data cost awal
+        const tbodyCost = document.getElementById(`tbody-cost-${optionCounter}`);
+        if (tbodyCost) {
+            costs.forEach(c => tbodyCost.appendChild(createRowHTML(c, 3, 0.5)));
+        }
+    }
+
+    function addNewOptionBlank() {
+        const nextIdx = document.querySelectorAll('.option-card').length + 1;
+        renderOptionCard(`Opsi Keputusan Baru ${nextIdx}`, 
+            [''],
+            ['']
+        );
+        hideResultSection();
+    }
+
+    // Fungsi Inti Kalkulasi & Pembandingan CBA
+    function calculateCBA() {
+        const optionCards = document.querySelectorAll('.option-card');
+        interface OptionResult {
+            id: number;
+            name: string;
+            totalBenefit: number;
+            totalCost: number;
+            netScore: number;
+        }
+        const results: OptionResult[] = [];
+
+        optionCards.forEach(card => {
+            const idStr = card.id.replace('option-card-', '');
+            const currentId = parseInt(idStr);
+            
+            const optionNameInput = card.querySelector('.option-name');
+            const optionName = optionNameInput ? (optionNameInput as HTMLInputElement).value : `Opsi Tanpa Nama #${currentId}`;
+
+            // Akumulasi Total Benefit
+            let totalBenefit = 0;
+            card.querySelectorAll(`#tbody-benefit-${currentId} tr`).forEach(row => {
+                const scoreEl = row.querySelector('.item-score');
+                totalBenefit += parseFloat(scoreEl ? (scoreEl as HTMLElement).textContent : '0');
+            });
+
+            // Akumulasi Total Cost
+            let totalCost = 0;
+            card.querySelectorAll(`#tbody-cost-${currentId} tr`).forEach(row => {
+                const scoreEl = row.querySelector('.item-score');
+                totalCost += parseFloat(scoreEl ? (scoreEl as HTMLElement).textContent : '0');
+            });
+
+            const netScore = totalBenefit - totalCost;
+
+            results.push({
+                id: currentId,
+                name: optionName,
+                totalBenefit: totalBenefit,
+                totalCost: totalCost,
+                netScore: Math.round((netScore + Number.EPSILON) * 100) / 100
+            });
+        });
+
+        // Urutkan dari Net Score tertinggi ke terendah
+        results.sort((a, b) => b.netScore - a.netScore);
+
+        // Render hasil perbandingan peringkat
+        const rankListDiv = document.getElementById('ranking-list');
+        if (rankListDiv) {
+            rankListDiv.innerHTML = '';
+
+            results.forEach((item, index) => {
+                const isWinner = index === 0;
+                
+                const itemClass = isWinner 
+                    ? "flex flex-col sm:flex-row justify-between sm:items-center p-4 border rounded-xl bg-emerald-50 text-emerald-950 border-emerald-200 font-bold shadow-xs ring-2 ring-emerald-500/10" 
+                    : "flex flex-col sm:flex-row justify-between sm:items-center p-4 border rounded-xl bg-white text-zinc-500 border-zinc-200 shadow-xs";
+                
+                const badgeClass = isWinner 
+                    ? "bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded font-black tracking-wider uppercase self-start"
+                    : "bg-zinc-100 text-zinc-500 text-[10px] px-2 py-0.5 rounded font-bold tracking-wider uppercase self-start";
+
+                const icon = isWinner ? '🏆 ' : '';
+                const scoreColor = item.netScore >= 0 ? 'text-emerald-600' : 'text-red-600';
+
+                rankListDiv.innerHTML += `
+                    <div class="${itemClass}">
+                        <div class="flex flex-col gap-1.5">
+                            <span class="${badgeClass}">Rekomendasi ${index + 1}</span>
+                            <span class="text-zinc-900 text-base font-extrabold">${icon}${item.name}</span>
+                            <div class="text-[11px] font-medium text-zinc-500 space-x-3">
+                                <span>Total Benefit: <span class="text-emerald-600 font-mono font-bold">${item.totalBenefit.toFixed(2)}</span></span>
+                                <span>Total Cost: <span class="text-red-600 font-mono font-bold">${item.totalCost.toFixed(2)}</span></span>
+                            </div>
+                        </div>
+                        <div class="text-left sm:text-right mt-2 sm:mt-0 border-t sm:border-t-0 border-zinc-100 pt-2 sm:pt-0">
+                            <span class="text-xs text-zinc-400 block">Net Value Score</span>
+                            <strong class="font-mono text-2xl ${scoreColor}">${item.netScore > 0 ? '+' : ''}${item.netScore.toFixed(2)}</strong>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        const resultSection = document.getElementById('result-section');
+        if (resultSection) {
+            resultSection.classList.remove('hidden');
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>
+
+</body>
+</html>
