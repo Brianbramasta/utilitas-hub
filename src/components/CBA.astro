@@ -128,10 +128,10 @@
                 <input type="text" class="item-desc bg-transparent border-b border-zinc-200 focus:border-zinc-400 outline-none w-full text-zinc-800 text-xs sm:text-sm" value="${desc}" placeholder="Nama komponen analisis...">
             </td>
             <td class="p-2 w-20">
-                <input type="number" class="item-value bg-zinc-50 border border-zinc-200 text-center rounded p-1 w-full text-zinc-800 outline-none text-xs sm:text-sm focus:border-zinc-400" value="${val}" min="1" max="5" step="1" oninput="window.calculateItemScore(this)">
+                <input type="number" class="item-value bg-zinc-50 border border-zinc-200 text-center rounded p-1 w-full text-zinc-800 outline-none text-xs sm:text-sm focus:border-zinc-400" value="${val}" min="1" max="5" step="1" onchange="window.calculateItemScore(this)">
             </td>
             <td class="p-2 w-24">
-                <input type="number" class="item-probability bg-zinc-50 border border-zinc-200 text-center rounded p-1 w-full text-zinc-800 outline-none text-xs sm:text-sm focus:border-zinc-400" value="${prob.toFixed(2)}" min="0" max="1" step="0.1" oninput="window.calculateItemScore(this)">
+                <input type="number" class="item-probability bg-zinc-50 border border-zinc-200 text-center rounded p-1 w-full text-zinc-800 outline-none text-xs sm:text-sm focus:border-zinc-400" value="${prob.toFixed(2)}" min="0" max="1" step="0.1" onchange="window.calculateItemScore(this)">
             </td>
             <td class="p-2 w-20 text-right font-mono text-xs sm:text-sm font-bold text-zinc-600 item-score">
                 ${score.toFixed(2)}
