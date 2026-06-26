@@ -1,0 +1,809 @@
+---
+---
+
+<div id="kalkulator-container" class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-4xl mx-auto my-10">
+    <h2 class="text-green-700 text-center mt-0 mb-8 border-b border-green-600 pb-4 text-2xl font-bold">Kalkulator Valuasi Saham Undervalue</h2>
+    
+    <!-- Action Buttons -->
+    <div id="action-buttons" class="flex gap-4 mb-6 hidden">
+      
+        <button id="btnPrintPDF" class="flex-1 bg-purple-600 text-white border-none py-3 text-lg font-bold rounded-lg cursor-pointer hover:bg-purple-700 transition-colors flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            Print PDF
+        </button>
+    </div>
+    
+    <!-- Tabs -->
+    <div class="flex border-b border-gray-200 mb-6">
+        <button class="tab-btn active px-6 py-3 font-semibold text-green-700 border-b-2 border-green-700" data-tab="relative">
+            Valuasi Relatif
+        </button>
+        <button class="tab-btn px-6 py-3 font-semibold text-gray-500 hover:text-green-700" data-tab="intrinsic">
+            Nilai Intrinsik
+        </button>
+        <button class="tab-btn px-6 py-3 font-semibold text-gray-500 hover:text-green-700" data-tab="dividend">
+            Pendekatan Dividen
+        </button>
+    </div>
+
+    <!-- Tab Content: Valuasi Relatif -->
+    <div id="tab-relative" class="tab-content">
+        <div class="flex flex-col md:flex-row gap-6 mb-6">
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="stockPrice" class="font-semibold text-base text-slate-700">Harga Saham Saat Ini (Rp):</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Harga saham yang sedang diperdagangkan di bursa saat ini. Dapat diperoleh dari platform trading saham atau situs finansial seperti Yahoo Finance, Bloomberg, atau IDX.
+                        </div>
+                    </div>
+                </div>
+                <input type="text" id="stockPrice" value="5000" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="eps" class="font-semibold text-base text-slate-700">Earnings Per Share (EPS) (Rp):</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Laba bersih perusahaan per lembar saham. Dihitung dari Laba Bersih dibagi Jumlah Saham Beredar. Diperoleh dari Laporan Keuangan tahunan atau kuartalan perusahaan.
+                        </div>
+                    </div>
+                </div>
+                <input type="text" id="eps" value="500" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-6 mb-6">
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="bvps" class="font-semibold text-base text-slate-700">Book Value per Share (BVPS) (Rp):</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Nilai buku per lembar saham. Dihitung dari Total Ekuitas dibagi Jumlah Saham Beredar. Diperoleh dari Laporan Posisi Keuangan (Neraca) perusahaan.
+                        </div>
+                    </div>
+                </div>
+                <input type="text" id="bvps" value="6000" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="epsGrowth" class="font-semibold text-base text-slate-700">Pertumbuhan EPS (%):</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Persentase pertumbuhan EPS tahunan. Dapat dihitung dari data historis 3-5 tahun terakhir atau berdasarkan proyeksi analis. Diperoleh dari situs finansial atau laporan analis.
+                        </div>
+                    </div>
+                </div>
+                <input type="number" id="epsGrowth" value="10" step="0.1" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-6 mb-8">
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="avgPerIndustry" class="font-semibold text-base text-slate-700">Rata-rata PER Industri:</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            PER rata-rata perusahaan sejenis dalam industri yang sama. Diperoleh dari situs finansial seperti Bloomberg, Reuters, atau IDX Statistics.
+                        </div>
+                    </div>
+                </div>
+                <input type="number" id="avgPerIndustry" value="15" step="0.1" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="avgPbvIndustry" class="font-semibold text-base text-slate-700">Rata-rata PBV Industri:</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            PBV rata-rata perusahaan sejenis dalam industri yang sama. Diperoleh dari sumber yang sama dengan rata-rata PER industri.
+                        </div>
+                    </div>
+                </div>
+                <input type="number" id="avgPbvIndustry" value="1.5" step="0.1" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+        </div>
+
+        <button id="btnHitungRelative" class="w-full bg-green-700 text-white border-none py-4 text-xl font-bold rounded-lg cursor-pointer hover:bg-green-800 transition-colors">Hitung Valuasi Relatif</button>
+
+        <div class="mt-8 p-6 bg-green-50 border-l-4 border-green-700 rounded hidden" id="resultBoxRelative">
+            <h3 class="mt-0 mb-6 text-green-700 text-xl font-bold">Hasil Valuasi Relatif:</h3>
+            
+            <div class="flex justify-between items-center py-3 text-lg border-b border-dashed border-green-300">
+                <span class="text-slate-700">Price to Earnings Ratio (PER):</span>
+                <span class="font-bold text-xl" id="resPer">0</span>
+            </div>
+            
+            <div class="flex justify-between items-center py-3 text-lg border-b border-dashed border-green-300">
+                <span class="text-slate-700">Kategori PER:</span>
+                <span class="font-bold text-xl" id="resPerCategory">-</span>
+            </div>
+            
+            <div class="flex justify-between items-center py-3 text-lg border-b border-dashed border-green-300">
+                <span class="text-slate-700">Price to Book Value (PBV):</span>
+                <span class="font-bold text-xl" id="resPbv">0</span>
+            </div>
+            
+            <div class="flex justify-between items-center py-3 text-lg border-b border-dashed border-green-300">
+                <span class="text-slate-700">Kategori PBV:</span>
+                <span class="font-bold text-xl" id="resPbvCategory">-</span>
+            </div>
+            
+            <div class="flex justify-between items-center py-3 text-lg border-b border-dashed border-green-300">
+                <span class="text-slate-700">Price to Earnings Growth (PEG):</span>
+                <span class="font-bold text-xl" id="resPeg">0</span>
+            </div>
+            
+            <div class="flex justify-between items-center py-3 text-lg">
+                <span class="text-slate-700">Kategori PEG:</span>
+                <span class="font-bold text-xl" id="resPegCategory">-</span>
+            </div>
+            
+            <div class="mt-6 p-4 rounded-lg text-center font-bold text-lg" id="resConclusionRelative">
+                -
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content: Nilai Intrinsik -->
+    <div id="tab-intrinsic" class="tab-content hidden">
+        <div class="flex flex-col md:flex-row gap-6 mb-6">
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="stockPriceIntrinsic" class="font-semibold text-base text-slate-700">Harga Saham Saat Ini (Rp):</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Harga saham yang sedang diperdagangkan di bursa saat ini.
+                        </div>
+                    </div>
+                </div>
+                <input type="text" id="stockPriceIntrinsic" value="5000" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="epsIntrinsic" class="font-semibold text-base text-slate-700">Earnings Per Share (EPS) (Rp):</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Laba bersih perusahaan per lembar saham dari laporan keuangan.
+                        </div>
+                    </div>
+                </div>
+                <input type="text" id="epsIntrinsic" value="500" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+        </div>
+
+        <div class="flex flex-col mb-6">
+            <div class="flex items-center gap-2 mb-2">
+                <label for="bvpsIntrinsic" class="font-semibold text-base text-slate-700">Book Value per Share (BVPS) (Rp):</label>
+                <div class="relative group">
+                    <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                    </svg>
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                        Nilai buku per lembar saham dari laporan posisi keuangan.
+                    </div>
+                </div>
+            </div>
+            <input type="text" id="bvpsIntrinsic" value="6000" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-6 mb-6">
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="fcf" class="font-semibold text-base text-slate-700">Free Cash Flow Tahunan (Rp):</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Kas bersih yang dihasilkan perusahaan setelah dikurangi biaya operasional dan belanja modal. Diperoleh dari Laporan Arus Kas perusahaan.
+                        </div>
+                    </div>
+                </div>
+                <input type="text" id="fcf" value="100000000000" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="sharesOutstanding" class="font-semibold text-base text-slate-700">Jumlah Saham Beredar:</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Total jumlah saham yang beredar dan dimiliki oleh investor. Diperoleh dari Laporan Keuangan atau situs IDX.
+                        </div>
+                    </div>
+                </div>
+                <input type="text" id="sharesOutstanding" value="10000000000" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-6 mb-6">
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="growthRate" class="font-semibold text-base text-slate-700">Tingkat Pertumbuhan FCF (%):</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Proyeksi pertumbuhan Free Cash Flow tahunan. Biasanya menggunakan rata-rata historis atau proyeksi analis, umumnya 3-7%.
+                        </div>
+                    </div>
+                </div>
+                <input type="number" id="growthRate" value="5" step="0.1" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="discountRate" class="font-semibold text-base text-slate-700">Tingkat Diskonto (%):</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Tingkat pengembalian yang diinginkan investor (WACC). Biasanya 8-15% tergantung risiko perusahaan dan industri.
+                        </div>
+                    </div>
+                </div>
+                <input type="number" id="discountRate" value="10" step="0.1" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+        </div>
+
+        <div class="flex flex-col mb-8">
+            <div class="flex items-center gap-2 mb-2">
+                <label for="marginOfSafety" class="font-semibold text-base text-slate-700">Margin of Safety (%):</label>
+                <div class="relative group">
+                    <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                    </svg>
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                        Buffer keamanan untuk melindungi dari kesalahan proyeksi. Warren Buffett biasanya menggunakan 20-30%.
+                    </div>
+                </div>
+            </div>
+            <input type="number" id="marginOfSafety" value="20" step="1" min="0" max="100" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+        </div>
+
+        <div class="flex gap-4 mb-8">
+            <button id="btnHitungGraham" class="flex-1 bg-green-700 text-white border-none py-4 text-lg font-bold rounded-lg cursor-pointer hover:bg-green-800 transition-colors">Hitung Rumus Graham</button>
+            <button id="btnHitungDCF" class="flex-1 bg-green-700 text-white border-none py-4 text-lg font-bold rounded-lg cursor-pointer hover:bg-green-800 transition-colors">Hitung DCF</button>
+        </div>
+
+        <div class="mt-8 p-6 bg-green-50 border-l-4 border-green-700 rounded hidden" id="resultBoxIntrinsic">
+            <h3 class="mt-0 mb-6 text-green-700 text-xl font-bold">Hasil Nilai Intrinsik:</h3>
+            
+            <div class="flex justify-between items-center py-3 text-lg border-b border-dashed border-green-300">
+                <span class="text-slate-700">Metode:</span>
+                <span class="font-bold text-xl" id="resMethod">-</span>
+            </div>
+            
+            <div class="flex justify-between items-center py-3 text-lg border-b border-dashed border-green-300">
+                <span class="text-slate-700">Nilai Intrinsik:</span>
+                <span class="font-bold text-xl" id="resIntrinsicValue">Rp 0</span>
+            </div>
+            
+            <div class="flex justify-between items-center py-3 text-lg border-b border-dashed border-green-300">
+                <span class="text-slate-700">Harga Aman (MoS):</span>
+                <span class="font-bold text-xl" id="resSafePrice">Rp 0</span>
+            </div>
+            
+            <div class="flex justify-between items-center py-3 text-lg">
+                <span class="text-slate-700">Potensi Kenaikan:</span>
+                <span class="font-bold text-xl" id="resUpside">0%</span>
+            </div>
+            
+            <div class="mt-6 p-4 rounded-lg text-center font-bold text-lg" id="resConclusionIntrinsic">
+                -
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content: Pendekatan Dividen -->
+    <div id="tab-dividend" class="tab-content hidden">
+        <div class="flex flex-col md:flex-row gap-6 mb-6">
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="stockPriceDividend" class="font-semibold text-base text-slate-700">Harga Saham Saat Ini (Rp):</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Harga saham yang sedang diperdagangkan di bursa saat ini.
+                        </div>
+                    </div>
+                </div>
+                <input type="text" id="stockPriceDividend" value="5000" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="dividendPerShare" class="font-semibold text-base text-slate-700">Dividen per Saham Tahunan (Rp):</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Total dividen yang dibagikan per lembar saham dalam setahun. Diperoleh dari riwayat dividen perusahaan atau Laporan Keuangan.
+                        </div>
+                    </div>
+                </div>
+                <input type="text" id="dividendPerShare" value="300" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-6 mb-6">
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="dividendGrowth" class="font-semibold text-base text-slate-700">Pertumbuhan Dividen (%):</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Persentase pertumbuhan dividen tahunan. Dapat dihitung dari riwayat dividen 3-5 tahun terakhir.
+                        </div>
+                    </div>
+                </div>
+                <input type="number" id="dividendGrowth" value="5" step="0.1" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <label for="requiredReturn" class="font-semibold text-base text-slate-700">Tingkat Pengembalian yang Diinginkan (%):</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            Tingkat pengembalian minimal yang diharapkan investor dari saham ini. Biasanya 8-12%.
+                        </div>
+                    </div>
+                </div>
+                <input type="number" id="requiredReturn" value="10" step="0.1" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+            </div>
+        </div>
+
+        <div class="flex flex-col mb-8">
+            <div class="flex items-center gap-2 mb-2">
+                <label for="marginOfSafetyDividend" class="font-semibold text-base text-slate-700">Margin of Safety (%):</label>
+                <div class="relative group">
+                    <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6h.01"></path>
+                    </svg>
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                        Buffer keamanan untuk melindungi dari risiko penurunan atau ketidakpastian dividen.
+                    </div>
+                </div>
+            </div>
+            <input type="number" id="marginOfSafetyDividend" value="20" step="1" min="0" max="100" class="w-full p-3 border border-slate-300 rounded-lg text-lg">
+        </div>
+
+        <button id="btnHitungDDM" class="w-full bg-green-700 text-white border-none py-4 text-xl font-bold rounded-lg cursor-pointer hover:bg-green-800 transition-colors">Hitung Dividend Discount Model</button>
+
+        <div class="mt-8 p-6 bg-green-50 border-l-4 border-green-700 rounded hidden" id="resultBoxDividend">
+            <h3 class="mt-0 mb-6 text-green-700 text-xl font-bold">Hasil Pendekatan Dividen:</h3>
+            
+            <div class="flex justify-between items-center py-3 text-lg border-b border-dashed border-green-300">
+                <span class="text-slate-700">Nilai Wajar DDM:</span>
+                <span class="font-bold text-xl" id="resDDMValue">Rp 0</span>
+            </div>
+            
+            <div class="flex justify-between items-center py-3 text-lg border-b border-dashed border-green-300">
+                <span class="text-slate-700">Harga Aman (MoS):</span>
+                <span class="font-bold text-xl" id="resSafePriceDividend">Rp 0</span>
+            </div>
+            
+            <div class="flex justify-between items-center py-3 text-lg border-b border-dashed border-green-300">
+                <span class="text-slate-700">Dividend Yield:</span>
+                <span class="font-bold text-xl" id="resDividendYield">0%</span>
+            </div>
+            
+            <div class="flex justify-between items-center py-3 text-lg">
+                <span class="text-slate-700">Potensi Kenaikan:</span>
+                <span class="font-bold text-xl" id="resUpsideDividend">0%</span>
+            </div>
+            
+            <div class="mt-6 p-4 rounded-lg text-center font-bold text-lg" id="resConclusionDividend">
+                -
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .tab-btn.active {
+        color: #15803d;
+        border-bottom: 2px solid #15803d;
+    }
+
+    /* Print styles */
+    @media print {
+        #sidebar, #mobileMenuToggle, #sidebarOverlay, #action-buttons {
+            display: none !important;
+        }
+        
+        #kalkulator-container {
+            box-shadow: none !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+        }
+    }
+
+    /* Hide action buttons during capture */
+    .capture-mode #action-buttons {
+        display: none !important;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+    function formatRupiah(angka: number): string {
+        return "Rp " + Math.round(angka).toLocaleString('id-ID', { useGrouping: true, maximumFractionDigits: 0 });
+    }
+
+    function formatInputRupiah(input: HTMLInputElement): void {
+        let value = input.value.replace(/[^0-9]/g, '');
+        if (value) {
+            const num = parseInt(value);
+            input.value = num.toLocaleString('id-ID', { useGrouping: true, maximumFractionDigits: 0 });
+        }
+    }
+
+    function unformatRupiah(value: string): number {
+        return parseInt(value.replace(/[^0-9]/g, '')) || 0;
+    }
+
+    function setCategory(element: HTMLElement, isUndervalue: boolean, text: string) {
+        element.textContent = text;
+        element.className = `font-bold text-xl ${isUndervalue ? 'text-green-700' : 'text-red-600'}`;
+    }
+
+    function setConclusion(element: HTMLElement, isUndervalue: boolean, text: string) {
+        element.textContent = text;
+        element.className = `mt-6 p-4 rounded-lg text-center font-bold text-lg ${isUndervalue ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`;
+    }
+
+    // Tab switching
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            
+            // Remove active class from all buttons
+            tabBtns.forEach(b => {
+                b.classList.remove('active', 'text-green-700', 'border-green-700');
+                b.classList.add('text-gray-500');
+            });
+            
+            // Hide all contents
+            tabContents.forEach(content => content.classList.add('hidden'));
+            
+            // Activate current tab
+            btn.classList.add('active', 'text-green-700', 'border-green-700');
+            btn.classList.remove('text-gray-500');
+            document.getElementById(`tab-${tabId}`)?.classList.remove('hidden');
+        });
+    });
+
+    // VALUASI RELATIF
+    function hitungValuasiRelatif() {
+        const stockPriceEl = document.getElementById('stockPrice') as HTMLInputElement | null;
+        const epsEl = document.getElementById('eps') as HTMLInputElement | null;
+        const bvpsEl = document.getElementById('bvps') as HTMLInputElement | null;
+        const epsGrowthEl = document.getElementById('epsGrowth') as HTMLInputElement | null;
+        const avgPerIndustryEl = document.getElementById('avgPerIndustry') as HTMLInputElement | null;
+        const avgPbvIndustryEl = document.getElementById('avgPbvIndustry') as HTMLInputElement | null;
+        
+        const resPerEl = document.getElementById('resPer') as HTMLElement | null;
+        const resPerCategoryEl = document.getElementById('resPerCategory') as HTMLElement | null;
+        const resPbvEl = document.getElementById('resPbv') as HTMLElement | null;
+        const resPbvCategoryEl = document.getElementById('resPbvCategory') as HTMLElement | null;
+        const resPegEl = document.getElementById('resPeg') as HTMLElement | null;
+        const resPegCategoryEl = document.getElementById('resPegCategory') as HTMLElement | null;
+        const resConclusionRelativeEl = document.getElementById('resConclusionRelative') as HTMLElement | null;
+        const resultBoxRelativeEl = document.getElementById('resultBoxRelative') as HTMLElement | null;
+
+        if (!stockPriceEl || !epsEl || !bvpsEl || !epsGrowthEl || !avgPerIndustryEl || !avgPbvIndustryEl ||
+            !resPerEl || !resPerCategoryEl || !resPbvEl || !resPbvCategoryEl || !resPegEl || !resPegCategoryEl ||
+            !resConclusionRelativeEl || !resultBoxRelativeEl) {
+            return;
+        }
+
+        const stockPrice = unformatRupiah(stockPriceEl.value);
+        const eps = unformatRupiah(epsEl.value);
+        const bvps = unformatRupiah(bvpsEl.value);
+        const epsGrowth = parseFloat(epsGrowthEl.value) / 100;
+        const avgPerIndustry = parseFloat(avgPerIndustryEl.value);
+        const avgPbvIndustry = parseFloat(avgPbvIndustryEl.value);
+
+        // PER Calculation
+        const per = stockPrice / eps;
+        const isPerUndervalue = per < avgPerIndustry;
+        
+        // PBV Calculation
+        const pbv = stockPrice / bvps;
+        const isPbvUndervalue = pbv < 1 || pbv < avgPbvIndustry;
+        
+        // PEG Calculation
+        const peg = per / (epsGrowth * 100);
+        const isPegUndervalue = peg < 1;
+
+        // Display results
+        resPerEl.textContent = per.toFixed(2);
+        setCategory(resPerCategoryEl, isPerUndervalue, isPerUndervalue ? 'Undervalue' : 'Overvalue');
+        
+        resPbvEl.textContent = pbv.toFixed(2);
+        setCategory(resPbvCategoryEl, isPbvUndervalue, isPbvUndervalue ? 'Undervalue' : 'Overvalue');
+        
+        resPegEl.textContent = peg.toFixed(2);
+        setCategory(resPegCategoryEl, isPegUndervalue, isPegUndervalue ? 'Undervalue' : 'Overvalue');
+
+        // Overall conclusion
+        const undervalueCount = [isPerUndervalue, isPbvUndervalue, isPegUndervalue].filter(Boolean).length;
+        const isOverallUndervalue = undervalueCount >= 2;
+        const conclusionText = isOverallUndervalue 
+            ? `✅ Saham ini cenderung UNDERVALUE (${undervalueCount}/3 indikator)`
+            : `⚠️ Saham ini cenderung OVERVALUE (${undervalueCount}/3 indikator)`;
+        
+        setConclusion(resConclusionRelativeEl, isOverallUndervalue, conclusionText);
+        
+        resultBoxRelativeEl.classList.remove('hidden');
+    }
+
+    // NILAI INTRINSIK - GRAHAM
+    function hitungGraham() {
+        const stockPriceEl = document.getElementById('stockPriceIntrinsic') as HTMLInputElement | null;
+        const epsEl = document.getElementById('epsIntrinsic') as HTMLInputElement | null;
+        const bvpsEl = document.getElementById('bvpsIntrinsic') as HTMLInputElement | null;
+        const marginOfSafetyEl = document.getElementById('marginOfSafety') as HTMLInputElement | null;
+        
+        const resMethodEl = document.getElementById('resMethod') as HTMLElement | null;
+        const resIntrinsicValueEl = document.getElementById('resIntrinsicValue') as HTMLElement | null;
+        const resSafePriceEl = document.getElementById('resSafePrice') as HTMLElement | null;
+        const resUpsideEl = document.getElementById('resUpside') as HTMLElement | null;
+        const resConclusionIntrinsicEl = document.getElementById('resConclusionIntrinsic') as HTMLElement | null;
+        const resultBoxIntrinsicEl = document.getElementById('resultBoxIntrinsic') as HTMLElement | null;
+
+        if (!stockPriceEl || !epsEl || !bvpsEl || !marginOfSafetyEl ||
+            !resMethodEl || !resIntrinsicValueEl || !resSafePriceEl || !resUpsideEl ||
+            !resConclusionIntrinsicEl || !resultBoxIntrinsicEl) {
+            return;
+        }
+
+        const stockPrice = unformatRupiah(stockPriceEl.value);
+        const eps = unformatRupiah(epsEl.value);
+        const bvps = unformatRupiah(bvpsEl.value);
+        const marginOfSafety = parseFloat(marginOfSafetyEl.value) / 100;
+
+        // Benjamin Graham Formula
+        const intrinsicValue = Math.sqrt(22.5 * eps * bvps);
+        const safePrice = intrinsicValue * (1 - marginOfSafety);
+        const upside = ((intrinsicValue - stockPrice) / stockPrice) * 100;
+        const isUndervalue = stockPrice < safePrice;
+
+        resMethodEl.textContent = 'Benjamin Graham Formula';
+        resIntrinsicValueEl.textContent = formatRupiah(intrinsicValue);
+        resSafePriceEl.textContent = formatRupiah(safePrice);
+        resUpsideEl.textContent = `${upside.toFixed(2)}%`;
+        
+        const conclusionText = isUndervalue
+            ? '✅ Saham ini UNDERVALUE dan layak dibeli dengan MoS'
+            : '⚠️ Saham ini OVERVALUE berdasarkan Rumus Graham';
+        
+        setConclusion(resConclusionIntrinsicEl, isUndervalue, conclusionText);
+        
+        resultBoxIntrinsicEl.classList.remove('hidden');
+    }
+
+    // NILAI INTRINSIK - DCF
+    function hitungDCF() {
+        const stockPriceEl = document.getElementById('stockPriceIntrinsic') as HTMLInputElement | null;
+        const fcfEl = document.getElementById('fcf') as HTMLInputElement | null;
+        const sharesOutstandingEl = document.getElementById('sharesOutstanding') as HTMLInputElement | null;
+        const growthRateEl = document.getElementById('growthRate') as HTMLInputElement | null;
+        const discountRateEl = document.getElementById('discountRate') as HTMLInputElement | null;
+        const marginOfSafetyEl = document.getElementById('marginOfSafety') as HTMLInputElement | null;
+        
+        const resMethodEl = document.getElementById('resMethod') as HTMLElement | null;
+        const resIntrinsicValueEl = document.getElementById('resIntrinsicValue') as HTMLElement | null;
+        const resSafePriceEl = document.getElementById('resSafePrice') as HTMLElement | null;
+        const resUpsideEl = document.getElementById('resUpside') as HTMLElement | null;
+        const resConclusionIntrinsicEl = document.getElementById('resConclusionIntrinsic') as HTMLElement | null;
+        const resultBoxIntrinsicEl = document.getElementById('resultBoxIntrinsic') as HTMLElement | null;
+
+        if (!stockPriceEl || !fcfEl || !sharesOutstandingEl || !growthRateEl || !discountRateEl || !marginOfSafetyEl ||
+            !resMethodEl || !resIntrinsicValueEl || !resSafePriceEl || !resUpsideEl ||
+            !resConclusionIntrinsicEl || !resultBoxIntrinsicEl) {
+            return;
+        }
+
+        const stockPrice = unformatRupiah(stockPriceEl.value);
+        const fcf = unformatRupiah(fcfEl.value);
+        const sharesOutstanding = unformatRupiah(sharesOutstandingEl.value);
+        const growthRate = parseFloat(growthRateEl.value) / 100;
+        const discountRate = parseFloat(discountRateEl.value) / 100;
+        const marginOfSafety = parseFloat(marginOfSafetyEl.value) / 100;
+
+        // Simplified DCF (Gordon Growth Model)
+        if (discountRate <= growthRate) {
+            alert('Tingkat diskonto harus lebih tinggi dari tingkat pertumbuhan!');
+            return;
+        }
+        
+        const terminalValue = fcf * (1 + growthRate) / (discountRate - growthRate);
+        const presentValue = terminalValue; // Simplified
+        const intrinsicValuePerShare = presentValue / sharesOutstanding;
+        const safePrice = intrinsicValuePerShare * (1 - marginOfSafety);
+        const upside = ((intrinsicValuePerShare - stockPrice) / stockPrice) * 100;
+        const isUndervalue = stockPrice < safePrice;
+
+        resMethodEl.textContent = 'Discounted Cash Flow (DCF)';
+        resIntrinsicValueEl.textContent = formatRupiah(intrinsicValuePerShare);
+        resSafePriceEl.textContent = formatRupiah(safePrice);
+        resUpsideEl.textContent = `${upside.toFixed(2)}%`;
+        
+        const conclusionText = isUndervalue
+            ? '✅ Saham ini UNDERVALUE dan layak dibeli dengan MoS'
+            : '⚠️ Saham ini OVERVALUE berdasarkan DCF';
+        
+        setConclusion(resConclusionIntrinsicEl, isUndervalue, conclusionText);
+        
+        resultBoxIntrinsicEl.classList.remove('hidden');
+    }
+
+    // DIVIDEND DISCOUNT MODEL
+    function hitungDDM() {
+        const stockPriceEl = document.getElementById('stockPriceDividend') as HTMLInputElement | null;
+        const dividendPerShareEl = document.getElementById('dividendPerShare') as HTMLInputElement | null;
+        const dividendGrowthEl = document.getElementById('dividendGrowth') as HTMLInputElement | null;
+        const requiredReturnEl = document.getElementById('requiredReturn') as HTMLInputElement | null;
+        const marginOfSafetyEl = document.getElementById('marginOfSafetyDividend') as HTMLInputElement | null;
+        
+        const resDDMValueEl = document.getElementById('resDDMValue') as HTMLElement | null;
+        const resSafePriceDividendEl = document.getElementById('resSafePriceDividend') as HTMLElement | null;
+        const resDividendYieldEl = document.getElementById('resDividendYield') as HTMLElement | null;
+        const resUpsideDividendEl = document.getElementById('resUpsideDividend') as HTMLElement | null;
+        const resConclusionDividendEl = document.getElementById('resConclusionDividend') as HTMLElement | null;
+        const resultBoxDividendEl = document.getElementById('resultBoxDividend') as HTMLElement | null;
+
+        if (!stockPriceEl || !dividendPerShareEl || !dividendGrowthEl || !requiredReturnEl || !marginOfSafetyEl ||
+            !resDDMValueEl || !resSafePriceDividendEl || !resDividendYieldEl || !resUpsideDividendEl ||
+            !resConclusionDividendEl || !resultBoxDividendEl) {
+            return;
+        }
+
+        const stockPrice = unformatRupiah(stockPriceEl.value);
+        const dividendPerShare = unformatRupiah(dividendPerShareEl.value);
+        const dividendGrowth = parseFloat(dividendGrowthEl.value) / 100;
+        const requiredReturn = parseFloat(requiredReturnEl.value) / 100;
+        const marginOfSafety = parseFloat(marginOfSafetyEl.value) / 100;
+
+        if (requiredReturn <= dividendGrowth) {
+            alert('Tingkat pengembalian yang diinginkan harus lebih tinggi dari pertumbuhan dividen!');
+            return;
+        }
+
+        // Gordon Growth Model for DDM
+        const ddmValue = dividendPerShare * (1 + dividendGrowth) / (requiredReturn - dividendGrowth);
+        const safePrice = ddmValue * (1 - marginOfSafety);
+        const dividendYield = (dividendPerShare / stockPrice) * 100;
+        const upside = ((ddmValue - stockPrice) / stockPrice) * 100;
+        const isUndervalue = stockPrice < safePrice;
+
+        resDDMValueEl.textContent = formatRupiah(ddmValue);
+        resSafePriceDividendEl.textContent = formatRupiah(safePrice);
+        resDividendYieldEl.textContent = `${dividendYield.toFixed(2)}%`;
+        resUpsideDividendEl.textContent = `${upside.toFixed(2)}%`;
+        
+        const conclusionText = isUndervalue
+            ? '✅ Saham ini UNDERVALUE dan layak dibeli dengan MoS'
+            : '⚠️ Saham ini OVERVALUE berdasarkan DDM';
+        
+        setConclusion(resConclusionDividendEl, isUndervalue, conclusionText);
+        
+        resultBoxDividendEl.classList.remove('hidden');
+    }
+
+    // Initialize rupiah formatting
+    const rupiahInputs = [
+        'stockPrice', 'eps', 'bvps',
+        'stockPriceIntrinsic', 'epsIntrinsic', 'bvpsIntrinsic', 'fcf', 'sharesOutstanding',
+        'stockPriceDividend', 'dividendPerShare'
+    ];
+
+    rupiahInputs.forEach(id => {
+        const el = document.getElementById(id) as HTMLInputElement | null;
+        if (el) {
+            formatInputRupiah(el);
+            el.addEventListener('input', () => formatInputRupiah(el));
+        }
+    });
+
+    // Button event listeners
+    document.getElementById('btnHitungRelative')?.addEventListener('click', hitungValuasiRelatif);
+    document.getElementById('btnHitungGraham')?.addEventListener('click', hitungGraham);
+    document.getElementById('btnHitungDCF')?.addEventListener('click', hitungDCF);
+    document.getElementById('btnHitungDDM')?.addEventListener('click', hitungDDM);
+
+    // Download image function
+    // async function downloadImage() {
+    //     const container = document.getElementById('kalkulator-container');
+    //     if (!container) return;
+
+    //     // Add capture mode class to hide action buttons
+    //     container.classList.add('capture-mode');
+        
+    //     try {
+    //         const canvas = await html2canvas(container, {
+    //             scale: 2,
+    //             backgroundColor: '#ffffff',
+    //             useCORS: true
+    //         });
+            
+    //         const link = document.createElement('a');
+    //         link.download = 'kalkulator-saham-undervalue.png';
+    //         link.href = canvas.toDataURL('image/png');
+    //         link.click();
+    //     } catch (error) {
+    //         console.error('Error downloading image:', error);
+    //         alert('Gagal mengunduh gambar. Silakan coba lagi.');
+    //     } finally {
+    //         // Remove capture mode class
+    //         container.classList.remove('capture-mode');
+    //     }
+    // }
+
+    // Print PDF function
+    function printPDF() {
+        window.print();
+    }
+
+    // Event listeners for download and print
+    // document.getElementById('btnDownloadImage')?.addEventListener('click', downloadImage);
+    document.getElementById('btnPrintPDF')?.addEventListener('click', printPDF);
+</script>

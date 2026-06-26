@@ -84,58 +84,76 @@
     }
 
     function hitungFIRE() {
-        const currentAgeEl = document.getElementById('currentAge') as HTMLInputElement | null;
-        const targetAgeEl = document.getElementById('targetAge') as HTMLInputElement | null;
-        const monthlyExpenseEl = document.getElementById('monthlyExpense') as HTMLInputElement | null;
-        const currentNetWorthEl = document.getElementById('currentNetWorth') as HTMLInputElement | null;
-        const investmentReturnEl = document.getElementById('investmentReturn') as HTMLInputElement | null;
-        const inflationEl = document.getElementById('inflation') as HTMLInputElement | null;
-        const resYearsToRetireEl = document.getElementById('resYearsToRetire') as HTMLElement | null;
-        const resFirePresentEl = document.getElementById('resFirePresent') as HTMLElement | null;
-        const resFireFutureEl = document.getElementById('resFireFuture') as HTMLElement | null;
-        const resMonthlySavingEl = document.getElementById('resMonthlySaving') as HTMLElement | null;
-        const resultBoxEl = document.getElementById('resultBox') as HTMLElement | null;
+    const currentAgeEl = document.getElementById('currentAge') as HTMLInputElement | null;
+    const targetAgeEl = document.getElementById('targetAge') as HTMLInputElement | null;
+    const monthlyExpenseEl = document.getElementById('monthlyExpense') as HTMLInputElement | null;
+    const currentNetWorthEl = document.getElementById('currentNetWorth') as HTMLInputElement | null;
+    const investmentReturnEl = document.getElementById('investmentReturn') as HTMLInputElement | null;
+    const inflationEl = document.getElementById('inflation') as HTMLInputElement | null;
+    const resYearsToRetireEl = document.getElementById('resYearsToRetire') as HTMLElement | null;
+    const resFirePresentEl = document.getElementById('resFirePresent') as HTMLElement | null;
+    const resFireFutureEl = document.getElementById('resFireFuture') as HTMLElement | null;
+    const resMonthlySavingEl = document.getElementById('resMonthlySaving') as HTMLElement | null;
+    const resultBoxEl = document.getElementById('resultBox') as HTMLElement | null;
 
-        if (!currentAgeEl || !targetAgeEl || !monthlyExpenseEl || !currentNetWorthEl || 
-            !investmentReturnEl || !inflationEl || !resYearsToRetireEl || 
-            !resFirePresentEl || !resFireFutureEl || !resMonthlySavingEl || !resultBoxEl) {
-            return;
-        }
-
-        const usiaSekarang = parseInt(currentAgeEl.value);
-        const usiaTarget = parseInt(targetAgeEl.value);
-        const pengeluaranBulanan = unformatRupiah(monthlyExpenseEl.value);
-        const asetSekarang = unformatRupiah(currentNetWorthEl.value);
-        const returnInvestasi = parseFloat(investmentReturnEl.value) / 100;
-        const inflasi = parseFloat(inflationEl.value) / 100;
-
-        if (usiaTarget <= usiaSekarang) {
-            alert("Target usia pensiun harus lebih besar dari usia saat ini!");
-            return;
-        }
-
-        const sisaTahun = usiaTarget - usiaSekarang;
-        const pengeluaranTahunan = pengeluaranBulanan * 12;
-
-        const targetFireHariIni = pengeluaranTahunan * 25;
-        const targetFireMasaDepan = targetFireHariIni * Math.pow((1 + inflasi), sisaTahun);
-        const nilaiAsetMasaDepan = asetSekarang * Math.pow((1 + returnInvestasi), sisaTahun);
-        const sisaKekuranganDana = targetFireMasaDepan - nilaiAsetMasaDepan;
-
-        let tabunganBulananWajib = 0;
-        if (sisaKekuranganDana > 0) {
-            const rateBulanan = returnInvestasi / 12;
-            const totalBulan = sisaTahun * 12;
-            tabunganBulananWajib = sisaKekuranganDana / (((Math.pow(1 + rateBulanan, totalBulan)) - 1) / rateBulanan);
-        }
-
-        resYearsToRetireEl.innerText = sisaTahun.toString();
-        resFirePresentEl.innerText = formatRupiah(targetFireHariIni);
-        resFireFutureEl.innerText = formatRupiah(targetFireMasaDepan);
-        resMonthlySavingEl.innerText = formatRupiah(tabunganBulananWajib > 0 ? tabunganBulananWajib : 0);
-
-        resultBoxEl.classList.remove('hidden');
+    if (!currentAgeEl || !targetAgeEl || !monthlyExpenseEl || !currentNetWorthEl || !investmentReturnEl || !inflationEl || !resYearsToRetireEl || !resFirePresentEl || !resFireFutureEl || !resMonthlySavingEl || !resultBoxEl) {
+        return;
     }
+
+    const usiaSekarang = parseInt(currentAgeEl.value);
+    const usiaTarget = parseInt(targetAgeEl.value);
+    const pengeluaranBulanan = unformatRupiah(monthlyExpenseEl.value);
+    const asetSekarang = unformatRupiah(currentNetWorthEl.value);
+    const returnInvestasi = parseFloat(investmentReturnEl.value) / 100;
+    const inflasi = parseFloat(inflationEl.value) / 100;
+
+    // Validasi Usia
+    if (usiaTarget <= usiaSekarang) {
+        alert("Target usia pensiun harus lebih besar dari usia saat ini!");
+        return;
+    }
+
+    const sisaTahun = usiaTarget - usiaSekarang;
+    const totalBulan = sisaTahun * 12;
+
+    // 1. Perhitungan Target FIRE (Aturan 25x Pengeluaran Tahunan)
+    const pengeluaranTahunan = pengeluaranBulanan * 12;
+    const targetFireHariIni = pengeluaranTahunan * 25;
+    const targetFireMasaDepan = targetFireHariIni * Math.pow((1 + inflasi), sisaTahun);
+
+    // 2. Hitung Imbal Hasil Riil (Return Bersih setelah dikurangi Inflasi)
+    const returnRiilTahun = returnInvestasi - inflasi;
+    const rateRiilBulan = returnRiilTahun / 12;
+
+    // 3. Proyeksikan Pertumbuhan Aset Saat Ini berdasarkan Nilai Riil (Daya Beli Hari Ini)
+    const nilaiAsetMasaDepanRiil = asetSekarang * Math.pow((1 + returnRiilTahun), sisaTahun);
+    const sisaKekuranganDanaRiil = targetFireHariIni - nilaiAsetMasaDepanRiil;
+
+    let tabunganBulananWajib = 0;
+
+    // 4. Hitung Tabungan Bulanan jika aset sekarang belum mencukupi target
+    if (sisaKekuranganDanaRiil > 0) {
+        if (returnRiilTahun > 0) {
+            // Rumus Masa Depan Anuitas (PMT) dengan suku bunga riil
+            tabunganBulananWajib = sisaKekuranganDanaRiil / (((Math.pow(1 + rateRiilBulan, totalBulan)) - 1) / rateRiilBulan);
+        } else if (returnRiilTahun === 0) {
+            // Jika return sama dengan inflasi, bagi rata kekurangan dana ke total bulan
+            tabunganBulananWajib = sisaKekuranganDanaRiil / totalBulan;
+        } else {
+            // Jika inflasi lebih tinggi dari return, uang melemah, kalkulasi tabungan dasar (tanpa bunga) sebagai batas aman minimum
+            tabunganBulananWajib = (targetFireMasaDepan - (asetSekarang * Math.pow((1 + returnInvestasi), sisaTahun))) / totalBulan;
+        }
+    }
+
+    // 5. Tampilkan Hasil ke UI
+    resYearsToRetireEl.innerText = sisaTahun.toString();
+    resFirePresentEl.innerText = formatRupiah(targetFireHariIni);
+    resFireFutureEl.innerText = formatRupiah(targetFireMasaDepan);
+    resMonthlySavingEl.innerText = formatRupiah(tabunganBulananWajib > 0 ? tabunganBulananWajib : 0);
+    
+    resultBoxEl.classList.remove('hidden');
+}
+
 
     const monthlyExpenseElInit = document.getElementById('monthlyExpense') as HTMLInputElement | null;
     const currentNetWorthElInit = document.getElementById('currentNetWorth') as HTMLInputElement | null;
