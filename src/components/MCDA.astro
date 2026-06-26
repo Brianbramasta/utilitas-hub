@@ -192,7 +192,7 @@
             const altId = idx + 1;
             html += `
                 <td class="p-3 border border-zinc-800 text-center cell-alt-${altId}">
-                    <input type="number" class="matrix-value bg-zinc-800 border border-zinc-700 text-center font-medium rounded p-1 w-16 text-white outline-none" data-alt="${altId}" data-crit="${criteriaCount}" value="3" min="1" max="5" oninput="window.validateMatrixValue(this)">
+                    <input type="number" class="matrix-value bg-zinc-800 border border-zinc-700 text-center font-medium rounded p-1 w-16 text-white outline-none" data-alt="${altId}" data-crit="${criteriaCount}" value="1" min="1" max="5" oninput="window.validateMatrixValue(this)">
                 </td>
             `;
         });
@@ -206,6 +206,23 @@
 
         row.innerHTML = html;
         if (body) body.appendChild(row);
+        let totalWeight = 0;
+                    const weightInputs = document.querySelectorAll('.c-weight');
+                    weightInputs.forEach(input => {
+                        totalWeight += parseFloat((input as HTMLInputElement).value) || 0;
+                    });
+                    const totalWeightDisplay = document.getElementById('total-weight-val');
+                    if (totalWeightDisplay) {
+                        totalWeightDisplay.innerText = totalWeight.toFixed(2);
+                    }
+
+                    // Jika total weight melebihi 1, ubah nilai terakhir ke 0
+                    if (totalWeight > 1) {
+                        const lastWeightInput = weightInputs[weightInputs.length - 1];
+                        if (lastWeightInput) {
+                            (lastWeightInput as HTMLInputElement).value = '0';
+                        }
+                    }
 
         updateTotalWeightDisplay();
         resetFoot();
