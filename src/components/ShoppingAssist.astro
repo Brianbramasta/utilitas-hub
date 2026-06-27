@@ -1,0 +1,232 @@
+---
+// Di sini Anda bisa mengimpor layout atau menambahkan data jika diperlukan
+// Contoh: import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<div class="bg-slate-50 text-slate-800 min-h-screen py-10 px-4 flex justify-center items-start">
+    <div class="w-full max-w-2xl bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-slate-100">
+        <h2 class="text-2xl font-bold text-center text-emerald-600 mb-2 flex items-center justify-center gap-2">
+            Smart Shopping Assistant
+        </h2>
+        <p class="text-sm text-slate-500 text-center mb-6">
+            Bandingkan berbagai ukuran kemasan produk untuk mencari opsi paling hemat. Anda bisa mengubah nama produk langsung di judulnya.
+        </p>
+        
+        <div id="products-container" class="grid grid-cols-1 md:grid-cols-1 gap-4">
+            <!-- Diisi secara dinamis oleh JavaScript -->
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 mt-6">
+            <button 
+                type="button" 
+                id="add-product-btn"
+                class="w-full px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition shadow-sm flex items-center justify-center gap-2 text-base"
+            >
+                Tambah Produk
+            </button>
+            <button 
+                type="button" 
+                id="compare-btn"
+                class="w-full px-4 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition shadow-md flex items-center justify-center gap-2 text-base"
+            >
+                Bandingkan Kehematan
+            </button>
+        </div>
+
+        <div id="result-box" class="mt-6 p-4 rounded-xl hidden text-sm font-medium border text-center">
+            <!-- Hasil diisi via JS -->
+        </div>
+    </div>
+</div>
+
+<script>
+    let productCount = 0;
+
+    const container = document.getElementById('products-container');
+    const addProductBtn = document.getElementById('add-product-btn');
+    const compareBtn = document.getElementById('compare-btn');
+
+    // Fungsi menambah kartu produk baru secara dinamis
+    function addProductCard() {
+        productCount++;
+        const card = document.createElement('div');
+        card.className = "p-4 bg-slate-50 rounded-xl border border-slate-200 product-card relative flex flex-col justify-between";
+        card.id = `product-card-${productCount}`;
+        
+        const defaultLetter = String.fromCharCode(65 + (document.querySelectorAll('.product-card').length));
+
+        card.innerHTML = `
+            <div>
+                <h3 class="font-bold text-slate-700 mb-3 border-b pb-2 flex justify-between items-center gap-2">
+                    <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                        <input type="text" value="Produk ${defaultLetter}" class="product-title-input font-bold text-slate-700 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-emerald-500 focus:bg-white focus:outline-none px-1 rounded transition-all w-full truncate text-base" title="Klik untuk mengubah nama produk">
+                    </div>
+                    <span class="badge text-xs px-2 py-0.5 rounded text-white shrink-0 hidden"></span>
+                </h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Harga (Rp)</label>
+                        <input type="text" placeholder="Contoh: 15.000" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 money-input">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Jumlah Isi</label>
+                            <input type="number" placeholder="Isi" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 size-input">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Satuan</label>
+                            <select class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 unit-select">
+                                <option value="1">Gram (g) / ml</option>
+                                <option value="1000">Kilogram (kg) / Liter (L)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-dashed border-slate-200 flex justify-between items-center">
+                <span class="unit-price-text text-xs text-slate-500 font-medium">Harga per unit: -</span>
+                <button type="button" class="text-xs text-red-500 hover:text-red-700 font-semibold delete-btn" data-id="${productCount}">Hapus</button>
+            </div>
+        `;
+        
+        container?.appendChild(card);
+
+        // Menambahkan event listener spesifik ke tombol hapus di kartu yang baru dibuat
+        card.querySelector('.delete-btn')?.addEventListener('click', (e) => {
+            const id = (e.currentTarget as HTMLElement).getAttribute('data-id');
+            deleteProductCard(id);
+        });
+
+        updateLabelsIfUnedited();
+    }
+
+    // Fungsi menghapus kartu produk
+    function deleteProductCard(id: string | null) {
+        if (!id) return;
+        const cards = document.querySelectorAll('.product-card');
+        if (cards.length > 2) {
+            document.getElementById(`product-card-${id}`)?.remove();
+            updateLabelsIfUnedited();
+        } else {
+            alert("Minimal harus membandingkan dua produk!");
+        }
+    }
+
+    function updateLabelsIfUnedited() {
+        const titleInputs = document.querySelectorAll('.product-title-input') as NodeListOf<HTMLInputElement>;
+        titleInputs.forEach((input, index) => {
+            const defaultPattern = /^Produk [A-Z]$/;
+            if (defaultPattern.test(input.value)) {
+                input.value = `Produk ${String.fromCharCode(65 + index)}`;
+            }
+        });
+    }
+
+    function formatNumber(value: string) {
+        if (!value) return "";
+        const clean = value.replace(/\D/g, "");
+        return clean.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    // Event Delegation untuk mendeteksi perubahan input mata uang
+    document.addEventListener("input", function(e) {
+        const target = e.target as HTMLInputElement;
+        if (target && target.classList.contains("money-input")) {
+            target.value = formatNumber(target.value);
+        }
+    });
+
+    // Fungsi Utama Perbandingan Multi-Produk
+    function compareMultiplePrices() {
+        const cards = document.querySelectorAll('.product-card');
+        let validProducts: Array<{ cardElement: Element, label: string, unitPrice: number }> = [];
+        let hasError = false;
+
+        cards.forEach((card) => {
+            const titleInput = card.querySelector('.product-title-input') as HTMLInputElement;
+            const label = titleInput?.value.trim() || "Produk Tanpa Nama";
+            
+            const priceInput = card.querySelector('.money-input') as HTMLInputElement;
+            const sizeInput = card.querySelector('.size-input') as HTMLInputElement;
+            const unitSelect = card.querySelector('.unit-select') as HTMLSelectElement;
+            
+            const price = parseFloat(priceInput?.value.replace(/\./g, "")) || 0;
+            const size = parseFloat(sizeInput?.value) || 0;
+            const multiplier = parseFloat(unitSelect?.value) || 1;
+
+            if (!price || !size) {
+                hasError = true;
+                return;
+            }
+
+            const totalSize = size * multiplier;
+            const unitPrice = price / totalSize;
+
+            validProducts.push({
+                cardElement: card,
+                label: label,
+                unitPrice: unitPrice
+            });
+        });
+
+        if (hasError) {
+            alert("Harap isi harga dan jumlah isi untuk semua produk yang tersedia!");
+            return;
+        }
+
+        validProducts.sort((a, b) => a.unitPrice - b.unitPrice);
+
+        const cheapestProduct = validProducts[0];
+        const mostExpensiveProduct = validProducts[validProducts.length - 1];
+
+        cards.forEach((card) => {
+            const badge = card.querySelector('.badge');
+            if (badge) badge.className = "badge text-xs px-2 py-0.5 rounded text-white hidden";
+        });
+
+        validProducts.forEach((product) => {
+            const textElement = product.cardElement.querySelector('.unit-price-text') as HTMLElement;
+            const badge = product.cardElement.querySelector('.badge') as HTMLElement;
+            
+            if (textElement) textElement.innerText = `Rp ${product.unitPrice.toFixed(2)} / g (ml)`;
+
+            if (badge) {
+                if (product.unitPrice === cheapestProduct.unitPrice) {
+                    badge.innerText = "Paling Hemat";
+                    badge.className = "badge text-xs px-2 py-0.5 rounded text-white bg-emerald-500 block";
+                } else if (product.unitPrice === mostExpensiveProduct.unitPrice) {
+                    badge.innerText = "Paling Boros";
+                    badge.className = "badge text-xs px-2 py-0.5 rounded text-white bg-red-500 block";
+                }
+            }
+        });
+
+        const resultBox = document.getElementById('result-box');
+        if (resultBox) {
+            resultBox.className = "mt-6 p-4 rounded-xl text-sm font-medium text-center border ";
+
+            const allSame = validProducts.every(p => p.unitPrice === cheapestProduct.unitPrice);
+
+            if (allSame) {
+                resultBox.classList.add('bg-blue-50', 'text-blue-700', 'border-blue-200');
+                resultBox.innerText = "⚖️ Semua opsi memiliki nilai kehematan yang SAMA PERSIS!";
+            } else {
+                const selisihPersen = ((mostExpensiveProduct.unitPrice - cheapestProduct.unitPrice) / mostExpensiveProduct.unitPrice) * 100;
+                
+                resultBox.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
+                resultBox.innerHTML = `🎉 Opsi terbaik adalah <strong>${cheapestProduct.label}</strong>! Memilih opsi ini menghemat hingga <strong>${selisihPersen.toFixed(1)}%</strong> anggaran belanja dibandingkan jika Anda memilih opsi paling mahal (<strong>${mostExpensiveProduct.label}</strong>).`;
+            }
+
+            resultBox.classList.remove('hidden');
+            resultBox.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // Pasang Event Listener ke tombol-tombol utama
+    addProductBtn?.addEventListener('click', addProductCard);
+    compareBtn?.addEventListener('click', compareMultiplePrices);
+
+    // Inisialisasi awal dengan memunculkan 2 kolom produk default
+    addProductCard();
+    addProductCard();
+</script>
