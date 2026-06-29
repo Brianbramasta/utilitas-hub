@@ -7,13 +7,50 @@ import Layout from '../layouts/Layout.astro';
 		<div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-4xl text-center">
 			<h1 class="text-green-700 text-3xl font-bold mb-4">Selamat Datang di Utilitas Hub</h1>
 			<p class="text-slate-600 text-lg mb-6">Kumpulan alat bantu dan kalkulator keuangan</p>
-			<div class="flex flex-col sm:flex-row gap-4 justify-center">
-				<a href="/fire" class="bg-green-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-800 transition-colors">
-					Kalkulator FIRE
-				</a>
-				<a href="/kpr" class="border-2 border-green-700 text-green-700 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
-					Kalkulator KPR
-				</a>
+			
+			<!-- Simulasi Investasi -->
+			<div class="mb-8">
+				<h2 class="text-green-700 text-xl font-bold mb-4">Simulasi Investasi</h2>
+				<div class="flex flex-col sm:flex-row gap-4 justify-center">
+					<a href="/fire" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
+						Kalkulator FIRE
+					</a>
+					<a href="/kpr" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
+						Kalkulator KPR
+					</a>
+					<a href="/saham" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
+						Kalkulator Saham
+					</a>
+				</div>
+			</div>
+
+			<!-- Kelola Keuangan -->
+			<div class="mb-8">
+				<h2 class="text-green-700 text-xl font-bold mb-4">Kelola Keuangan</h2>
+				<div class="flex flex-col sm:flex-row gap-4 justify-center">
+					<a href="/split_bill" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
+						Split Bill
+					</a>
+					<a href="/shopping_assistant" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
+						Shopping Assistant
+					</a>
+					<a href="/cooking_planner" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
+						Cooking Planner Budgeting
+					</a>
+				</div>
+			</div>
+
+			<!-- Decision Making -->
+			<div>
+				<h2 class="text-green-700 text-xl font-bold mb-4">Decision Making</h2>
+				<div class="flex flex-col sm:flex-row gap-4 justify-center">
+					<a href="/mcda" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
+						MCDA
+					</a>
+					<a href="/cba" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
+						CBA
+					</a>
+				</div>
 			</div>
 		</div>
 	</div>

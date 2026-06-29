@@ -1,12 +1,6 @@
 ---
 import '../styles/global.css';
-
-interface MenuItem {
-    name: string;
-    href?: string;
-    icon?: string;
-    children?: MenuItem[];
-}
+import Sidebar from '../components/Sidebar.astro';
 
 interface Props {
     title?: string;
@@ -20,96 +14,6 @@ const shouldShowSidebar = !no_sidebar && !noSidebarFromUrl;
 
 // --- PERBAIKAN DI SINI: Ambil pathname saat ini ---
 const currentPath = Astro.url.pathname;
-
-// Fungsi helper untuk menghapus trailing slash agar perbandingan konsisten di prod & dev
-const cleanPath = (path: string) => path.replace(/\/$/, "");
-const normalizedCurrentPath = cleanPath(currentPath);
-
-const menuItems: MenuItem[] = [
-    {
-        name: "Simulasi Investasi",
-        icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>`,
-        children: [
-            {
-                name: "Fire",
-                href: "/fire",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>`
-            },
-            {
-                name: "KPR",
-                href: "/kpr",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>`
-            },
-            {
-                name: "Saham",
-                href: "/saham",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>`
-            },
-            
-        ]
-    },
-    {
-        name: "Kelola Keuangan",
-        icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-        </svg>`,
-        children: [
-            {
-                name: "Split Bill",
-                href: "/split_bill",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 022 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>`
-            },{
-                name: "Shopping Assistant",
-                href: "/shopping_assistant",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>`
-            },{
-                name: "Cooking Planner Budgeting",
-                href: "/cooking_planner",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253M8 21h8m-4-4v4m-4-16h.01" />
-                </svg>`
-            },
-        ]
-    },
-    {
-        name: "Decision Making",
-        icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-        </svg>`,
-        children: [
-            {
-                name: "MCDA",
-                href: "/mcda",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17l6-6-6-6" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v18" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l7-7 7 7v11a2 2 0 01-2 2H7a2 2 0 01-2-2V8z" />
-                </svg>`
-            },
-            {
-                name: "CBA",
-                href: "/cba",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17l6-6-6-6" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v18" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l7-7 7 7v11a2 2 0 01-2 2H7a2 2 0 01-2-2V8z" />
-                </svg>`
-            }
-        ]
-    }
-];
 ---
 
 <!doctype html>
@@ -126,77 +30,7 @@ const menuItems: MenuItem[] = [
     <body class="m-0 w-full min-h-screen bg-green-50 font-sans">
         <div class="flex min-h-screen">
             {shouldShowSidebar && (
-                <>
-                    <button id="mobileMenuToggle" class="fixed top-4 left-4 z-50 md:hidden bg-green-700 text-white p-3 rounded-lg shadow-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </button>
-
-                    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden md:hidden"></div>
-
-                    <aside id="sidebar" class="fixed md:sticky md:top-0 z-40 w-64 min-h-screen bg-white shadow-xl transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out">
-                        <div class="p-4 border-b border-gray-200 flex items-center justify-between">
-                            <h1 id="sidebarTitle" class="text-xl font-bold text-green-700 transition-opacity duration-300">Utilitas Hub</h1>
-                            <button id="minimizeBtn" class="hidden md:flex items-center justify-center p-2 rounded-lg hover:bg-green-50 text-gray-600 hover:text-green-700 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" id="minimizeIcon" class="h-5 w-5 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-                                </svg>
-                            </button>
-                        </div>
-                        <nav class="p-4">
-                            <ul class="space-y-2">
-                                {menuItems.map((item, index) => {
-                                    // --- PERBAIKAN DI SINI: Gunakan cleanPath untuk menormalkan rute anak ---
-                                    const hasActiveChild = item.children?.some(child => child.href && cleanPath(child.href) === normalizedCurrentPath);
-                                    const isParentActive = hasActiveChild;
-                                    
-                                    return (
-                                        <li>
-                                            {item.children ? (
-                                                <>
-                                                    <button
-                                                        class={`menu-toggle w-full flex items-center justify-between p-3 rounded-lg transition-colors ${isParentActive ? 'bg-green-100 text-green-700' : 'text-gray-700 hover:bg-green-50 hover:text-green-700'}`}
-                                                        data-menu-index={index}
-                                                        data-expanded={isParentActive ? "true" : "false"}
-                                                    >
-                                                        <div class="flex items-center">
-                                                            <Fragment set:html={item.icon} />
-                                                            <span class="sidebar-text ml-3 whitespace-nowrap transition-opacity duration-300">{item.name}</span>
-                                                        </div>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class={`menu-chevron h-4 w-4 flex-shrink-0 transition-transform duration-300 ${isParentActive ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                                        </svg>
-                                                    </button>
-                                                    <ul class={`menu-submenu ml-4 mt-1 space-y-1 ${isParentActive ? '' : 'hidden'}`}>
-                                                        {item.children.map((child) => {
-                                                            // --- PERBAIKAN DI SINI: Gunakan cleanPath untuk keaslian kecocokan ---
-                                                            const isActive = child.href && cleanPath(child.href) === normalizedCurrentPath;
-                                                            return (
-                                                                <li>
-                                                                    <a href={child.href} class={`flex items-center p-2 rounded-lg transition-colors ${isActive ? 'bg-green-100 text-green-700' : 'text-gray-600 hover:bg-green-50 hover:text-green-700'}`}>
-                                                                        <Fragment set:html={child.icon} />
-                                                                        <span class="sidebar-text ml-2 whitespace-nowrap text-sm transition-opacity duration-300">{child.name}</span>
-                                                                    </a>
-                                                                </li>
-                                                            );
-                                                        })}
-                                                    </ul>
-                                                </>
-                                            ) : (
-                                                // --- PERBAIKAN DI SINI: Untuk menu utama tanpa anak ---
-                                                <a href={item.href} class={`flex items-center p-3 rounded-lg transition-colors ${item.href && cleanPath(item.href) === normalizedCurrentPath ? 'bg-green-100 text-green-700' : 'text-gray-700 hover:bg-green-50 hover:text-green-700'}`}>
-                                                    <Fragment set:html={item.icon} />
-                                                    <span class="sidebar-text ml-3 whitespace-nowrap transition-opacity duration-300">{item.name}</span>
-                                                </a>
-                                            )}
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </nav>
-                    </aside>
-                </>
+                <Sidebar currentPath={currentPath} />
             )}
 
             <main class="flex-1">
@@ -204,67 +38,5 @@ const menuItems: MenuItem[] = [
             </main>
         </div>
 
-        <script>
-            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-            const sidebar = document.getElementById('sidebar');
-            const sidebarOverlay = document.getElementById('sidebarOverlay');
-            const minimizeBtn = document.getElementById('minimizeBtn');
-            const minimizeIcon = document.getElementById('minimizeIcon');
-            const sidebarTitle = document.getElementById('sidebarTitle');
-            const sidebarTexts = document.querySelectorAll('.sidebar-text');
-            const menuToggles = document.querySelectorAll('.menu-toggle');
-            
-            let isMinimized = false;
-
-            function toggleSidebar() {
-                sidebar?.classList.toggle('-translate-x-full');
-                sidebarOverlay?.classList.toggle('hidden');
-            }
-
-            function toggleMinimize() {
-                isMinimized = !isMinimized;
-                
-                if (sidebar) {
-                    sidebar.classList.toggle('w-64', !isMinimized);
-                    sidebar.classList.toggle('w-20', isMinimized);
-                }
-                
-                if (sidebarTitle) {
-                    sidebarTitle.classList.toggle('opacity-0', isMinimized);
-                    sidebarTitle.classList.toggle('opacity-100', !isMinimized);
-                }
-                
-                if (minimizeIcon) {
-                    minimizeIcon.style.transform = isMinimized ? 'rotate(180deg)' : 'rotate(0deg)';
-                }
-                
-                sidebarTexts.forEach(text => {
-                    text.classList.toggle('opacity-0', isMinimized);
-                    text.classList.toggle('opacity-100', !isMinimized);
-                    text.classList.toggle('w-0', isMinimized);
-                });
-            }
-
-            function toggleMenu(button: HTMLElement) {
-                const submenu = button.nextElementSibling as HTMLElement;
-                const chevron = button.querySelector('.menu-chevron') as HTMLElement;
-                
-                if (submenu && submenu.classList.contains('menu-submenu')) {
-                    const isHidden = submenu.classList.contains('hidden');
-                    submenu.classList.toggle('hidden');
-                    if (chevron) {
-                        chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
-                    }
-                }
-            }
-
-            mobileMenuToggle?.addEventListener('click', toggleSidebar);
-            sidebarOverlay?.addEventListener('click', toggleSidebar);
-            minimizeBtn?.addEventListener('click', toggleMinimize);
-            
-            menuToggles.forEach(toggle => {
-                toggle.addEventListener('click', () => toggleMenu(toggle as HTMLElement));
-            });
-        </script>
     </body>
 </html>
