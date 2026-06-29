@@ -1,12 +1,66 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import KPR from '../components/KPR.astro';
 ---
 
 <Layout title="Kalkulator KPR - Utilitas Hub">
 	<div class="p-5 md:p-10 flex items-center justify-center min-h-screen">
-		<div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-4xl text-center">
-			<h2 class="text-green-700 text-2xl font-bold mb-4">Kalkulator KPR</h2>
-			<p class="text-slate-600 text-lg">on development</p>
-		</div>
+			<KPR />
+		
 	</div>
+	<section class="my-12 max-w-6xl mx-auto px-4">
+			<h2 class="text-2xl font-bold mb-6 text-emerald-900 flex items-center gap-2">
+				<span class="w-2 h-6 bg-emerald-600 rounded-full inline-block"></span>
+				FAQ - Simulasi KPR (Kredit Pemilikan Rumah)
+			</h2>
+			
+			<div class="space-y-4">
+				<details class="bg-white rounded-xl shadow-sm border border-emerald-100/50 group">
+					<summary class="cursor-pointer p-4 font-semibold text-emerald-950 hover:bg-emerald-50/30 flex justify-between items-center transition outline-none rounded-t-xl group-open:bg-emerald-50/50">
+						Apa itu metode perhitungan bunga Anuitas pada simulasi ini?
+						<span class="transform group-open:rotate-180 transition-transform text-emerald-600">▼</span>
+					</summary>
+					<div class="p-4 pt-2 text-gray-600 border-t border-emerald-50/50">
+						<p>Metode Anuitas (Bunga Efektif yang Disetahunkan) adalah skema perbankan di mana <strong>nominal angsuran bulanan Anda akan selalu tetap</strong> sepanjang masa tenor pinjaman.</p>
+						<p class="mt-2">Namun, di dalam porsi angsuran tersebut terdapat perubahan struktur: pada tahun-tahun awal, porsi pembayaran akan didominasi untuk membayar bunga, sedangkan porsi pembayaran pokoknya kecil. Seiring berjalannya waktu, porsi bunga akan semakin mengecil dan porsi pokoknya akan semakin membesar.</p>
+					</div>
+				</details>
+
+				<details class="bg-white rounded-xl shadow-sm border border-emerald-100/50 group">
+					<summary class="cursor-pointer p-4 font-semibold text-emerald-950 hover:bg-emerald-50/30 flex justify-between items-center transition outline-none rounded-t-xl group-open:bg-emerald-50/50">
+						Mengapa tabel amortisasi di atas dikelompokkan per tahun?
+						<span class="transform group-open:rotate-180 transition-transform text-emerald-600">▼</span>
+					</summary>
+					<div class="p-4 pt-2 text-gray-600 border-t border-emerald-50/50">
+						<p>Pengelompokan per tahun dilakukan untuk memberikan <strong>gambaran makro yang bersih dan ringkas</strong> mengenai perjalanan penurunan utang pokok Anda tanpa harus melihat 120 hingga 360 baris data bulanan yang melelahkan.</p>
+						<p class="mt-2">Angka yang tertera pada kolom angsuran, bunga, dan pokok merupakan akumulasi total yang Anda bayarkan selama 12 bulan di tahun tersebut, sedangkan sisa pinjaman adalah sisa utang riil Anda di akhir tahun bersangkutan.</p>
+					</div>
+				</details>
+
+				<details class="bg-white rounded-xl shadow-sm border border-emerald-100/50 group">
+					<summary class="cursor-pointer p-4 font-semibold text-emerald-950 hover:bg-emerald-50/30 flex justify-between items-center transition outline-none rounded-t-xl group-open:bg-emerald-50/50">
+						Apa perbedaan antara Suku Bunga Fixed dan Floating?
+						<span class="transform group-open:rotate-180 transition-transform text-emerald-600">▼</span>
+					</summary>
+					<div class="p-4 pt-2 text-gray-600 border-t border-emerald-50/50">
+						<ul class="list-disc list-inside space-y-2">
+							<li><strong>Fixed Rate (Suku Bunga Tetap):</strong> Suku bunga yang tidak berubah selama periode tertentu (misal: promo 3 tahun pertama). Cicilan Anda dijamin stabil selama masa tersebut.</li>
+							<li><strong>Floating Rate (Suku Bunga Mengambang):</strong> Suku bunga yang nilainya mengikuti fluktuasi suku bunga acuan bank sentral (Bank Indonesia). Jika suku bunga pasar naik, angsuran bulanan KPR Anda juga berpotensi naik.</li>
+						</ul>
+						<p class="mt-2 text-xs text-amber-700 bg-amber-50 p-2 rounded-lg border border-amber-100">💡 <em>Kalkulator ini mensimulasikan perhitungan berbasis flat/fixed sepanjang tenor untuk mempermudah perkiraan batas aman anggaran finansial Anda.</em></p>
+					</div>
+				</details>
+
+				<details class="bg-white rounded-xl shadow-sm border border-emerald-100/50 group">
+					<summary class="cursor-pointer p-4 font-semibold text-emerald-950 hover:bg-emerald-50/30 flex justify-between items-center transition outline-none rounded-t-xl group-open:bg-emerald-50/50">
+						Berapa batas ideal angsuran KPR dari total pendapatan bulanan?
+						<span class="transform group-open:rotate-180 transition-transform text-emerald-600">▼</span>
+					</summary>
+					<div class="p-4 pt-2 text-gray-600 border-t border-emerald-50/50">
+						<p>Berdasarkan standar rasio kesehatan finansial (DTI - <em>Debt to Income Ratio</em>), batas aman cicilan utang maksimal adalah <strong>30% hingga 35% dari total pendapatan bersih (take-home pay) bulanan Anda</strong> (atau gabungan pendapatan jika sudah menikah).</p>
+						<p class="mt-2">Jika nominal "Angsuran Bulanan" pada hasil simulasi di atas melebihi angka 35% dari gaji Anda, disarankan untuk memperpanjang jangka waktu (tenor) atau memperbesar persentase Uang Muka (DP) guna menekan pokok pinjaman.</p>
+					</div>
+				</details>
+			</div>
+		</section>
 </Layout>

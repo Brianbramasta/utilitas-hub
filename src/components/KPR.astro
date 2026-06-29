@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi KPR Online - Emerald Theme</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-emerald-50/30 text-gray-800 font-sans antialiased">
+
+    <div class=" mx-auto px-4 py-10">
+        <header class="text-center mb-10">
+            <h1 class="text-3xl font-bold text-emerald-700 md:text-4xl">Kalkulator Simulasi KPR</h1>
+            <p class="text-gray-500 mt-2">Hitung perkiraan cicilan bulanan rumah impian Anda dengan tema finansial yang segar.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-emerald-100/50">
+                <h2 class="text-xl font-semibold mb-6 text-emerald-900 border-b border-emerald-100 pb-3 flex items-center gap-2">
+                    <span class="w-2 h-5 bg-emerald-600 rounded-full inline-block"></span>
+                    Data Pinjaman
+                </h2>
+                
+                <form id="kprForm" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-medium text-emerald-800 mb-1">Harga Properti (Rp)</label>
+                        <input type="text" id="hargaProperti" value="500.000.000" class="w-full px-4 py-2.5 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition font-semibold text-emerald-950 bg-emerald-50/10" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-emerald-800 mb-1">Uang Muka / DP (%)</label>
+                        <input type="number" id="persenDp" value="10" min="0" max="100" class="w-full px-4 py-2.5 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition text-emerald-950" required>
+                        <p class="text-xs text-emerald-600 mt-1">Nilai DP: <span id="labelNilaiDp" class="font-bold">Rp 0</span></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-emerald-800 mb-1">Suku Bunga per Tahun (%)</label>
+                        <input type="number" id="sukuBunga" value="5" step="0.1" class="w-full px-4 py-2.5 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition text-emerald-950" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-emerald-800 mb-1">Jangka Waktu (Tenor)</label>
+                        <select id="tenor" class="w-full px-4 py-2.5 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition text-emerald-950 bg-white">
+                            <option value="5">5 Tahun</option>
+                            <option value="10">10 Tahun</option>
+                            <option value="15" selected>15 Tahun</option>
+                            <option value="20">20 Tahun</option>
+                            <option value="25">25 Tahun</option>
+                            <option value="30">30 Tahun</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition shadow-md hover:shadow-lg shadow-emerald-600/20 hover:shadow-emerald-700/30 cursor-pointer text-center block">
+                        Hitung Simulasi
+                    </button>
+                </form>
+            </div>
+
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100/50">
+                    <h2 class="text-xl font-semibold mb-6 text-emerald-900 border-b border-emerald-100 pb-3 flex items-center gap-2">
+                        <span class="w-2 h-5 bg-emerald-600 rounded-full inline-block"></span>
+                        Ringkasan Hasil
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-4 bg-emerald-600 text-white rounded-xl shadow-sm shadow-emerald-600/10">
+                            <p class="text-sm text-emerald-100 font-medium uppercase tracking-wider">Angsuran Bulanan</p>
+                            <p id="hasilCicilan" class="text-2xl font-bold mt-1">Rp 0</p>
+                        </div>
+                        <div class="p-4 bg-emerald-50/50 rounded-xl border border-emerald-100">
+                            <p class="text-sm text-emerald-700 font-medium uppercase tracking-wider">Total Pinjaman Pokok</p>
+                            <p id="hasilPokok" class="text-xl font-bold text-emerald-950 mt-1">Rp 0</p>
+                        </div>
+                        <div class="p-4 bg-emerald-50/50 rounded-xl border border-emerald-100">
+                            <p class="text-sm text-emerald-700 font-medium uppercase tracking-wider">Total Uang Muka (DP)</p>
+                            <p id="hasilDp" class="text-xl font-bold text-emerald-950 mt-1">Rp 0</p>
+                        </div>
+                        <div class="p-4 bg-emerald-50/50 rounded-xl border border-emerald-100">
+                            <p class="text-sm text-emerald-700 font-medium uppercase tracking-wider">Total Bunga Dibayar</p>
+                            <p id="hasilTotalBunga" class="text-xl font-bold text-amber-700 mt-1">Rp 0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100/50">
+                    <h2 class="text-xl font-semibold mb-4 text-emerald-900">Jadwal Angsuran (Tahun ke Tahun)</h2>
+                    <div class="overflow-x-auto max-h-96">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-emerald-600 text-white text-sm font-medium sticky top-0 shadow-sm">
+                                    <th class="p-3 rounded-l-lg">Tahun</th>
+                                    <th class="p-3">Angsuran/Tahun</th>
+                                    <th class="p-3">Bunga/Tahun</th>
+                                    <th class="p-3">Pokok/Tahun</th>
+                                    <th class="p-3 rounded-r-lg">Sisa Pinjaman</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelAmortisasi" class="text-sm divide-y divide-emerald-50 text-gray-600">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('kprForm');
+        const inputHarga = document.getElementById('hargaProperti');
+
+        function formatRupiah(angka: number) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                maximumFractionDigits: 0
+            }).format(angka);
+        }
+
+        // Real-time masking dengan titik
+        function formatInputTitik(value: string) {
+            let angka = value.replace(/\D/g, "");
+            return angka.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        function getNilaiMentah(stringUang: string) {
+            return parseFloat(stringUang.replace(/\./g, '')) || 0;
+        }
+
+        inputHarga?.addEventListener('input', function(e) {
+            (e.target as HTMLInputElement).value = formatInputTitik((e.target as HTMLInputElement).value);
+            updateLiveDp();
+        });
+
+        function updateLiveDp() {
+            const harga = getNilaiMentah((inputHarga as HTMLInputElement).value);
+            const persenDpInput = document.getElementById('persenDp');
+            const persenDp = persenDpInput ? parseFloat((persenDpInput as HTMLInputElement).value) || 0 : 0;
+            const nominalDp = harga * (persenDp / 100);
+            const labelNilaiDp = document.getElementById('labelNilaiDp');
+            if (labelNilaiDp) {
+                labelNilaiDp.innerText = formatRupiah(nominalDp);
+            }
+        }
+
+        const persenDpInput = document.getElementById('persenDp');
+        if (persenDpInput) {
+            persenDpInput.addEventListener('input', updateLiveDp);
+        }
+
+        function hitungKPR(e: Event | null) {
+            if(e) e.preventDefault();
+
+            const harga = getNilaiMentah((inputHarga as HTMLInputElement).value);
+            const persenDpInput = document.getElementById('persenDp');
+            const persenDp = persenDpInput ? parseFloat((persenDpInput as HTMLInputElement).value) || 0 : 0;
+            const bungaTahunanInput = document.getElementById('sukuBunga');
+            const bungaTahunan = bungaTahunanInput ? parseFloat((bungaTahunanInput as HTMLInputElement).value) || 0 : 0;
+            const tenorTahunInput = document.getElementById('tenor');
+            const tenorTahun = tenorTahunInput ? parseInt((tenorTahunInput as HTMLInputElement).value) || 0 : 0;
+
+            const nominalDp = harga * (persenDp / 100);
+            const pokokPinjaman = harga - nominalDp;
+            const tenorBulan = tenorTahun * 12;
+            const bungaBulanan = (bungaTahunan / 100) / 12;
+
+            let cicilanBulanan = 0;
+            if (bungaBulanan === 0) {
+                cicilanBulanan = pokokPinjaman / tenorBulan;
+            } else {
+                cicilanBulanan = pokokPinjaman * (bungaBulanan * Math.pow(1 + bungaBulanan, tenorBulan)) / (Math.pow(1 + bungaBulanan, tenorBulan) - 1);
+            }
+
+            const totalPembayaran = cicilanBulanan * tenorBulan;
+            const totalBunga = totalPembayaran - pokokPinjaman;
+
+            const hasilCicilanEl = document.getElementById('hasilCicilan');
+            if (hasilCicilanEl) {
+                hasilCicilanEl.innerText = formatRupiah(cicilanBulanan);
+            }
+            const hasilPokokEl = document.getElementById('hasilPokok');
+            if (hasilPokokEl) {
+                hasilPokokEl.innerText = formatRupiah(pokokPinjaman);
+            }
+            const hasilDpEl = document.getElementById('hasilDp');
+            if (hasilDpEl) {
+                hasilDpEl.innerText = formatRupiah(nominalDp);
+            }
+            const hasilTotalBungaEl = document.getElementById('hasilTotalBunga');
+            if (hasilTotalBungaEl) {
+                hasilTotalBungaEl.innerText = formatRupiah(totalBunga);
+            }
+
+            const tbody = document.getElementById('tabelAmortisasi');
+            if (tbody) {
+                tbody.innerHTML = '';
+            }
+
+            let sisaPinjaman = pokokPinjaman;
+            
+            for (let tahun = 1; tahun <= tenorTahun; tahun++) {
+                let bungaTahunIni = 0;
+                let pokokTahunIni = 0;
+                let angsuranTahunIni = 0;
+
+                for (let bulan = 1; bulan <= 12; bulan++) {
+                    let porsiBungaBulanan = sisaPinjaman * bungaBulanan;
+                    let porsiPokokBulanan = cicilanBulanan - porsiBungaBulanan;
+                    
+                    bungaTahunIni += porsiBungaBulanan;
+                    pokokTahunIni += porsiPokokBulanan;
+                    angsuranTahunIni += cicilanBulanan;
+                    
+                    sisaPinjaman -= porsiPokokBulanan;
+                }
+
+                if (sisaPinjaman < 0 || tahun === tenorTahun) {
+                    sisaPinjaman = 0;
+                }
+
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-emerald-50/40 transition';
+                row.innerHTML = `
+                    <td class="p-3 font-medium text-emerald-900">Tahun ${tahun}</td>
+                    <td class="p-3 font-semibold">${formatRupiah(angsuranTahunIni)}</td>
+                    <td class="p-3 text-red-500">${formatRupiah(bungaTahunIni)}</td>
+                    <td class="p-3 text-emerald-600">${formatRupiah(pokokTahunIni)}</td>
+                    <td class="p-3 font-medium text-gray-700">${formatRupiah(sisaPinjaman)}</td>
+                `;
+                if (tbody) {
+                    tbody.appendChild(row);
+                }
+            }
+        }
+
+        form?.addEventListener('submit', hitungKPR);
+        updateLiveDp();
+        hitungKPR(null);
+    </script>
+</body>
+</html>
