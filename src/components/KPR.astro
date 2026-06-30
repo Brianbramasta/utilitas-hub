@@ -24,26 +24,27 @@
                 <form id="kprForm" class="space-y-5">
                     <div>
                         <label class="block text-sm font-medium text-emerald-800 mb-1">Harga Properti (Rp)</label>
-                        <input type="text" id="hargaProperti" value="500.000.000" class="w-full px-4 py-2.5 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition font-semibold text-emerald-950 bg-emerald-50/10" required>
+                        <input type="text" id="hargaProperti" placeholder="Contoh: 500.000.000" class="w-full px-4 py-2.5 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition font-semibold text-emerald-950 bg-emerald-50/10" required>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-emerald-800 mb-1">Uang Muka / DP (%)</label>
-                        <input type="number" id="persenDp" value="10" min="0" max="100" class="w-full px-4 py-2.5 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition text-emerald-950" required>
+                        <input type="number" id="persenDp" placeholder="Contoh: 10" min="0" max="100" class="w-full px-4 py-2.5 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition text-emerald-950" required>
                         <p class="text-xs text-emerald-600 mt-1">Nilai DP: <span id="labelNilaiDp" class="font-bold">Rp 0</span></p>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-emerald-800 mb-1">Suku Bunga per Tahun (%)</label>
-                        <input type="number" id="sukuBunga" value="5" step="0.1" class="w-full px-4 py-2.5 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition text-emerald-950" required>
+                        <input type="number" id="sukuBunga" placeholder="Contoh: 5" step="0.1" class="w-full px-4 py-2.5 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition text-emerald-950" required>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-emerald-800 mb-1">Jangka Waktu (Tenor)</label>
                         <select id="tenor" class="w-full px-4 py-2.5 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition text-emerald-950 bg-white">
+                            <option value="" selected disabled>Pilih tenor tahun</option>
                             <option value="5">5 Tahun</option>
                             <option value="10">10 Tahun</option>
-                            <option value="15" selected>15 Tahun</option>
+                            <option value="15">15 Tahun</option>
                             <option value="20">20 Tahun</option>
                             <option value="25">25 Tahun</option>
                             <option value="30">30 Tahun</option>
@@ -98,12 +99,12 @@
                             </thead>
                             <tbody id="tabelAmortisasi" class="text-sm divide-y divide-emerald-50 text-gray-600">
                                 </tbody>
-                        </table>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
     <script>
         const form = document.getElementById('kprForm');
@@ -165,8 +166,8 @@
             const bungaBulanan = (bungaTahunan / 100) / 12;
 
             let cicilanBulanan = 0;
-            if (bungaBulanan === 0) {
-                cicilanBulanan = pokokPinjaman / tenorBulan;
+            if (bungaBulanan === 0 || pokokPinjaman === 0 || tenorBulan === 0) {
+                cicilanBulanan = 0;
             } else {
                 cicilanBulanan = pokokPinjaman * (bungaBulanan * Math.pow(1 + bungaBulanan, tenorBulan)) / (Math.pow(1 + bungaBulanan, tenorBulan) - 1);
             }
@@ -235,7 +236,6 @@
 
         form?.addEventListener('submit', hitungKPR);
         updateLiveDp();
-        hitungKPR(null);
     </script>
 </body>
 </html>
