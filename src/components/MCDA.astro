@@ -189,6 +189,7 @@
         // Loop sebanyak kolom alternatif yang saat ini aktif
         const currentAlts = document.querySelectorAll('.container-alt-head');
         currentAlts.forEach((th, idx) => {
+            console.log(th);
             const altId = idx + 1;
             html += `
                 <td class="p-3 border border-zinc-800 text-center cell-alt-${altId}">
