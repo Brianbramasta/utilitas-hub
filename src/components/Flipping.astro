@@ -1,0 +1,245 @@
+---
+// Zero dependencies - Tidak perlu instalasi npm lucide lagi
+---
+
+
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 flex flex-col justify-between">
+            
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-2 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600 w-5 h-5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <h2 class="text-lg font-semibold text-slate-900">1. Data Properti & Nilai Pasar</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Nama / Lokasi Properti</label>
+                            <input type="text" id="propName" placeholder="Contoh: Rumah Cluster Minimalis" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Harga Ditawarkan (Rp)</label>
+                            <input type="text" id="askingPrice" placeholder="Contoh: 650.000.000" class="mask-rupiah w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Luas Tanah (m²)</label>
+                            <input type="number" id="landSize" placeholder="Contoh: 120" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Luas Bangunan (m²)</label>
+                            <input type="number" id="buildingSize" placeholder="Contoh: 90" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Harga Tanah Pasar / m² (Rp)</label>
+                            <input type="text" id="marketLandPrice" placeholder="Contoh: 4.500.000" class="mask-rupiah w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Harga Bangunan Baru / m² (Rp)</label>
+                            <input type="text" id="marketBuildingPrice" placeholder="Contoh: 4.500.000" class="mask-rupiah w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-2 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600 w-5 h-5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 0-7.94-7.94l-6.91 6.91a2.12 2.12 0 0 0-.13 2.87l1.37 1.37a2.12 2.12 0 0 0 2.87-.13l6.91-6.91a6 6 0 0 0-7.94-7.94l-3.76 3.76z"/></svg>
+                        <h2 class="text-lg font-semibold text-slate-900">2. Estimasi Biaya & Proyeksi Jual</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Estimasi Biaya Renovasi (Rp)</label>
+                            <input type="text" id="renovationCost" placeholder="Contoh: 75.000.000" class="mask-rupiah w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Biaya Legalitas & Pajak (Rp)</label>
+                            <input type="text" id="legalCost" placeholder="Contoh: 35.000.000" class="mask-rupiah w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Target Harga Jual Kembali (Rp)</label>
+                            <input type="text" id="targetSellPrice" placeholder="Contoh: 950.000.000" class="mask-rupiah w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold text-emerald-700 focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Biaya Penjualan & Agen (%)</label>
+                            <input type="number" id="agentFeePercent" placeholder="Contoh: 2.5" step="0.1" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div id="statusCard" class="p-6 rounded-xl border text-white transition-all duration-300">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-widest opacity-80">Keputusan Deal</span>
+                        <div id="statusIcon" class="p-1.5 bg-white/20 rounded-lg"></div>
+                    </div>
+                    <div id="statusTitle" class="text-2xl font-bold mb-1">-</div>
+                    <p id="statusDesc" class="text-xs opacity-90 leading-relaxed"></p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h3 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2 uppercase tracking-wider">Ringkasan Analisis</h3>
+                    
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Harga Wajar Pasar:</span>
+                            <span id="resMarketValue" class="font-semibold text-slate-900">Rp 0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Diskon dari Pasar:</span>
+                            <span id="resDiscountPercent" class="font-bold text-emerald-600">0%</span>
+                        </div>
+                        <hr class="border-slate-100">
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Total Modal Kerja:</span>
+                            <span id="resTotalCapital" class="font-semibold text-slate-900">Rp 0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Biaya Keluar (Jual):</span>
+                            <span id="resExitCost" class="font-semibold text-slate-900">Rp 0</span>
+                        </div>
+                        <hr class="border-slate-100">
+                        <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                            <span class="font-medium text-slate-700">Proyeksi Profit Bersih:</span>
+                            <span id="resNetProfit" class="font-bold text-lg text-slate-900">Rp 0</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                            <span class="font-medium text-slate-700">Potensi ROI:</span>
+                            <span id="resROI" class="font-extrabold text-lg text-slate-900">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function initCalculator() {
+            const rupiahInputs = document.querySelectorAll('.mask-rupiah');
+            const nonRupiahInputs = ['landSize', 'buildingSize', 'agentFeePercent', 'propName'];
+
+            function formatThousand(value: string) {
+                return value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            function parsePureNumber(id: string) {
+                const element = document.getElementById(id) as HTMLInputElement;
+                if (!element) return 0;
+                return parseFloat(element.value.replace(/\./g, '')) || 0;
+            }
+
+            function formatDisplayRupiah(angka: number) {
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    maximumFractionDigits: 0
+                }).format(angka);
+            }
+
+            // Kumpulan komponen SVG string untuk render status dinamis secara native
+            const icons = {
+                info: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-white"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`,
+                trendingUp: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-white"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>`,
+                alertCircle: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-white"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12" y1="16" y2="16.01"/></svg>`,
+                thumbsDown: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-white"><path d="M17 14V2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3a2 2 0 0 1 2 2v1a5 5 0 0 0 5 5v-4a2 2 0 0 0 2-2h4a2 2 0 0 0 2-2v-2H17z"/></svg>`
+            };
+
+            function calculateProperty() {
+                const askingPrice = parsePureNumber('askingPrice');
+                const landSize = parseFloat((document.getElementById('landSize') as HTMLInputElement).value) || 0;
+                const buildingSize = parseFloat((document.getElementById('buildingSize') as HTMLInputElement).value) || 0;
+                const marketLandPrice = parsePureNumber('marketLandPrice');
+                const marketBuildingPrice = parsePureNumber('marketBuildingPrice');
+                const renovationCost = parsePureNumber('renovationCost');
+                const legalCost = parsePureNumber('legalCost');
+                const targetSellPrice = parsePureNumber('targetSellPrice');
+                const agentFeePercent = parseFloat((document.getElementById('agentFeePercent') as HTMLInputElement).value) || 0;
+
+                const currentBuildingValue = (buildingSize * marketBuildingPrice) * 0.6;
+                const marketValue = (landSize * marketLandPrice) + currentBuildingValue;
+
+                const discountValue = marketValue - askingPrice;
+                const discountPercent = marketValue > 0 ? (discountValue / marketValue) * 100 : 0;
+
+                const totalCapital = askingPrice + renovationCost + legalCost;
+                const exitCost = targetSellPrice * (agentFeePercent / 100);
+
+                const netProfit = targetSellPrice - totalCapital - exitCost;
+                const roi = totalCapital > 0 ? (netProfit / totalCapital) * 100 : 0;
+
+                (document.getElementById('resMarketValue') as HTMLElement).innerText = formatDisplayRupiah(marketValue);
+                (document.getElementById('resDiscountPercent') as HTMLElement).innerText = `${discountPercent.toFixed(1)}%`;
+                (document.getElementById('resTotalCapital') as HTMLElement).innerText = formatDisplayRupiah(totalCapital);
+                (document.getElementById('resExitCost') as HTMLElement).innerText = formatDisplayRupiah(exitCost);
+                
+                const netProfitEl = document.getElementById('resNetProfit') as HTMLElement;
+                netProfitEl.innerText = formatDisplayRupiah(netProfit);
+                netProfitEl.className = netProfit >= 0 ? 'font-bold text-lg text-emerald-600' : 'font-bold text-lg text-rose-600';
+
+                const roiEl = document.getElementById('resROI') as HTMLElement;
+                roiEl.innerText = `${roi.toFixed(1)}%`;
+                roiEl.className = roi >= 15 ? 'font-extrabold text-lg text-emerald-600' : (roi > 0 ? 'font-extrabold text-lg text-amber-500' : 'font-extrabold text-lg text-rose-600');
+
+                const statusCard = document.getElementById('statusCard');
+                const statusTitle = document.getElementById('statusTitle');
+                const statusDesc = document.getElementById('statusDesc');
+                const statusIcon = document.getElementById('statusIcon');
+
+                if (askingPrice === 0 && landSize === 0) {
+                    (statusCard as HTMLElement).className = "p-6 rounded-xl border border-slate-300 bg-slate-400 text-white shadow-sm transition-all duration-300";
+                    (statusTitle as HTMLElement).innerText = "Menunggu Data";
+                    (statusDesc as HTMLElement).innerText = "Silakan isi parameter data properti dan estimasi biaya di sebelah kiri untuk melihat keputusan kalkulasi.";
+                    (statusIcon as HTMLElement).innerHTML = icons.info;
+                    return;
+                }
+
+                if (discountPercent >= 15 && roi >= 15) {
+                    (statusCard as HTMLElement).className = "p-6 rounded-xl border border-emerald-500 bg-emerald-600 text-white shadow-lg transition-all duration-300";
+                    (statusTitle as HTMLElement).innerText = "GREAT DEAL! POTENSI FLIP";
+                    (statusDesc as HTMLElement).innerText = `Properti ini dijual sekitar ${discountPercent.toFixed(0)}% di bawah harga pasar sewajarnya dan memiliki proyeksi ROI yang sangat sehat (${roi.toFixed(0)}%). Layak dipertimbangkan untuk eksekusi cepat.`;
+                    (statusIcon as HTMLElement).innerHTML = icons.trendingUp;
+                } else if (discountPercent > 0 && roi > 0) {
+                    (statusCard as HTMLElement).className = "p-6 rounded-xl border border-amber-400 bg-amber-500 text-white shadow-lg transition-all duration-300";
+                    (statusTitle as HTMLElement).innerText = "MARGINAL DEAL (BUTUH NEGOSIASI)";
+                    (statusDesc as HTMLElement).innerText = `Harga di bawah pasar sedikit, namun proyeksi ROI (${roi.toFixed(0)}%) masih tipis setelah dikurangi biaya renovasi dan legalitas. Coba negosiasikan kembali harga beli properti agar margin lebih aman.`;
+                    (statusIcon as HTMLElement).innerHTML = icons.alertCircle;
+                } else {
+                    (statusCard as HTMLElement).className = "p-6 rounded-xl border border-rose-500 bg-rose-600 text-white shadow-lg transition-all duration-300";
+                    (statusTitle as HTMLElement).innerText = "SKIP / OVERPRICED";
+                    (statusDesc as HTMLElement).innerText = `Harga yang ditawarkan terlalu mendekati atau bahkan melebihi nilai pasar objektif saat ini. Ditambah biaya modal, potensi transaksi ini berisiko rugi atau menghasilkan ROI negatif.`;
+                    (statusIcon as HTMLElement).innerHTML = icons.thumbsDown;
+                }
+            }
+
+            rupiahInputs.forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const target = e.target as HTMLInputElement;
+                    let cursorPosition = target.selectionStart;
+                    let originalLength = target.value.length;
+
+                    target.value = formatThousand(target.value);
+
+                    let newLength = target.value.length;
+                    if (cursorPosition !== null) {
+                        cursorPosition = cursorPosition + (newLength - originalLength);
+                        target.setSelectionRange(cursorPosition, cursorPosition);
+                    }
+                    target.setSelectionRange(cursorPosition, cursorPosition);
+
+                    calculateProperty();
+                });
+            });
+
+            nonRupiahInputs.forEach(id => {
+                document.getElementById(id)?.addEventListener('input', calculateProperty);
+            });
+
+            calculateProperty();
+        }
+
+        initCalculator();
+        document.addEventListener('astro:page-load', initCalculator);
+    </script>

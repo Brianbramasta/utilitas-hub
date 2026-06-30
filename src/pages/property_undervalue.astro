@@ -1,0 +1,73 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Flipping from '../components/Flipping.astro';
+---
+
+<Layout title="Kalkulator Property Undervalue - Utilitas Hub">
+    
+	<div class="p-5 md:p-10">
+        <header class="text-center mt-16">
+			<h1 class="text-3xl font-bold text-emerald-700 md:text-4xl">Kalkulator Simulasi Property Flipping & Undervalue</h1>
+			<p class="text-gray-500 mt-2">Hitung potensi keuntungan dari properti undervalue dan flipping untuk investasi properti Anda.</p>
+		</header>
+		<Flipping />
+	</div>
+    <!-- faq -->
+	<section class="my-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+		<h2 class="text-2xl font-bold mb-6 text-slate-900 flex items-center gap-2">
+			<span class="w-2 h-6 bg-emerald-600 rounded-full inline-block"></span>
+			FAQ - Simulasi Property Flipping & Undervalue
+		</h2>
+		
+		<div class="space-y-4">
+			<details class="bg-white rounded-xl shadow-sm border border-slate-200 group">
+				<summary class="cursor-pointer p-4 font-semibold text-slate-900 hover:bg-slate-50/50 flex justify-between items-center transition outline-none rounded-t-xl group-open:bg-slate-50/50">
+					Apa yang dimaksud dengan properti "Undervalue" dalam simulasi ini?
+					<span class="transform group-open:rotate-180 transition-transform text-emerald-600">▼</span>
+				</summary>
+				<div class="p-4 pt-2 text-slate-600 border-t border-slate-100">
+					<p>Properti <strong>undervalue</strong> adalah properti yang ditawarkan atau dijual dengan harga di bawah nilai pasar objektif sewajarnya (intrinsic market value) di kawasan tersebut.</p>
+					<p class="mt-2">Dalam simulator ini, nilai pasar objektif dihitung secara independen berdasarkan luas tanah dan bangunan dikalikan dengan standar harga rata-rata wilayah setempat, kemudian dibandingkan langsung dengan harga penawaran penjual (Asking Price).</p>
+				</div>
+			</details>
+
+			<details class="bg-white rounded-xl shadow-sm border border-slate-200 group">
+				<summary class="cursor-pointer p-4 font-semibold text-slate-900 hover:bg-slate-50/50 flex justify-between items-center transition outline-none rounded-t-xl group-open:bg-slate-50/50">
+					Bagaimana simulator ini menghitung taksiran awal nilai bangunan bekas?
+					<span class="transform group-open:rotate-180 transition-transform text-emerald-600">▼</span>
+				</summary>
+				<div class="p-4 pt-2 text-slate-600 border-t border-slate-100">
+					<p>Sebelum direnovasi, bangunan lama atau bekas tentu mengalami penyusutan nilai properti. Simulator ini menerapkan rumus depresiasi wajar sebesar <strong>60% dari standar harga konstruksi bangunan baru</strong> per meter persegi di wilayah tersebut.</p>
+					<p class="mt-2">Pendekatan ini memberikan batas kalkulasi margin aman (safety margin) yang konservatif bagi seorang flipper sebelum menggelontorkan modal tambahan untuk biaya perbaikan atau renovasi fisik.</p>
+				</div>
+			</details>
+
+			<details class="bg-white rounded-xl shadow-sm border border-slate-200 group">
+				<summary class="cursor-pointer p-4 font-semibold text-slate-900 hover:bg-slate-50/50 flex justify-between items-center transition outline-none rounded-t-xl group-open:bg-slate-50/50">
+					Apa saja komponen yang masuk ke dalam "Total Modal Kerja"?
+					<span class="transform group-open:rotate-180 transition-transform text-emerald-600">▼</span>
+				</summary>
+				<div class="p-4 pt-2 text-slate-600 border-t border-slate-100">
+					<p>Banyak flipper pemula mengalami kerugian karena hanya menghitung harga beli aset saja. Simulator ini menghitung akumulasi modal kerja secara komprehensif, meliputi:</p>
+					<ul class="list-disc list-inside space-y-1 mt-2 font-medium text-slate-700">
+						<li>Harga Kesepakatan Beli (Asking Price)</li>
+						<li>Estimasi Total Biaya Renovasi Fasad & Interior</li>
+						<li>Biaya Legalitas Pembelian (BPHTB, Pajak Pembeli, Jasa Notaris/PPAT, Balik Nama Sertifikat)</li>
+					</ul>
+				</div>
+			</details>
+
+			<details class="bg-white rounded-xl shadow-sm border border-slate-200 group">
+				<summary class="cursor-pointer p-4 font-semibold text-slate-900 hover:bg-slate-50/50 flex justify-between items-center transition outline-none rounded-t-xl group-open:bg-slate-50/50">
+					Berapa batas minimum persentase diskon pasar dan ROI untuk sebuah "Great Deal"?
+					<span class="transform group-open:rotate-180 transition-transform text-emerald-600">▼</span>
+				</summary>
+				<div class="p-4 pt-2 text-slate-600 border-t border-slate-100">
+					<p>Sistem otomatis menetapkan indikator hijau (Great Deal) jika properti memiliki <strong>diskon pasar minimal 15% DAN proyeksi bersih ROI minimal 15%</strong>.</p>
+					<p class="mt-2">Angka 15% merupakan batas ambang batas aman (margin of safety) dalam bisnis properti flipping guna mengantisipasi risiko tak terduga selama masa konstruksi, fluktuasi biaya material, maupun pergeseran minat pasar saat proses penjualan kembali.</p>
+					<p class="mt-2 text-xs text-amber-700 bg-amber-50 p-2 rounded-lg border border-amber-100">💡 <em>Jika hasil berada di bawah rentang tersebut namun tetap positif, sistem menyarankan opsi negosiasi ulang harga beli guna melebarkan ruang profit Anda.</em></p>
+				</div>
+			</details>
+		</div>
+	</section>
+</Layout>
