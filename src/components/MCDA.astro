@@ -54,6 +54,38 @@
             </button>
         </div>
         
+        <div class="mb-4">
+            <button id="btn-toggle-json" class="border border-zinc-700 hover:border-zinc-500 text-zinc-400 hover:text-white text-xs py-2 px-4 rounded-lg cursor-pointer w-full transition font-medium">
+                📝 Import/Export JSON
+            </button>
+        </div>
+
+        <div id="json-section" class="mb-6 hidden">
+            <div class="bg-zinc-900 p-4 rounded-lg border border-zinc-700">
+                <label class="block text-xs font-semibold text-zinc-400 mb-2">Import Data dari JSON:</label>
+                <textarea id="json-input" class="w-full h-64 bg-zinc-800 border border-zinc-700 rounded-lg p-3 text-xs text-zinc-300 font-mono outline-none focus:border-zinc-500 resize-y" placeholder='{
+  "criteria": [
+    {
+      "name": "Kriteria 1",
+      "weight": 0.30,
+      "type": "benefit"
+    }
+  ],
+  "alternatives": ["Opsi A", "Opsi B"],
+  "matrix": [[5, 4], [3, 5]]
+}'></textarea>
+                <div class="flex gap-2 mt-3">
+                    <button id="btn-import-json" class="bg-blue-600 hover:bg-blue-500 text-white text-xs py-2 px-4 rounded-lg font-bold cursor-pointer transition flex-1">Import JSON</button>
+                    <button id="btn-export-json" class="bg-zinc-700 hover:bg-zinc-600 text-white text-xs py-2 px-4 rounded-lg font-bold cursor-pointer transition flex-1">Export JSON</button>
+                    <button id="btn-clear-json" class="bg-red-900 hover:bg-red-800 text-white text-xs py-2 px-4 rounded-lg font-bold cursor-pointer transition">Clear</button>
+                </div>
+                <div class="flex gap-2 mt-2">
+                    <button id="btn-reset-data" class="bg-orange-700 hover:bg-orange-600 text-white text-xs py-2 px-4 rounded-lg font-bold cursor-pointer transition w-full">🔄 Reset ke Default</button>
+                </div>
+                <p id="json-error" class="text-red-400 text-xs mt-2 hidden"></p>
+            </div>
+        </div>
+        
         <button id="btn-calculate" class="bg-emerald-600 hover:bg-emerald-500 text-white py-3 px-5 rounded-lg font-bold cursor-pointer w-full transition duration-200 shadow-md">Proses & Hitung Rekomendasi</button>
     </div>
 
@@ -69,24 +101,65 @@
     let alternativeCount = 0;
 
     // Inisialisasi awal saat DOM siap
-    addAlternative();
-    addAlternative();
+    loadFromLocalStorage();
     
-    addCriteria();
-    addCriteria();
-    addCriteria();
+    if (criteriaCount === 0 && alternativeCount === 0) {
+        addAlternative();
+        addAlternative();
+        
+        addCriteria();
+        addCriteria();
+        addCriteria();
+    }
+
+    // Fungsi reset ke default
+    function resetToDefault() {
+        if (!confirm('Apakah Anda yakin ingin mereset semua data ke kondisi default? Data yang tersimpan akan dihapus.')) {
+            return;
+        }
+
+        // Hapus data dari localStorage
+        localStorage.removeItem('mcdaData');
+
+        // Reset form
+        const matrixBody = document.getElementById('matrix-body');
+        if (matrixBody) matrixBody.innerHTML = '';
+        document.querySelectorAll('.container-alt-head').forEach(el => el.remove());
+        criteriaCount = 0;
+        alternativeCount = 0;
+
+        // Sembunyikan hasil dan footer
+        document.getElementById('matrix-foot')?.classList.add('hidden');
+        document.getElementById('result-section')?.classList.add('hidden');
+
+        // Reset ke default: 2 alternatif, 3 kriteria
+        addAlternative();
+        addAlternative();
+        
+        addCriteria();
+        addCriteria();
+        addCriteria();
+
+        updateTotalWeightDisplay();
+    }
 
     // Event Listeners untuk menggantikan inline onclick atribut (Best Practice di Astro/Modern JS)
     document.getElementById('btn-add-alternative')?.addEventListener('click', addAlternative);
     document.getElementById('btn-add-criteria')?.addEventListener('click', addCriteria);
     document.getElementById('btn-calculate')?.addEventListener('click', calculateMCDA);
+    document.getElementById('btn-toggle-json')?.addEventListener('click', toggleJsonSection);
+    document.getElementById('btn-import-json')?.addEventListener('click', importFromJson);
+    document.getElementById('btn-export-json')?.addEventListener('click', exportToJson);
+    document.getElementById('btn-clear-json')?.addEventListener('click', clearJsonInput);
+    document.getElementById('btn-reset-data')?.addEventListener('click', resetToDefault);
 
     // Mendaftarkan fungsi ke objek window agar fungsi rekursif dinamis (seperti tombol hapus yang di-generate lewat string) tetap dapat diakses
     Object.assign(window, {
         removeAlternative,
         removeCriteria,
         validateWeights,
-        validateMatrixValue
+        validateMatrixValue,
+        saveToLocalStorage
     });
 
     // Fungsi menambah kolom alternatif
@@ -427,6 +500,283 @@
         if (resultSection) {
             resultSection.classList.remove('hidden');
             resultSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // Fungsi menyimpan data ke localStorage
+    function saveToLocalStorage() {
+        const data: any = {
+            criteria: [],
+            alternatives: [],
+            matrix: []
+        };
+
+        // Simpan data kriteria
+        document.querySelectorAll('#matrix-body tr').forEach((row, idx) => {
+            const nameInput = row.querySelector('.c-name');
+            const weightInput = row.querySelector('.c-weight');
+            const typeInput = row.querySelector('.c-type');
+            
+            data.criteria.push({
+                name: (nameInput as HTMLInputElement).value,
+                weight: parseFloat((weightInput as HTMLInputElement).value) || 0,
+                type: (typeInput as HTMLSelectElement).value
+            });
+
+            // Simpan nilai matrix untuk baris ini
+            const matrixValues: number[] = [];
+            row.querySelectorAll('.matrix-value').forEach(input => {
+                matrixValues.push(parseFloat((input as HTMLInputElement).value) || 0);
+            });
+            data.matrix.push(matrixValues);
+        });
+
+        // Simpan data alternatif
+        document.querySelectorAll('.alt-name').forEach(input => {
+            data.alternatives.push((input as HTMLInputElement).value);
+        });
+
+        localStorage.setItem('mcdaData', JSON.stringify(data));
+    }
+
+    // Fungsi memuat data dari localStorage
+    function loadFromLocalStorage() {
+        const savedData = localStorage.getItem('mcdaData');
+        if (!savedData) return;
+
+        try {
+            const data = JSON.parse(savedData);
+            
+            // Reset form
+            const matrixBody = document.getElementById('matrix-body');
+            if (matrixBody) matrixBody.innerHTML = '';
+            document.querySelectorAll('.container-alt-head').forEach(el => el.remove());
+            criteriaCount = 0;
+            alternativeCount = 0;
+
+            // Restore alternatif
+            data.alternatives.forEach((altName: string) => {
+                addAlternative();
+                const altInputs = document.querySelectorAll('.alt-name');
+                const lastAltInput = altInputs[altInputs.length - 1];
+                if (lastAltInput) {
+                    (lastAltInput as HTMLInputElement).value = altName;
+                }
+            });
+
+            // Restore kriteria dan matrix
+            data.criteria.forEach((crit: any, idx: number) => {
+                addCriteria();
+                const rows = document.querySelectorAll('#matrix-body tr');
+                const currentRow = rows[rows.length - 1];
+                
+                if (currentRow) {
+                    const nameInput = currentRow.querySelector('.c-name');
+                    const weightInput = currentRow.querySelector('.c-weight');
+                    const typeInput = currentRow.querySelector('.c-type');
+                    
+                    if (nameInput) (nameInput as HTMLInputElement).value = crit.name;
+                    if (weightInput) (weightInput as HTMLInputElement).value = crit.weight;
+                    if (typeInput) (typeInput as HTMLSelectElement).value = crit.type;
+
+                    // Restore nilai matrix
+                    const matrixInputs = currentRow.querySelectorAll('.matrix-value');
+                    if (data.matrix[idx]) {
+                        data.matrix[idx].forEach((val: number, matrixIdx: number) => {
+                            if (matrixInputs[matrixIdx]) {
+                                (matrixInputs[matrixIdx] as HTMLInputElement).value = val.toString();
+                            }
+                        });
+                    }
+                }
+            });
+
+            updateTotalWeightDisplay();
+        } catch (e) {
+            console.error('Error loading from localStorage:', e);
+        }
+    }
+
+    // Event listeners untuk auto-save
+    document.addEventListener('input', (e) => {
+        const target = e.target as HTMLElement;
+        if (target.classList.contains('c-name') || 
+            target.classList.contains('c-weight') || 
+            target.classList.contains('c-type') || 
+            target.classList.contains('alt-name') || 
+            target.classList.contains('matrix-value')) {
+            saveToLocalStorage();
+        }
+    });
+
+    // Event listener untuk tombol hapus
+    document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'BUTTON' && (target.textContent === '×' || target.textContent === 'Hapus')) {
+            setTimeout(saveToLocalStorage, 100);
+        }
+    });
+
+    // Fungsi toggle section JSON
+    function toggleJsonSection() {
+        const jsonSection = document.getElementById('json-section');
+        if (jsonSection) {
+            jsonSection.classList.toggle('hidden');
+        }
+    }
+
+    // Fungsi export data ke JSON
+    function exportToJson() {
+        const data: any = {
+            criteria: [],
+            alternatives: [],
+            matrix: []
+        };
+
+        // Ambil data kriteria
+        document.querySelectorAll('#matrix-body tr').forEach((row) => {
+            const nameInput = row.querySelector('.c-name');
+            const weightInput = row.querySelector('.c-weight');
+            const typeInput = row.querySelector('.c-type');
+            
+            data.criteria.push({
+                name: (nameInput as HTMLInputElement).value,
+                weight: parseFloat((weightInput as HTMLInputElement).value) || 0,
+                type: (typeInput as HTMLSelectElement).value
+            });
+
+            // Ambil nilai matrix untuk baris ini
+            const matrixValues: number[] = [];
+            row.querySelectorAll('.matrix-value').forEach(input => {
+                matrixValues.push(parseFloat((input as HTMLInputElement).value) || 0);
+            });
+            data.matrix.push(matrixValues);
+        });
+
+        // Ambil data alternatif
+        document.querySelectorAll('.alt-name').forEach(input => {
+            data.alternatives.push((input as HTMLInputElement).value);
+        });
+
+        const jsonInput = document.getElementById('json-input') as HTMLTextAreaElement;
+        if (jsonInput) {
+            jsonInput.value = JSON.stringify(data, null, 2);
+        }
+    }
+
+    // Fungsi import data dari JSON
+    function importFromJson() {
+        const jsonInput = document.getElementById('json-input') as HTMLTextAreaElement;
+        const errorEl = document.getElementById('json-error');
+        
+        if (!jsonInput || !jsonInput.value.trim()) {
+            if (errorEl) {
+                errorEl.textContent = 'JSON input tidak boleh kosong';
+                errorEl.classList.remove('hidden');
+            }
+            return;
+        }
+
+        try {
+            const data = JSON.parse(jsonInput.value);
+            
+            // Validasi struktur JSON
+            if (!data.criteria || !Array.isArray(data.criteria) || 
+                !data.alternatives || !Array.isArray(data.alternatives) ||
+                !data.matrix || !Array.isArray(data.matrix)) {
+                throw new Error('Struktur JSON tidak valid. Harus mengandung criteria, alternatives, dan matrix');
+            }
+
+            if (data.criteria.length !== data.matrix.length) {
+                throw new Error('Jumlah kriteria harus sama dengan jumlah baris matrix');
+            }
+
+            if (data.alternatives.length === 0) {
+                throw new Error('Minimal harus ada 1 alternatif');
+            }
+
+            if (data.criteria.length === 0) {
+                throw new Error('Minimal harus ada 1 kriteria');
+            }
+
+            // Reset form
+            const matrixBody = document.getElementById('matrix-body');
+            if (matrixBody) matrixBody.innerHTML = '';
+            document.querySelectorAll('.container-alt-head').forEach(el => el.remove());
+            criteriaCount = 0;
+            alternativeCount = 0;
+
+            // Restore alternatif
+            data.alternatives.forEach((altName: string) => {
+                addAlternative();
+                const altInputs = document.querySelectorAll('.alt-name');
+                const lastAltInput = altInputs[altInputs.length - 1];
+                if (lastAltInput) {
+                    (lastAltInput as HTMLInputElement).value = altName;
+                }
+            });
+
+            // Restore kriteria dan matrix
+            data.criteria.forEach((crit: any, idx: number) => {
+                addCriteria();
+                const rows = document.querySelectorAll('#matrix-body tr');
+                const currentRow = rows[rows.length - 1];
+                
+                if (currentRow) {
+                    const nameInput = currentRow.querySelector('.c-name');
+                    const weightInput = currentRow.querySelector('.c-weight');
+                    const typeInput = currentRow.querySelector('.c-type');
+                    
+                    if (nameInput) (nameInput as HTMLInputElement).value = crit.name;
+                    if (weightInput) (weightInput as HTMLInputElement).value = crit.weight;
+                    if (typeInput) (typeInput as HTMLSelectElement).value = crit.type;
+
+                    // Restore nilai matrix
+                    const matrixInputs = currentRow.querySelectorAll('.matrix-value');
+                    if (data.matrix[idx]) {
+                        data.matrix[idx].forEach((val: number, matrixIdx: number) => {
+                            if (matrixInputs[matrixIdx]) {
+                                (matrixInputs[matrixIdx] as HTMLInputElement).value = val.toString();
+                            }
+                        });
+                    }
+                }
+            });
+
+            updateTotalWeightDisplay();
+            saveToLocalStorage();
+            
+            // Hide error jika ada
+            if (errorEl) {
+                errorEl.classList.add('hidden');
+            }
+
+            // Hide JSON section setelah import berhasil
+            const jsonSection = document.getElementById('json-section');
+            if (jsonSection) {
+                jsonSection.classList.add('hidden');
+            }
+
+            alert('Data berhasil di-import dari JSON!');
+
+        } catch (e) {
+            if (errorEl) {
+                errorEl.textContent = `Error: ${(e as Error).message}`;
+                errorEl.classList.remove('hidden');
+            }
+        }
+    }
+
+    // Fungsi clear JSON input
+    function clearJsonInput() {
+        const jsonInput = document.getElementById('json-input') as HTMLTextAreaElement;
+        const errorEl = document.getElementById('json-error');
+        
+        if (jsonInput) {
+            jsonInput.value = '';
+        }
+        if (errorEl) {
+            errorEl.classList.add('hidden');
         }
     }
 </script>
