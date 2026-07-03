@@ -15,6 +15,7 @@
     "@astrojs/check": "^0.9.9",
     "@tailwindcss/vite": "^4.3.1",
     "astro": "^7.0.2",
+    "chart.js": "^4.5.1",
     "html2canvas": "^1.4.1",
     "typescript": "^6.0.3"
   },
