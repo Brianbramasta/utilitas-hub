@@ -1,0 +1,227 @@
+---
+// 7RingsRelationship.astro
+// Tema disesuaikan dengan referensi berkas image_c0cce3.png
+---
+
+<style>
+    .ring-layer {
+        transition: all 0.3s ease;
+    }
+</style>
+
+<!-- Pembungkus Utama (Ganti bg-emerald-50/50 jika background global project Anda sudah diatur) -->
+<div class="w-full min-h-screen bg-[#f0f9f6] text-slate-700 font-sans antialiased px-4 py-8">
+    <div class="max-w-6xl mx-auto">
+        
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-black tracking-tight text-[#00a3e0] mb-2">
+                7 Rings of Relationship
+            </h1>
+            <p class="text-slate-400 max-w-xl mx-auto text-sm font-medium">
+                Petakan hubungan orang-orang di sekitarmu berdasarkan 7 tingkatan kedekatan psikologis dan sosial.
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Left Column: Form & List -->
+            <div class="lg:col-span-4 bg-[#7e8a96] border border-[#6b7885] rounded-2xl p-6 shadow-2xl space-y-6 text-slate-200">
+                <div>
+                    <h2 class="text-base font-bold text-white mb-4 tracking-wide">Tambah Hubungan</h2>
+                    <form id="relationForm" class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-[#9ba7b3] uppercase tracking-wider mb-1">Nama</label>
+                            <input type="text" id="personName" required placeholder="Contoh: Riyan" 
+                                class="w-full bg-[#0f172a] border border-[#4a5563] rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#00a3e0] transition-colors">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[10px] font-bold text-[#9ba7b3] uppercase tracking-wider mb-1">Pilih Tingkatan (Ring)</label>
+                            <select id="ringSelect" class="w-full bg-[#0f172a] border border-[#4a5563] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#00a3e0] transition-colors">
+                                <option value="1">Ring 1: Intimate (Pasangan/Keluarga Inti)</option>
+                                <option value="2">Ring 2: Close Friends (Sahabat Dekat)</option>
+                                <option value="3">Ring 3: Casual Friends (Teman Biasa)</option>
+                                <option value="4">Ring 4: Acquaintances (Kenalan)</option>
+                                <option value="5">Ring 5: Professional (Rekan Kerja/Bisnis)</option>
+                                <option value="6">Ring 6: Community (Satu Komunitas/Grup)</option>
+                                <option value="7">Ring 7: Strangers (Orang Asing/Baru Kenal)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="w-full bg-[#00a3e0] hover:bg-[#008ec4] text-white font-bold text-sm py-2.5 rounded-lg transition-colors cursor-pointer shadow-sm">
+                            Masukkan ke Ring
+                        </button>
+                    </form>
+                </div>
+
+                <hr class="border-[#6b7885]">
+
+                <!-- People List -->
+                <div>
+                    <h2 class="text-[11px] font-bold text-[#9ba7b3] uppercase tracking-wider mb-3">Daftar Orang</h2>
+                    <div id="peopleList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                        <p class="text-xs text-[#9ba7b3]/80 text-left py-2 pl-1">Belum ada nama yang dimasukkan.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Radar Map -->
+            <div class="lg:col-span-8 bg-[#b2bdc6] border border-[#a1adb7] rounded-2xl p-6 shadow-2xl flex flex-col items-center">
+                <h2 class="text-base font-bold text-[#5c6873] mb-4 self-start tracking-wide">Peta Hubungan (Radar)</h2>
+                
+                <!-- Radar Container dengan Background Abu-Abu Gelap Melingkar -->
+                <div class="relative w-full aspect-square max-w-[500px] flex items-center justify-center border-2 border-[#334155]/40 rounded-full p-4 bg-[#475569] shadow-inner shadow-black/20">
+                    
+                    <!-- Center Core: ME -->
+                    <div class="absolute z-10 w-11 h-11 bg-gradient-to-b from-[#2575fc] to-[#1a5edb] rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-md border-2 border-[#475569]">
+                        SAYA
+                    </div>
+
+                    <!-- Rings Layers Sesuai image_c0cce3.png -->
+                    <div id="visual-ring-1" class="ring-layer absolute w-[24%] h-[24%] border border-dashed border-red-500/50 rounded-full flex items-end justify-center pb-0.5">
+                        <span class="text-[8px] font-black text-red-400/80 tracking-tighter pointer-events-none">R1</span>
+                    </div>
+                    <div id="visual-ring-2" class="ring-layer absolute w-[36%] h-[36%] border border-solid border-orange-400/40 rounded-full flex items-end justify-center pb-0.5">
+                        <span class="text-[8px] font-black text-orange-400/70 tracking-tighter pointer-events-none">R2</span>
+                    </div>
+                    <div id="visual-ring-3" class="ring-layer absolute w-[48%] h-[48%] border border-solid border-yellow-400/40 rounded-full flex items-end justify-center pb-0.5">
+                        <span class="text-[8px] font-black text-yellow-400/70 tracking-tighter pointer-events-none">R3</span>
+                    </div>
+                    <div id="visual-ring-4" class="ring-layer absolute w-[60%] h-[60%] border border-solid border-emerald-400/40 rounded-full flex items-end justify-center pb-0.5">
+                        <span class="text-[8px] font-black text-emerald-400/70 tracking-tighter pointer-events-none">R4</span>
+                    </div>
+                    <div id="visual-ring-5" class="ring-layer absolute w-[72%] h-[72%] border border-solid border-teal-400/40 rounded-full flex items-end justify-center pb-0.5">
+                        <span class="text-[8px] font-black text-teal-400/70 tracking-tighter pointer-events-none">R5</span>
+                    </div>
+                    <div id="visual-ring-6" class="ring-layer absolute w-[84%] h-[84%] border border-solid border-blue-400/40 rounded-full flex items-end justify-center pb-0.5">
+                        <span class="text-[8px] font-black text-blue-400/70 tracking-tighter pointer-events-none">R6</span>
+                    </div>
+                    <div id="visual-ring-7" class="ring-layer absolute w-[96%] h-[96%] border border-solid border-purple-400/40 rounded-full flex items-end justify-center pb-0.5">
+                        <span class="text-[8px] font-black text-purple-400/70 tracking-tighter pointer-events-none">R7</span>
+                    </div>
+
+                    <!-- Dynamic Nodes Container -->
+                    <div id="nodesContainer" class="absolute inset-0 pointer-events-none"></div>
+
+                </div>
+
+                <!-- Legends bawah yang disesuaikan ukurannya -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 mt-6 text-[10px] font-medium text-[#5c6873] w-full border-t border-[#a1adb7]/40 pt-4">
+                    <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-500"></span> R1: Intimate</div>
+                    <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-orange-500"></span> R2: Close Friends</div>
+                    <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-yellow-500"></span> R3: Casual Friends</div>
+                    <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> R4: Acquaintances</div>
+                    <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-teal-500"></span> R5: Professional</div>
+                    <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> R6: Community</div>
+                    <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-purple-500"></span> R7: Strangers</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    let people = [];
+
+    const ringConfig = {
+        1: { color: 'bg-red-500', text: 'text-red-400', border: 'border-red-500', name: 'Intimate', minRadius: 12, maxRadius: 17 },
+        2: { color: 'bg-orange-500', text: 'text-orange-400', border: 'border-orange-500', name: 'Close Friend', minRadius: 19, maxRadius: 23 },
+        3: { color: 'bg-yellow-500', text: 'text-yellow-400', border: 'border-yellow-500', name: 'Casual Friend', minRadius: 25, maxRadius: 29 },
+        4: { color: 'bg-emerald-500', text: 'text-emerald-400', border: 'border-emerald-500', name: 'Acquaintance', minRadius: 31, maxRadius: 35 },
+        5: { color: 'bg-teal-500', text: 'text-teal-400', border: 'border-teal-500', name: 'Professional', minRadius: 37, maxRadius: 41 },
+        6: { color: 'bg-blue-500', text: 'text-blue-400', border: 'border-blue-500', name: 'Community', minRadius: 43, maxRadius: 47 },
+        7: { color: 'bg-purple-500', text: 'text-purple-400', border: 'border-purple-500', name: 'Stranger', minRadius: 49, maxRadius: 49 }
+    };
+
+    const form = document.getElementById('relationForm');
+    const nameInput = document.getElementById('personName');
+    const ringSelect = document.getElementById('ringSelect');
+    const peopleList = document.getElementById('peopleList');
+    const nodesContainer = document.getElementById('nodesContainer');
+
+    form?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const name = nameInput.value.trim();
+        const ring = parseInt(ringSelect.value);
+
+        if (!name) return;
+
+        const config = ringConfig[ring];
+        const radius = config.minRadius + Math.random() * (config.maxRadius - config.minRadius);
+        const angle = Math.random() * Math.PI * 2;
+
+        const x = 50 + radius * Math.cos(angle);
+        const y = 50 + radius * Math.sin(angle);
+
+        const person = {
+            id: Date.now(),
+            name,
+            ring,
+            pos: { x, y }
+        };
+
+        people.push(person);
+        form.reset();
+        updateUI();
+    });
+
+    window.deletePerson = function(id) {
+        people = people.filter(p => p.id !== id);
+        updateUI();
+    };
+
+    window.highlightRing = function(ringId, isHover) {
+        const el = document.getElementById(`visual-ring-${ringId}`);
+        if (!el) return;
+        if (isHover) {
+            // Memberikan efek highlight semi-terang di atas background abu-abu gelap radar
+            el.classList.add('bg-white/10', 'scale-[1.005]');
+        } else {
+            el.classList.remove('bg-white/10', 'scale-[1.005]');
+        }
+    };
+
+    function updateUI() {
+        if (!peopleList || !nodesContainer) return;
+
+        if (people.length === 0) {
+            peopleList.innerHTML = `<p class="text-xs text-[#9ba7b3]/80 text-left py-2 pl-1">Belum ada nama yang dimasukkan.</p>`;
+        } else {
+            const sortedPeople = [...people].sort((a, b) => a.ring - b.ring);
+            
+            peopleList.innerHTML = sortedPeople.map(person => {
+                const conf = ringConfig[person.ring];
+                return `
+                    <div class="flex items-center justify-between p-2 bg-[#0f172a]/40 rounded-lg border border-[#6b7885]/40 group hover:border-white/40 transition-colors"
+                         onmouseenter="highlightRing(${person.ring}, true)" 
+                         onmouseleave="highlightRing(${person.ring}, false)">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-2 h-2 rounded-full ${conf.color} shrink-0"></span>
+                            <span class="text-sm font-medium text-white truncate">${person.name}</span>
+                            <span class="text-[9px] px-1.5 py-0.5 bg-[#0f172a] rounded text-[#9ba7b3] border border-slate-700">${conf.name}</span>
+                        </div>
+                        <button onclick="deletePerson(${person.id})" class="text-slate-400 hover:text-rose-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        nodesContainer.innerHTML = people.map(person => {
+            const conf = ringConfig[person.ring];
+            return `
+                <div class="absolute pointer-events-auto transform -translate-x-1/2 -translate-y-1/2 group z-20" 
+                     style="left: ${person.pos.x}%; top: ${person.pos.y}%;">
+                    <div class="w-2.5 h-2.5 ${conf.color} rounded-full border border-slate-800 shadow shadow-black/60 group-hover:scale-125 transition-transform cursor-help"></div>
+                    <div class="absolute left-3 -top-2 bg-slate-900/95 border border-slate-700 text-[10px] font-bold text-white px-1.5 py-0.5 rounded shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 group-hover:z-30 transition-opacity pointer-events-none">
+                        ${person.name}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+</script>

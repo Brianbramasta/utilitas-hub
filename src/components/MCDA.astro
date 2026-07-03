@@ -159,7 +159,9 @@
         removeCriteria,
         validateWeights,
         validateMatrixValue,
-        saveToLocalStorage
+        saveToLocalStorage,
+        convertToText,
+        convertToInput
     });
 
     // Fungsi menambah kolom alternatif
@@ -175,7 +177,8 @@
         newTh.id = `th-alt-${alternativeCount}`;
         newTh.innerHTML = `
             <div class="flex items-center justify-between gap-1">
-                <input type="text" class="alt-name bg-transparent font-bold text-center border-b border-zinc-700 focus:border-zinc-500 outline-none w-full text-white" value="${altLabel}">
+                <span class="alt-name-display font-bold text-center text-white cursor-pointer hover:text-zinc-300 break-words w-full" onclick="window.convertToInput(this, 'alt-name')">${altLabel}</span>
+                <input type="text" class="alt-name bg-transparent font-bold text-center border-b border-zinc-700 focus:border-zinc-500 outline-none w-full text-white hidden" value="${altLabel}" onblur="window.convertToText(this, 'alt-name')" onkeydown="if(event.key === 'Enter') { this.blur(); }">
                 <button onclick="window.removeAlternative(${alternativeCount})" class="text-red-400 hover:text-red-300 font-bold text-xs p-0.5 transition absolute right-1 top-1" title="Hapus Kolom">×</button>
             </div>
         `;
@@ -191,7 +194,8 @@
             const newTd = document.createElement('td');
             newTd.className = `p-3 border border-zinc-800 text-center cell-alt-${alternativeCount}`;
             newTd.innerHTML = `
-                <input type="number" class="matrix-value bg-zinc-800 border border-zinc-700 text-center font-medium rounded p-1 w-16 text-white outline-none" data-alt="${alternativeCount}" data-crit="${critId}" value="3" min="1" max="5" oninput="window.validateMatrixValue(this)">
+                <span class="matrix-value-display text-center font-medium text-zinc-300 cursor-pointer hover:text-white" onclick="window.convertToInput(this, 'matrix-value')" data-alt="${alternativeCount}" data-crit="${critId}">3</span>
+                <input type="number" class="matrix-value bg-zinc-800 border border-zinc-700 text-center font-medium rounded p-1 w-16 text-white outline-none hidden" data-alt="${alternativeCount}" data-crit="${critId}" value="3" min="1" max="5" oninput="window.validateMatrixValue(this)" onblur="window.convertToText(this, 'matrix-value')" onkeydown="if(event.key === 'Enter') { this.blur(); }">
             `;
             row.insertBefore(newTd, tdAdd);
         });
@@ -246,7 +250,8 @@
 
         let html = `
             <td class="p-3 border border-zinc-800">
-                <input type="text" class="c-name bg-transparent font-semibold border-b border-dashed border-zinc-700 focus:border-zinc-500 outline-none w-full text-zinc-100" value="Kriteria Utama ${criteriaCount}">
+                <span class="c-name-display font-semibold text-zinc-100 cursor-pointer hover:text-zinc-300 break-words" onclick="window.convertToInput(this, 'c-name')">Kriteria Utama ${criteriaCount}</span>
+                <input type="text" class="c-name bg-transparent font-semibold border-b border-dashed border-zinc-700 focus:border-zinc-500 outline-none w-full text-zinc-100 hidden" value="Kriteria Utama ${criteriaCount}" onblur="window.convertToText(this, 'c-name')" onkeydown="if(event.key === 'Enter') { this.blur(); }">
             </td>
             <td class="p-3 border border-zinc-800 text-center">
                 <input type="number" class="c-weight bg-zinc-800 border border-zinc-700 text-center font-semibold rounded p-1 w-16 text-white outline-none" value="0.20" min="0" max="1" step="0.01" oninput="window.validateWeights(this)">
@@ -266,7 +271,8 @@
             const altId = idx + 1;
             html += `
                 <td class="p-3 border border-zinc-800 text-center cell-alt-${altId}">
-                    <input type="number" class="matrix-value bg-zinc-800 border border-zinc-700 text-center font-medium rounded p-1 w-16 text-white outline-none" data-alt="${altId}" data-crit="${criteriaCount}" value="1" min="1" max="5" oninput="window.validateMatrixValue(this)">
+                    <span class="matrix-value-display text-center font-medium text-zinc-300 cursor-pointer hover:text-white" onclick="window.convertToInput(this, 'matrix-value')" data-alt="${altId}" data-crit="${criteriaCount}">1</span>
+                    <input type="number" class="matrix-value bg-zinc-800 border border-zinc-700 text-center font-medium rounded p-1 w-16 text-white outline-none hidden" data-alt="${altId}" data-crit="${criteriaCount}" value="1" min="1" max="5" oninput="window.validateMatrixValue(this)" onblur="window.convertToText(this, 'matrix-value')" onkeydown="if(event.key === 'Enter') { this.blur(); }">
                 </td>
             `;
         });
@@ -374,6 +380,53 @@
         if (isNaN(val)) return;
         if (val > 5) input.value = 5;
         if (val < 1) input.value = 1;
+    }
+
+    // Fungsi mengkonversi input ke text display
+    function convertToText(input: any, type: string) {
+        const value = input.value;
+        const parent = input.parentElement;
+        
+        // Cari elemen display yang sesuai
+        let displayEl: HTMLElement | null = null;
+        if (type === 'alt-name') {
+            displayEl = parent?.querySelector('.alt-name-display') || null;
+        } else if (type === 'c-name') {
+            displayEl = parent?.querySelector('.c-name-display') || null;
+        } else if (type === 'matrix-value') {
+            displayEl = parent?.querySelector('.matrix-value-display') || null;
+        }
+
+        if (displayEl) {
+            displayEl.textContent = value;
+            displayEl.classList.remove('hidden');
+            input.classList.add('hidden');
+            
+            // Simpan ke localStorage
+            saveToLocalStorage();
+        }
+    }
+
+    // Fungsi mengkonversi text display ke input
+    function convertToInput(displayEl: HTMLElement, type: string) {
+        const parent = displayEl.parentElement;
+        
+        // Cari elemen input yang sesuai
+        let input: HTMLInputElement | null = null;
+        if (type === 'alt-name') {
+            input = parent?.querySelector('.alt-name') || null;
+        } else if (type === 'c-name') {
+            input = parent?.querySelector('.c-name') || null;
+        } else if (type === 'matrix-value') {
+            input = parent?.querySelector('.matrix-value') || null;
+        }
+
+        if (input) {
+            input.classList.remove('hidden');
+            displayEl.classList.add('hidden');
+            input.focus();
+            input.select();
+        }
     }
 
     function calculateMCDA() {
@@ -561,6 +614,10 @@
                 const lastAltInput = altInputs[altInputs.length - 1];
                 if (lastAltInput) {
                     (lastAltInput as HTMLInputElement).value = altName;
+                    // Update display element
+                    const parent = lastAltInput.parentElement;
+                    const displayEl = parent?.querySelector('.alt-name-display');
+                    if (displayEl) displayEl.textContent = altName;
                 }
             });
 
@@ -575,7 +632,13 @@
                     const weightInput = currentRow.querySelector('.c-weight');
                     const typeInput = currentRow.querySelector('.c-type');
                     
-                    if (nameInput) (nameInput as HTMLInputElement).value = crit.name;
+                    if (nameInput) {
+                        (nameInput as HTMLInputElement).value = crit.name;
+                        // Update display element
+                        const parent = nameInput.parentElement;
+                        const displayEl = parent?.querySelector('.c-name-display');
+                        if (displayEl) displayEl.textContent = crit.name;
+                    }
                     if (weightInput) (weightInput as HTMLInputElement).value = crit.weight;
                     if (typeInput) (typeInput as HTMLSelectElement).value = crit.type;
 
@@ -585,6 +648,10 @@
                         data.matrix[idx].forEach((val: number, matrixIdx: number) => {
                             if (matrixInputs[matrixIdx]) {
                                 (matrixInputs[matrixIdx] as HTMLInputElement).value = val.toString();
+                                // Update display element
+                                const parent = matrixInputs[matrixIdx].parentElement;
+                                const displayEl = parent?.querySelector('.matrix-value-display');
+                                if (displayEl) displayEl.textContent = val.toString();
                             }
                         });
                     }
@@ -713,6 +780,10 @@
                 const lastAltInput = altInputs[altInputs.length - 1];
                 if (lastAltInput) {
                     (lastAltInput as HTMLInputElement).value = altName;
+                    // Update display element
+                    const parent = lastAltInput.parentElement;
+                    const displayEl = parent?.querySelector('.alt-name-display');
+                    if (displayEl) displayEl.textContent = altName;
                 }
             });
 
@@ -727,7 +798,13 @@
                     const weightInput = currentRow.querySelector('.c-weight');
                     const typeInput = currentRow.querySelector('.c-type');
                     
-                    if (nameInput) (nameInput as HTMLInputElement).value = crit.name;
+                    if (nameInput) {
+                        (nameInput as HTMLInputElement).value = crit.name;
+                        // Update display element
+                        const parent = nameInput.parentElement;
+                        const displayEl = parent?.querySelector('.c-name-display');
+                        if (displayEl) displayEl.textContent = crit.name;
+                    }
                     if (weightInput) (weightInput as HTMLInputElement).value = crit.weight;
                     if (typeInput) (typeInput as HTMLSelectElement).value = crit.type;
 
@@ -737,6 +814,10 @@
                         data.matrix[idx].forEach((val: number, matrixIdx: number) => {
                             if (matrixInputs[matrixIdx]) {
                                 (matrixInputs[matrixIdx] as HTMLInputElement).value = val.toString();
+                                // Update display element
+                                const parent = matrixInputs[matrixIdx].parentElement;
+                                const displayEl = parent?.querySelector('.matrix-value-display');
+                                if (displayEl) displayEl.textContent = val.toString();
                             }
                         });
                     }

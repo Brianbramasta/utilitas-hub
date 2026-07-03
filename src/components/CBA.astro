@@ -145,8 +145,21 @@
                     
                     renderOptionCard(opt.name || 'Opsi Tanpa Nama', benefitDescs, costDescs);
                     
-                    // Restore benefit values
+                    // Restore option name display
                     const cardId = document.querySelectorAll('.option-card').length;
+                    const card = document.getElementById(`option-card-${cardId}`);
+                    if (card) {
+                        const optionNameInput = card.querySelector('.option-name');
+                        if (optionNameInput) {
+                            (optionNameInput as HTMLInputElement).value = opt.name || 'Opsi Tanpa Nama';
+                            // Update display element
+                            const parent = optionNameInput.parentElement;
+                            const displayEl = parent?.querySelector('.option-name-display');
+                            if (displayEl) displayEl.textContent = opt.name || 'Opsi Tanpa Nama';
+                        }
+                    }
+                    
+                    // Restore benefit values
                     const tbodyBenefit = document.getElementById(`tbody-benefit-${cardId}`);
                     if (tbodyBenefit && opt.benefits) {
                         const rows = tbodyBenefit.querySelectorAll('tr');
@@ -156,9 +169,27 @@
                                 const valueInput = rows[idx].querySelector('.item-value');
                                 const probInput = rows[idx].querySelector('.item-probability');
                                 
-                                if (descInput) (descInput as HTMLInputElement).value = b.desc || '';
-                                if (valueInput) (valueInput as HTMLInputElement).value = b.value || 3;
-                                if (probInput) (probInput as HTMLInputElement).value = b.probability || 0.5;
+                                if (descInput) {
+                                    (descInput as HTMLInputElement).value = b.desc || '';
+                                    // Update display element
+                                    const parent = descInput.parentElement;
+                                    const displayEl = parent?.querySelector('.item-desc-display');
+                                    if (displayEl) displayEl.textContent = b.desc || 'Nama komponen analisis...';
+                                }
+                                if (valueInput) {
+                                    (valueInput as HTMLInputElement).value = b.value || 3;
+                                    // Update display element
+                                    const parent = valueInput.parentElement;
+                                    const displayEl = parent?.querySelector('.item-value-display');
+                                    if (displayEl) displayEl.textContent = (b.value || 3).toString();
+                                }
+                                if (probInput) {
+                                    (probInput as HTMLInputElement).value = b.probability || 0.5;
+                                    // Update display element
+                                    const parent = probInput.parentElement;
+                                    const displayEl = parent?.querySelector('.item-probability-display');
+                                    if (displayEl) displayEl.textContent = (b.probability || 0.5).toFixed(2);
+                                }
                                 
                                 // Recalculate score
                                 if (valueInput) (window as any).calculateItemScore(valueInput);
@@ -176,9 +207,27 @@
                                 const valueInput = rows[idx].querySelector('.item-value');
                                 const probInput = rows[idx].querySelector('.item-probability');
                                 
-                                if (descInput) (descInput as HTMLInputElement).value = c.desc || '';
-                                if (valueInput) (valueInput as HTMLInputElement).value = c.value || 3;
-                                if (probInput) (probInput as HTMLInputElement).value = c.probability || 0.5;
+                                if (descInput) {
+                                    (descInput as HTMLInputElement).value = c.desc || '';
+                                    // Update display element
+                                    const parent = descInput.parentElement;
+                                    const displayEl = parent?.querySelector('.item-desc-display');
+                                    if (displayEl) displayEl.textContent = c.desc || 'Nama komponen analisis...';
+                                }
+                                if (valueInput) {
+                                    (valueInput as HTMLInputElement).value = c.value || 3;
+                                    // Update display element
+                                    const parent = valueInput.parentElement;
+                                    const displayEl = parent?.querySelector('.item-value-display');
+                                    if (displayEl) displayEl.textContent = (c.value || 3).toString();
+                                }
+                                if (probInput) {
+                                    (probInput as HTMLInputElement).value = c.probability || 0.5;
+                                    // Update display element
+                                    const parent = probInput.parentElement;
+                                    const displayEl = parent?.querySelector('.item-probability-display');
+                                    if (displayEl) displayEl.textContent = (c.probability || 0.5).toFixed(2);
+                                }
                                 
                                 // Recalculate score
                                 if (valueInput) (window as any).calculateItemScore(valueInput);
@@ -289,9 +338,22 @@
                 
                 renderOptionCard(opt.name || 'Opsi Tanpa Nama', benefitDescs, costDescs);
                 
+                // Restore option name display
+                const importCardId = document.querySelectorAll('.option-card').length;
+                const card = document.getElementById(`option-card-${importCardId}`);
+                if (card) {
+                    const optionNameInput = card.querySelector('.option-name');
+                    if (optionNameInput) {
+                        (optionNameInput as HTMLInputElement).value = opt.name || 'Opsi Tanpa Nama';
+                        // Update display element
+                        const parent = optionNameInput.parentElement;
+                        const displayEl = parent?.querySelector('.option-name-display');
+                        if (displayEl) displayEl.textContent = opt.name || 'Opsi Tanpa Nama';
+                    }
+                }
+                
                 // Restore benefit values
-                const cardId = document.querySelectorAll('.option-card').length;
-                const tbodyBenefit = document.getElementById(`tbody-benefit-${cardId}`);
+                const tbodyBenefit = document.getElementById(`tbody-benefit-${importCardId}`);
                 if (tbodyBenefit && opt.benefits) {
                     const rows = tbodyBenefit.querySelectorAll('tr');
                     opt.benefits.forEach((b: any, idx: number) => {
@@ -300,9 +362,27 @@
                             const valueInput = rows[idx].querySelector('.item-value');
                             const probInput = rows[idx].querySelector('.item-probability');
                             
-                            if (descInput) (descInput as HTMLInputElement).value = b.desc || '';
-                            if (valueInput) (valueInput as HTMLInputElement).value = b.value || 3;
-                            if (probInput) (probInput as HTMLInputElement).value = b.probability || 0.5;
+                            if (descInput) {
+                                (descInput as HTMLInputElement).value = b.desc || '';
+                                // Update display element
+                                const parent = descInput.parentElement;
+                                const displayEl = parent?.querySelector('.item-desc-display');
+                                if (displayEl) displayEl.textContent = b.desc || 'Nama komponen analisis...';
+                            }
+                            if (valueInput) {
+                                (valueInput as HTMLInputElement).value = b.value || 3;
+                                // Update display element
+                                const parent = valueInput.parentElement;
+                                const displayEl = parent?.querySelector('.item-value-display');
+                                if (displayEl) displayEl.textContent = (b.value || 3).toString();
+                            }
+                            if (probInput) {
+                                (probInput as HTMLInputElement).value = b.probability || 0.5;
+                                // Update display element
+                                const parent = probInput.parentElement;
+                                const displayEl = parent?.querySelector('.item-probability-display');
+                                if (displayEl) displayEl.textContent = (b.probability || 0.5).toFixed(2);
+                            }
                             
                             // Recalculate score
                             if (valueInput) (window as any).calculateItemScore(valueInput);
@@ -311,7 +391,7 @@
                 }
 
                 // Restore cost values
-                const tbodyCost = document.getElementById(`tbody-cost-${cardId}`);
+                const tbodyCost = document.getElementById(`tbody-cost-${importCardId}`);
                 if (tbodyCost && opt.costs) {
                     const rows = tbodyCost.querySelectorAll('tr');
                     opt.costs.forEach((c: any, idx: number) => {
@@ -320,9 +400,27 @@
                             const valueInput = rows[idx].querySelector('.item-value');
                             const probInput = rows[idx].querySelector('.item-probability');
                             
-                            if (descInput) (descInput as HTMLInputElement).value = c.desc || '';
-                            if (valueInput) (valueInput as HTMLInputElement).value = c.value || 3;
-                            if (probInput) (probInput as HTMLInputElement).value = c.probability || 0.5;
+                            if (descInput) {
+                                (descInput as HTMLInputElement).value = c.desc || '';
+                                // Update display element
+                                const parent = descInput.parentElement;
+                                const displayEl = parent?.querySelector('.item-desc-display');
+                                if (displayEl) displayEl.textContent = c.desc || 'Nama komponen analisis...';
+                            }
+                            if (valueInput) {
+                                (valueInput as HTMLInputElement).value = c.value || 3;
+                                // Update display element
+                                const parent = valueInput.parentElement;
+                                const displayEl = parent?.querySelector('.item-value-display');
+                                if (displayEl) displayEl.textContent = (c.value || 3).toString();
+                            }
+                            if (probInput) {
+                                (probInput as HTMLInputElement).value = c.probability || 0.5;
+                                // Update display element
+                                const parent = probInput.parentElement;
+                                const displayEl = parent?.querySelector('.item-probability-display');
+                                if (displayEl) displayEl.textContent = (c.probability || 0.5).toFixed(2);
+                            }
                             
                             // Recalculate score
                             if (valueInput) (window as any).calculateItemScore(valueInput);
@@ -502,6 +600,53 @@
         if (scoreEl) (scoreEl as HTMLElement).innerText = score.toFixed(2);
     };
 
+    // Fungsi mengkonversi input ke text display
+    (window as any).convertToText = function(input: any, type: string) {
+        const value = input.value;
+        const parent = input.parentElement;
+        
+        let displayEl: HTMLElement | null = null;
+        if (type === 'option-name') {
+            displayEl = parent?.querySelector('.option-name-display') || null;
+        } else if (type === 'item-desc') {
+            displayEl = parent?.querySelector('.item-desc-display') || null;
+        } else if (type === 'item-value') {
+            displayEl = parent?.querySelector('.item-value-display') || null;
+        } else if (type === 'item-probability') {
+            displayEl = parent?.querySelector('.item-probability-display') || null;
+        }
+
+        if (displayEl) {
+            displayEl.textContent = value;
+            displayEl.classList.remove('hidden');
+            input.classList.add('hidden');
+            saveToLocalStorage();
+        }
+    };
+
+    // Fungsi mengkonversi text display ke input
+    (window as any).convertToInput = function(displayEl: HTMLElement, type: string) {
+        const parent = displayEl.parentElement;
+        
+        let input: HTMLInputElement | null = null;
+        if (type === 'option-name') {
+            input = parent?.querySelector('.option-name') || null;
+        } else if (type === 'item-desc') {
+            input = parent?.querySelector('.item-desc') || null;
+        } else if (type === 'item-value') {
+            input = parent?.querySelector('.item-value') || null;
+        } else if (type === 'item-probability') {
+            input = parent?.querySelector('.item-probability') || null;
+        }
+
+        if (input) {
+            input.classList.remove('hidden');
+            displayEl.classList.add('hidden');
+            input.focus();
+            input.select();
+        }
+    };
+
     function hideResultSection() {
         const resultSection = document.getElementById('result-section');
         if (resultSection) resultSection.classList.add('hidden');
@@ -516,13 +661,16 @@
 
         tr.innerHTML = `
             <td class="p-2">
-                <input type="text" class="item-desc bg-transparent border-b border-zinc-200 focus:border-zinc-400 outline-none w-full text-zinc-800 text-xs sm:text-sm" value="${desc}" placeholder="Nama komponen analisis...">
+                <span class="item-desc-display text-zinc-800 text-xs sm:text-sm cursor-pointer hover:text-zinc-600 break-words" onclick="window.convertToInput(this, 'item-desc')">${desc || 'Nama komponen analisis...'}</span>
+                <input type="text" class="item-desc bg-transparent border-b border-zinc-200 focus:border-zinc-400 outline-none w-full text-zinc-800 text-xs sm:text-sm hidden" value="${desc}" placeholder="Nama komponen analisis..." onblur="window.convertToText(this, 'item-desc')" onkeydown="if(event.key === 'Enter') { this.blur(); }">
             </td>
             <td class="p-2 w-20">
-                <input type="number" class="item-value bg-zinc-50 border border-zinc-200 text-center rounded p-1 w-full text-zinc-800 outline-none text-xs sm:text-sm focus:border-zinc-400" value="${val}" min="1" max="5" step="1" onchange="window.calculateItemScore(this)">
+                <span class="item-value-display text-center text-zinc-800 text-xs sm:text-sm cursor-pointer hover:text-zinc-600" onclick="window.convertToInput(this, 'item-value')">${val}</span>
+                <input type="number" class="item-value bg-zinc-50 border border-zinc-200 text-center rounded p-1 w-full text-zinc-800 outline-none text-xs sm:text-sm focus:border-zinc-400 hidden" value="${val}" min="1" max="5" step="1" onchange="window.calculateItemScore(this)" onblur="window.convertToText(this, 'item-value')" onkeydown="if(event.key === 'Enter') { this.blur(); }">
             </td>
             <td class="p-2 w-24">
-                <input type="number" class="item-probability bg-zinc-50 border border-zinc-200 text-center rounded p-1 w-full text-zinc-800 outline-none text-xs sm:text-sm focus:border-zinc-400" value="${prob.toFixed(2)}" min="0" max="1" step="0.1" onchange="window.calculateItemScore(this)">
+                <span class="item-probability-display text-center text-zinc-800 text-xs sm:text-sm cursor-pointer hover:text-zinc-600" onclick="window.convertToInput(this, 'item-probability')">${prob.toFixed(2)}</span>
+                <input type="number" class="item-probability bg-zinc-50 border border-zinc-200 text-center rounded p-1 w-full text-zinc-800 outline-none text-xs sm:text-sm focus:border-zinc-400 hidden" value="${prob.toFixed(2)}" min="0" max="1" step="0.1" onchange="window.calculateItemScore(this)" onblur="window.convertToText(this, 'item-probability')" onkeydown="if(event.key === 'Enter') { this.blur(); }">
             </td>
             <td class="p-2 w-20 text-right font-mono text-xs sm:text-sm font-bold text-zinc-600 item-score">
                 ${score.toFixed(2)}
@@ -546,7 +694,8 @@
 
         card.innerHTML = `
             <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4 pb-2 border-b border-zinc-100">
-                <input type="text" class="option-name bg-transparent font-extrabold text-lg sm:text-xl border-b border-transparent focus:border-zinc-400 outline-none text-zinc-900 w-full sm:w-2/3" value="${title}">
+                <span class="option-name-display font-extrabold text-lg sm:text-xl text-zinc-900 cursor-pointer hover:text-zinc-600 break-words w-full sm:w-2/3" onclick="window.convertToInput(this, 'option-name')">${title}</span>
+                <input type="text" class="option-name bg-transparent font-extrabold text-lg sm:text-xl border-b border-transparent focus:border-zinc-400 outline-none text-zinc-900 w-full sm:w-2/3 hidden" value="${title}" onblur="window.convertToText(this, 'option-name')" onkeydown="if(event.key === 'Enter') { this.blur(); }">
                 <button onclick="window.deleteOption(${optionCounter})" class="text-xs text-red-600 hover:bg-red-50 border border-red-200 px-2.5 py-1 rounded-md cursor-pointer transition sm:opacity-0 group-hover:opacity-100 self-start sm:self-center">
                     Hapus Opsi
                 </button>
