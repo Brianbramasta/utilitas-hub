@@ -148,18 +148,18 @@
 <script>
     import Chart from 'chart.js/auto';
 
-    let chartInstance = null;
+    let chartInstance: Chart | null = null;
 
     // Fungsi pemformatan visual angka ke ribuan berkoma/titik saat user mengetik
-    function formatNumberWithDots(value) {
+    function formatNumberWithDots(value: string) {
         // Ambil hanya karakter angka
         let num = value.replace(/\D/g, "");
         if (num === "") return "";
-        return new Intl.NumberFormat('id-ID').format(num);
+        return new Intl.NumberFormat('id-ID').format(parseFloat(num));
     }
 
     // Fungsi konversi string berpemisah titik ke tipe data float murni untuk kalkulasi
-    function parseRupiahInput(id) {
+    function parseRupiahInput(id: string) {
         const inputElement = document.getElementById(id) as HTMLInputElement;
         const rawValue = inputElement ? inputElement.value : "0";
         // Hilangkan titik agar menjadi deretan angka murni kembali
@@ -167,7 +167,7 @@
         return parseFloat(cleanValue) || 0;
     }
 
-    function formatRupiahOutput(number) {
+    function formatRupiahOutput(number: number): string {
         if (number < 0) return '- ' + formatRupiahOutput(Math.abs(number));
         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
     }

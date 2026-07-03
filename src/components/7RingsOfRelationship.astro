@@ -123,7 +123,13 @@
 </div>
 
 <script>
-    let people = [];
+    interface Person {
+        id: number;
+        name: string;
+        ring: number;
+        pos: { x: number; y: number };
+    }
+    let people: Person[] = [];
 
     const ringConfig = {
         1: { color: 'bg-red-500', text: 'text-red-400', border: 'border-red-500', name: 'Intimate', minRadius: 12, maxRadius: 17 },
@@ -144,12 +150,12 @@
     form?.addEventListener('submit', (e) => {
         e.preventDefault();
         
-        const name = nameInput.value.trim();
-        const ring = parseInt(ringSelect.value);
+        const name = (nameInput as HTMLInputElement)?.value.trim() || '';
+        const ring = parseInt((ringSelect as HTMLSelectElement)?.value || '');
 
         if (!name) return;
 
-        const config = ringConfig[ring];
+        const config = ringConfig[ring as keyof typeof ringConfig];
         const radius = config.minRadius + Math.random() * (config.maxRadius - config.minRadius);
         const angle = Math.random() * Math.PI * 2;
 
@@ -164,16 +170,16 @@
         };
 
         people.push(person);
-        form.reset();
+        (form as HTMLFormElement).reset();
         updateUI();
     });
 
-    window.deletePerson = function(id) {
+    (window as any).deletePerson = function(id: number) {
         people = people.filter(p => p.id !== id);
         updateUI();
     };
 
-    window.highlightRing = function(ringId, isHover) {
+    (window as any).highlightRing = function(ringId: number, isHover: boolean) {
         const el = document.getElementById(`visual-ring-${ringId}`);
         if (!el) return;
         if (isHover) {
@@ -193,7 +199,7 @@
             const sortedPeople = [...people].sort((a, b) => a.ring - b.ring);
             
             peopleList.innerHTML = sortedPeople.map(person => {
-                const conf = ringConfig[person.ring];
+                const conf = ringConfig[person.ring as keyof typeof ringConfig];
                 return `
                     <div class="flex items-center justify-between p-2 bg-[#0f172a]/40 rounded-lg border border-[#6b7885]/40 group hover:border-white/40 transition-colors"
                          onmouseenter="highlightRing(${person.ring}, true)" 
@@ -212,7 +218,7 @@
         }
 
         nodesContainer.innerHTML = people.map(person => {
-            const conf = ringConfig[person.ring];
+            const conf = ringConfig[person.ring as keyof typeof ringConfig];
             return `
                 <div class="absolute pointer-events-auto transform -translate-x-1/2 -translate-y-1/2 group z-20" 
                      style="left: ${person.pos.x}%; top: ${person.pos.y}%;">
