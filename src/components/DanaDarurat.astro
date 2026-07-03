@@ -1,0 +1,498 @@
+---
+// Anda bisa menambahkan properti (Props) di sini jika ingin membuat judulnya bisa dikustomisasi
+interface Props {
+  title?: string;
+  subtitle?: string;
+}
+
+const { 
+  title = "Kalkulator Dana Darurat", 
+  subtitle = "Bebas mengubah nama kategori dan menambah daftar pengeluaran Anda." 
+} = Astro.props;
+---
+
+<div class="max-w-4xl mx-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden text-slate-800 dark:text-slate-100">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white text-center">
+        <h1 class="text-2xl font-bold md:text-3xl">{title}</h1>
+        <p class="text-emerald-100 mt-2 text-sm md:text-base">{subtitle}</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Left Column: Dynamic Inputs -->
+        <div class="space-y-5">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
+                <h2 class="text-xl font-semibold text-slate-700 dark:text-slate-200">1. Pos Pengeluaran</h2>
+                <!-- Tombol Tambah Kategori -->
+                <button type="button" id="btn-tambah-pos" class="px-3 py-1 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition flex items-center gap-1 cursor-pointer">
+                    + Tambah Pos
+                </button>
+            </div>
+            
+            <!-- Wadah Kategori Dinamis -->
+            <div id="container-pengeluaran" class="space-y-4 max-h-[320px] overflow-y-auto pr-1">
+                <!-- Elemen di-generate otomatis oleh JavaScript -->
+            </div>
+
+            <div class="pt-2">
+                <h2 class="text-xl font-semibold border-b border-slate-200 dark:border-slate-800 pb-2 text-slate-700 dark:text-slate-200 mb-3">2. Target Waktu Bertahan</h2>
+                <div class="grid grid-cols-4 gap-2" id="group-bulan">
+                    <button type="button" class="btn-bulan py-2 text-center border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer" data-months="3">3 Bln</button>
+                    <button type="button" class="btn-bulan py-2 text-center border border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 rounded-lg text-sm font-medium transition cursor-pointer" data-months="6">6 Bln</button>
+                    <button type="button" class="btn-bulan py-2 text-center border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer" data-months="9">9 Bln</button>
+                    <button type="button" class="btn-bulan py-2 text-center border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer" data-months="12">12 Bln</button>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button id="btn-toggle-json" class="border border-slate-300 dark:border-slate-700 hover:border-slate-500 dark:hover:border-slate-500 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-xs py-2 px-4 rounded-lg cursor-pointer w-full transition font-medium">
+                    📝 Import/Export JSON
+                </button>
+            </div>
+
+            <div id="json-section" class="pt-2 hidden">
+                <div class="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg border border-slate-300 dark:border-slate-700">
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Import Data dari JSON:</label>
+                    <textarea id="json-input" class="w-full h-48 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg p-3 text-xs text-slate-700 dark:text-slate-300 font-mono outline-none focus:border-emerald-500 resize-y" placeholder='{
+  "targetBulan": 6,
+  "daftarPengeluaran": [
+    { "id": 1, "nama": "Kebutuhan Pokok", "nilai": "" },
+    { "id": 2, "nama": "Cicilan Bulanan", "nilai": "" }
+  ]
+}'></textarea>
+                    <div class="flex gap-2 mt-3">
+                        <button id="btn-import-json" class="bg-blue-600 hover:bg-blue-500 text-white text-xs py-2 px-4 rounded-lg font-bold cursor-pointer transition flex-1">Import JSON</button>
+                        <button id="btn-export-json" class="bg-slate-700 hover:bg-slate-600 text-white text-xs py-2 px-4 rounded-lg font-bold cursor-pointer transition flex-1">Export JSON</button>
+                        <button id="btn-clear-json" class="bg-red-600 hover:bg-red-500 text-white text-xs py-2 px-4 rounded-lg font-bold cursor-pointer transition">Clear</button>
+                    </div>
+                    <div class="flex gap-2 mt-2">
+                        <button id="btn-reset-data" class="bg-orange-600 hover:bg-orange-500 text-white text-xs py-2 px-4 rounded-lg font-bold cursor-pointer transition w-full">🔄 Reset ke Default</button>
+                    </div>
+                    <p id="json-error" class="text-red-500 text-xs mt-2 hidden"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Results -->
+        <div class="bg-slate-900 rounded-xl p-6 text-white flex flex-col justify-between min-h-[350px]">
+            <div>
+                <h3 class="text-slate-400 text-sm font-medium uppercase tracking-wider">Total Dana Darurat Yang Diperlukan</h3>
+                <div class="text-3xl md:text-4xl font-extrabold text-emerald-400 mt-1" id="total-dana-darurat">Rp 0</div>
+                
+                <div class="mt-6 space-y-3 border-t border-slate-800 pt-4">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-400">Total Pengeluaran / Bulan:</span>
+                        <span class="font-semibold text-slate-200" id="total-bulanan">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-400">Durasi Target:</span>
+                        <span class="font-semibold text-emerald-400" id="display-bulan">6 Bulan</span>
+                    </div>
+                </div>
+
+                <!-- Visual Proporsi Dinamis -->
+                <div class="mt-8">
+                    <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Proporsi Pengeluaran</h4>
+                    <div id="progress-bar-container" class="w-full bg-slate-800 h-4 rounded-full overflow-hidden flex">
+                        <!-- Diisi dinamis oleh JS -->
+                    </div>
+                    
+                    <!-- Legend Wadah Dinamis -->
+                    <div id="legend-container" class="flex flex-wrap gap-x-4 gap-y-2 mt-4 text-xs text-slate-300">
+                        <!-- Diisi dinamis oleh JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Kode ini dieksekusi di sisi klien oleh Astro
+    let targetBulan = 6;
+    
+    let daftarPengeluaran = [
+        { id: 1, nama: 'Kebutuhan Pokok', nilai: '' },
+        { id: 2, nama: 'Cicilan Bulanan', nilai: '' },
+        { id: 3, nama: 'Gaya Hidup', nilai: '' }
+    ];
+
+    const kumpulanWarna = ['bg-emerald-500', 'bg-amber-500', 'bg-rose-500', 'bg-sky-500', 'bg-indigo-500', 'bg-fuchsia-500'];
+
+    function formatAngkaMurni(angkaString: string) {
+        let nomorMurni = angkaString.replace(/[^0-9]/g, '');
+        return nomorMurni.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function ambilAngkaMurni(inputString: string) {
+        let angka = inputString.replace(/\./g, '');
+        return parseFloat(angka) || 0;
+    }
+
+    function formatDisplayRupiah(angka: number) {
+        return 'Rp ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function renderInputs() {
+        const container = document.getElementById('container-pengeluaran');
+        if (!container) return;
+        
+        container.innerHTML = '';
+
+        daftarPengeluaran.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = "flex gap-2 items-center bg-slate-50/50 dark:bg-slate-800/40 p-2 border border-slate-200 dark:border-slate-800 rounded-xl relative";
+            
+            div.innerHTML = `
+                <input type="text" value="${item.nama}" data-id="${item.id}" class="input-nama w-5/12 p-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-800 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white" placeholder="Nama Kategori">
+                
+                <div class="relative w-6/12 rounded-md shadow-xs">
+                    <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+                        <span class="text-slate-400 text-xs">Rp</span>
+                    </div>
+                    <input type="text" value="${item.nilai}" data-id="${item.id}" class="input-nilai w-full pl-8 pr-2 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-right dark:text-white" placeholder="0">
+                </div>
+
+                <button type="button" data-id="${item.id}" class="btn-hapus w-1/12 p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg text-center font-bold text-sm transition cursor-pointer ${daftarPengeluaran.length === 1 ? 'opacity-30 pointer-events-none' : ''}" title="Hapus">
+                    ✕
+                </button>
+            `;
+            container.appendChild(div);
+        });
+
+        hitungDanaDarurat();
+    }
+
+    function tambahKategori() {
+        const idBaru = daftarPengeluaran.length > 0 ? Math.max(...daftarPengeluaran.map(o => o.id)) + 1 : 1;
+        daftarPengeluaran.push({
+            id: idBaru,
+            nama: `Pengeluaran ${idBaru}`,
+            nilai: ''
+        });
+        renderInputs();
+        
+        const container = document.getElementById('container-pengeluaran');
+        if (container) container.scrollTop = container.scrollHeight;
+    }
+
+    function setBulan(bulan: number) {
+        targetBulan = bulan;
+        document.querySelectorAll('.btn-bulan').forEach(btn => {
+            const currentMonths = parseInt(btn.getAttribute('data-months') || '0');
+            if (currentMonths === bulan) {
+                btn.classList.remove('border-slate-300', 'dark:border-slate-700', 'text-slate-700', 'dark:text-slate-300', 'hover:bg-slate-50', 'dark:hover:bg-slate-800');
+                btn.classList.add('border-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-950/30', 'text-emerald-700', 'dark:text-emerald-400');
+            } else {
+                btn.classList.remove('border-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-950/30', 'text-emerald-700', 'dark:text-emerald-400');
+                btn.classList.add('border-slate-300', 'dark:border-slate-700', 'text-slate-700', 'dark:text-slate-300', 'hover:bg-slate-50', 'dark:hover:bg-slate-800');
+            }
+        });
+        hitungDanaDarurat();
+    }
+
+    function hitungDanaDarurat() {
+        let totalPerBulan = 0;
+        daftarPengeluaran.forEach(item => {
+            totalPerBulan += ambilAngkaMurni(item.nilai);
+        });
+
+        const totalDanaDarurat = totalPerBulan * targetBulan;
+
+        const elTotalBulanan = document.getElementById('total-bulanan');
+        const elTotalDana = document.getElementById('total-dana-darurat');
+        const elDisplayBulan = document.getElementById('display-bulan');
+
+        if (elTotalBulanan) elTotalBulanan.innerText = formatDisplayRupiah(totalPerBulan);
+        if (elTotalDana) elTotalDana.innerText = formatDisplayRupiah(totalDanaDarurat);
+        if (elDisplayBulan) elDisplayBulan.innerText = targetBulan + " Bulan";
+
+        kalkulasiProporsiGrafik();
+    }
+
+    function kalkulasiProporsiGrafik() {
+        const barContainer = document.getElementById('progress-bar-container');
+        const legendContainer = document.getElementById('legend-container');
+        
+        if (!barContainer || !legendContainer) return;
+        
+        barContainer.innerHTML = '';
+        legendContainer.innerHTML = '';
+
+        let totalPerBulan = 0;
+        daftarPengeluaran.forEach(item => { totalPerBulan += ambilAngkaMurni(item.nilai); });
+
+        if (totalPerBulan > 0) {
+            let sisaPersen = 100;
+
+            daftarPengeluaran.forEach((item, index) => {
+                const nilaiMurni = ambilAngkaMurni(item.nilai);
+                if (nilaiMurni > 0) {
+                    let persen = Math.round((nilaiMurni / totalPerBulan) * 100);
+                    
+                    if (index === daftarPengeluaran.length - 1 || sisaPersen - persen < 0) {
+                        persen = sisaPersen;
+                    }
+                    sisaPersen -= persen;
+
+                    if (persen > 0) {
+                        const warna = kumpulanWarna[index % kumpulanWarna.length];
+                        
+                        const barSegment = document.createElement('div');
+                        barSegment.className = `${warna} h-full transition-all duration-300`;
+                        barSegment.style.width = persen + '%';
+                        barContainer.appendChild(barSegment);
+
+                        const legendItem = document.createElement('div');
+                        legendItem.className = "flex items-center gap-1.5 max-w-[150px]";
+                        legendItem.innerHTML = `
+                            <span class="w-2.5 h-2.5 rounded-full ${warna} shrink-0 inline-block"></span>
+                            <span class="truncate" title="${item.nama}">${item.nama || 'Tanpa Nama'} (${persen}%)</span>
+                        `;
+                        legendContainer.appendChild(legendItem);
+                    }
+                }
+            });
+        } else {
+            barContainer.innerHTML = `<div class="bg-slate-800 w-full h-full"></div>`;
+            legendContainer.innerHTML = `<span class="text-slate-500 italic text-xs">Belum ada data pengeluaran dimasukkan.</span>`;
+        }
+    }
+
+    // Inisialisasi Event Listener berbasis program (Astro Safe)
+    function siapkanEvent() {
+        const btnTambah = document.getElementById('btn-tambah-pos');
+        const container = document.getElementById('container-pengeluaran');
+        const groupBulan = document.getElementById('group-bulan');
+
+        if (btnTambah) {
+            btnTambah.addEventListener('click', tambahKategori);
+        }
+
+        // Event Delegation untuk Input & Tombol Hapus di dalam kontainer dinamis
+        if (container) {
+            container.addEventListener('input', (e) => {
+                const target = e.target as HTMLInputElement;
+                const id = parseInt(target.getAttribute('data-id') || '0');
+                
+                if (target.classList.contains('input-nama')) {
+                    let objek = daftarPengeluaran.find(item => item.id === id);
+                    if (objek) objek.nama = target.value;
+                    kalkulasiProporsiGrafik();
+                }
+                
+                if (target.classList.contains('input-nilai')) {
+                    let posisiKursor = target.selectionStart || 0;
+                    let panjangLama = target.value.length;
+
+                    target.value = formatAngkaMurni(target.value);
+
+                    let panjangBaru = target.value.length;
+                    target.setSelectionRange(posisiKursor + (panjangBaru - panjangLama), posisiKursor + (panjangBaru - panjangLama));
+
+                    let objek = daftarPengeluaran.find(item => item.id === id);
+                    if (objek) objek.nilai = target.value;
+                    
+                    hitungDanaDarurat();
+                }
+            });
+
+            container.addEventListener('click', (e) => {
+                const target = e.target as HTMLElement;
+                const btnHapus = target.closest('.btn-hapus');
+                if (btnHapus) {
+                    const id = parseInt(btnHapus.getAttribute('data-id') || '0');
+                    if (daftarPengeluaran.length > 1) {
+                        daftarPengeluaran = daftarPengeluaran.filter(item => item.id !== id);
+                        renderInputs();
+                    }
+                }
+            });
+        }
+
+        // Delegasi Event untuk pilihan tombol bulan
+        if (groupBulan) {
+            groupBulan.addEventListener('click', (e) => {
+                const target = e.target as HTMLElement;
+                const btnBulan = target.closest('.btn-bulan');
+                if (btnBulan) {
+                    const bulan = parseInt(btnBulan.getAttribute('data-months') || '6');
+                    setBulan(bulan);
+                }
+            });
+        }
+
+        // Render perdana saat komponen ter-mount di browser
+        renderInputs();
+    }
+
+    // Fungsi menyimpan data ke localStorage
+    function saveToLocalStorage() {
+        const data = {
+            targetBulan: targetBulan,
+            daftarPengeluaran: daftarPengeluaran
+        };
+        localStorage.setItem('danaDaruratData', JSON.stringify(data));
+    }
+
+    // Fungsi memuat data dari localStorage
+    function loadFromLocalStorage() {
+        const savedData = localStorage.getItem('danaDaruratData');
+        if (!savedData) return;
+
+        try {
+            const data = JSON.parse(savedData);
+            
+            // Restore target bulan
+            if (data.targetBulan !== undefined) {
+                targetBulan = data.targetBulan;
+                setBulan(targetBulan);
+            }
+
+            // Restore daftar pengeluaran
+            if (data.daftarPengeluaran && Array.isArray(data.daftarPengeluaran)) {
+                daftarPengeluaran = data.daftarPengeluaran;
+                renderInputs();
+            }
+        } catch (e) {
+            console.error('Error loading from localStorage:', e);
+        }
+    }
+
+    // Fungsi reset ke default
+    function resetToDefault() {
+        if (!confirm('Apakah Anda yakin ingin mereset semua data ke kondisi default? Data yang tersimpan akan dihapus.')) {
+            return;
+        }
+
+        // Hapus data dari localStorage
+        localStorage.removeItem('danaDaruratData');
+
+        // Reset ke default
+        targetBulan = 6;
+        daftarPengeluaran = [
+            { id: 1, nama: 'Kebutuhan Pokok', nilai: '' },
+            { id: 2, nama: 'Cicilan Bulanan', nilai: '' },
+            { id: 3, nama: 'Gaya Hidup', nilai: '' }
+        ];
+
+        setBulan(targetBulan);
+        renderInputs();
+    }
+
+    // Fungsi toggle section JSON
+    function toggleJsonSection() {
+        const jsonSection = document.getElementById('json-section');
+        if (jsonSection) {
+            jsonSection.classList.toggle('hidden');
+        }
+    }
+
+    // Fungsi export data ke JSON
+    function exportToJson() {
+        const data = {
+            targetBulan: targetBulan,
+            daftarPengeluaran: daftarPengeluaran
+        };
+        const jsonInput = document.getElementById('json-input') as HTMLTextAreaElement;
+        if (jsonInput) {
+            jsonInput.value = JSON.stringify(data, null, 2);
+        }
+    }
+
+    // Fungsi import data dari JSON
+    function importFromJson() {
+        const jsonInput = document.getElementById('json-input') as HTMLTextAreaElement;
+        const errorEl = document.getElementById('json-error');
+        
+        if (!jsonInput || !jsonInput.value.trim()) {
+            if (errorEl) {
+                errorEl.textContent = 'JSON input tidak boleh kosong';
+                errorEl.classList.remove('hidden');
+            }
+            return;
+        }
+
+        try {
+            const data = JSON.parse(jsonInput.value);
+            
+            // Validasi struktur data
+            if (typeof data.targetBulan !== 'number' || !Array.isArray(data.daftarPengeluaran)) {
+                throw new Error('Struktur JSON tidak valid');
+            }
+
+            // Apply data
+            targetBulan = data.targetBulan;
+            daftarPengeluaran = data.daftarPengeluaran;
+
+            setBulan(targetBulan);
+            renderInputs();
+            saveToLocalStorage();
+
+            if (errorEl) errorEl.classList.add('hidden');
+        } catch (e) {
+            if (errorEl) {
+                errorEl.textContent = 'Error: ' + (e as Error).message;
+                errorEl.classList.remove('hidden');
+            }
+        }
+    }
+
+    // Fungsi clear JSON input
+    function clearJsonInput() {
+        const jsonInput = document.getElementById('json-input') as HTMLTextAreaElement;
+        const errorEl = document.getElementById('json-error');
+        if (jsonInput) jsonInput.value = '';
+        if (errorEl) errorEl.classList.add('hidden');
+    }
+
+    // Berjalan saat inisialisasi awal halaman
+    loadFromLocalStorage();
+    siapkanEvent();
+
+    // Event listeners untuk tombol JSON
+    document.getElementById('btn-toggle-json')?.addEventListener('click', toggleJsonSection);
+    document.getElementById('btn-import-json')?.addEventListener('click', importFromJson);
+    document.getElementById('btn-export-json')?.addEventListener('click', exportToJson);
+    document.getElementById('btn-clear-json')?.addEventListener('click', clearJsonInput);
+    document.getElementById('btn-reset-data')?.addEventListener('click', resetToDefault);
+
+    // Event listeners untuk auto-save
+    document.addEventListener('input', (e) => {
+        const target = e.target as HTMLElement;
+        if (target.classList.contains('input-nama') || 
+            target.classList.contains('input-nilai')) {
+            saveToLocalStorage();
+        }
+    });
+
+    // Event listener untuk tombol hapus
+    document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (target.classList.contains('btn-hapus')) {
+            setTimeout(saveToLocalStorage, 100);
+        }
+    });
+
+    // Event listener untuk tombol bulan
+    document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (target.classList.contains('btn-bulan')) {
+            setTimeout(saveToLocalStorage, 100);
+        }
+    });
+
+    // Opsional: Jika Anda menggunakan Astro View Transitions, aktifkan ini agar skrip berjalan kembali setelah pindah halaman
+    document.addEventListener('astro:after-swap', () => {
+        loadFromLocalStorage();
+        siapkanEvent();
+        document.getElementById('btn-toggle-json')?.addEventListener('click', toggleJsonSection);
+        document.getElementById('btn-import-json')?.addEventListener('click', importFromJson);
+        document.getElementById('btn-export-json')?.addEventListener('click', exportToJson);
+        document.getElementById('btn-clear-json')?.addEventListener('click', clearJsonInput);
+        document.getElementById('btn-reset-data')?.addEventListener('click', resetToDefault);
+    });
+</script>
