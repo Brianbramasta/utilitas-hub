@@ -115,6 +115,16 @@ export const menuItems: MenuItem[] = [
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l7-7 7 7v11a2 2 0 01-2 2H7a2 2 0 01-2-2V8z" />
                 </svg>`,
                 requiresAuth: true
+            },
+            {
+                name: "Ikigai",
+                href: "/ikigai",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17l6-6-6-6" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v18" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l7-7 7 7v11a2 2 0 01-2 2H7a2 2 0 01-2-2V8z" />
+                </svg>`,
+                requiresAuth: true
             }
         ]
     }

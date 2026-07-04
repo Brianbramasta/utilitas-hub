@@ -1,0 +1,502 @@
+---
+// Di sini kamu bisa memasukkan logic server-side Astro jika dibutuhkan di masa depan,
+// namun untuk aplikasi interaktif ini, semua logic berjalan di sisi client.
+---
+
+<div class="max-w-7xl mx-auto my-6 px-4">
+    <!-- Header -->
+    <header class="text-center mb-8">
+        <h1 class="text-3xl font-extrabold text-indigo-600 tracking-tight">Personal Ikigai Activity Mapper</h1>
+        <p class="text-slate-500 mt-2 text-sm sm:text-base">Petakan aktivitasmu langsung ke dalam bentuk Diagram Venn dan Kartu Analisis Ikigai.</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- KIRI: FORM INPUT & LIST (4 Kolom) -->
+        <div class="lg:col-span-4 flex flex-col gap-6">
+            
+            <!-- Input Form -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
+                    <span class="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-xs text-indigo-600 font-bold">1</span>
+                    Tambah Aktivitas / Profesi
+                </h2>
+                
+                <form id="ikigai-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Nama Aktivitas</label>
+                        <input type="text" id="act-name" required placeholder="Misal: UI Desain, Coding, Bikin Kue" 
+                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                    </div>
+
+                    <div class="space-y-2 pt-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Kondisi Saat Ini:</label>
+                        
+                        <label class="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 border border-slate-100 cursor-pointer text-sm transition">
+                            <input type="checkbox" id="p-love" class="w-4 h-4 rounded text-rose-600 border-slate-300 focus:ring-rose-500">
+                            <span>❤️ Saya sangat <strong>menyukai</strong> hal ini</span>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 border border-slate-100 cursor-pointer text-sm transition">
+                            <input type="checkbox" id="p-good" class="w-4 h-4 rounded text-sky-600 border-slate-300 focus:ring-sky-500">
+                            <span>💪 Saya <strong>mahir / bisa</strong> melakukannya</span>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 border border-slate-100 cursor-pointer text-sm transition">
+                            <input type="checkbox" id="p-need" class="w-4 h-4 rounded text-emerald-600 border-slate-300 focus:ring-emerald-500">
+                            <span>🌍 Dunia / sekitar <strong>membutuhkan</strong> ini</span>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 border border-slate-100 cursor-pointer text-sm transition">
+                            <input type="checkbox" id="p-paid" class="w-4 h-4 rounded text-amber-600 border-slate-300 focus:ring-amber-500">
+                            <span>💰 Saya <strong>bisa dibayar</strong> dari sini</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-sm shadow-sm mt-2">
+                        Simpan & Petakan Aktivitas
+                    </button>
+                </form>
+            </div>
+
+            <!-- Daftar Urutan Aktivitas -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
+                    <span class="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-xs text-indigo-600 font-bold">2</span>
+                    Semua Aktivitas Kamu
+                </h2>
+                <div id="activity-list" class="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+                    <!-- Dimanipulasi Client-side JS -->
+                </div>
+                <div class="mt-4">
+                    <button id="btn-toggle-json" class="border border-dashed border-slate-300 hover:border-slate-400 text-slate-500 hover:text-slate-700 text-xs py-2 px-4 rounded-lg cursor-pointer w-full transition font-medium">
+                        📝 Import/Export JSON
+                    </button>
+                </div>
+                <div id="json-section" class="mt-4 hidden">
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <label class="block text-xs font-semibold text-slate-500 mb-2">Import Data dari JSON:</label>
+                        <textarea id="json-input" class="w-full h-48 bg-white border border-slate-300 rounded-lg p-3 text-xs text-slate-600 font-mono outline-none focus:border-indigo-500 resize-y" placeholder='{
+  "activities": [
+    {
+      "id": 1,
+      "name": "Coding",
+      "love": true,
+      "good": true,
+      "need": true,
+      "paid": true
+    }
+  ]
+}'></textarea>
+                        <div class="flex gap-2 mt-3">
+                            <button id="btn-import-json" class="bg-blue-600 hover:bg-blue-500 text-white text-xs py-2 px-4 rounded-lg font-bold cursor-pointer transition flex-1">Import JSON</button>
+                            <button id="btn-export-json" class="bg-slate-700 hover:bg-slate-600 text-white text-xs py-2 px-4 rounded-lg font-bold cursor-pointer transition flex-1">Export JSON</button>
+                            <button id="btn-clear-json" class="bg-red-600 hover:bg-red-500 text-white text-xs py-2 px-4 rounded-lg font-bold cursor-pointer transition">Clear</button>
+                        </div>
+                        <div class="flex gap-2 mt-2">
+                            <button id="btn-reset-data" class="bg-orange-600 hover:bg-orange-500 text-white text-xs py-2 px-4 rounded-lg font-bold cursor-pointer transition w-full">🔄 Reset ke Default</button>
+                        </div>
+                        <p id="json-error" class="text-red-500 text-xs mt-2 hidden"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KANAN: LIVE DIAGRAM VENN & CARD GRID (8 Kolom) -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+            
+            <!-- ATAS KANAN: Diagram Venn Visual -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center">
+                <h2 class="text-lg font-bold text-slate-700 w-full mb-4">Peta Posisi Diagram Venn</h2>
+                
+                <div class="relative w-full max-w-[420px] aspect-square bg-slate-50/50 rounded-xl p-4 border border-slate-100">
+                    <svg viewBox="0 0 400 400" class="w-full h-full overflow-visible" id="ikigai-svg">
+                        <!-- Lingkaran 4 Dimensi Ikigai -->
+                        <circle cx="200" cy="140" r="85" class="fill-red-500/10 stroke-red-400/40 stroke-[1.5]" />
+                        <circle cx="140" cy="210" r="85" class="fill-sky-500/10 stroke-sky-400/40 stroke-[1.5]" />
+                        <circle cx="260" cy="210" r="85" class="fill-emerald-500/10 stroke-emerald-400/40 stroke-[1.5]" />
+                        <circle cx="200" cy="270" r="85" class="fill-amber-500/10 stroke-amber-400/40 stroke-[1.5]" />
+
+                        <!-- Teks Kategori Utama Wilayah Luar -->
+                        <text x="200" y="40" text-anchor="middle" class="text-[10px] font-black fill-red-600 tracking-widest uppercase">❤️ SUKA</text>
+                        <text x="35" y="215" text-anchor="start" class="text-[10px] font-black fill-sky-600 tracking-widest uppercase">💪 KUASAI</text>
+                        <text x="365" y="215" text-anchor="end" class="text-[10px] font-black fill-emerald-600 tracking-widest uppercase">🌍 BUTUH</text>
+                        <text x="200" y="375" text-anchor="middle" class="text-[10px] font-black fill-amber-600 tracking-widest uppercase">💰 DIBAYAR</text>
+
+                        <!-- Label Transparan Tipis di Diagram -->
+                        <text x="200" y="213" text-anchor="middle" class="text-[9px] font-black fill-yellow-600/30 tracking-wider">IKIGAI</text>
+
+                        <!-- CONTAINER DINAMIS UNTUK TEKS AKTIVITAS -->
+                        <g id="dynamic-labels-group"></g>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- BAWAH KANAN: Grid Card Kategori Kelompok -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-700 mb-4">Pengelompokan Kartu Status Ikigai</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Card 1: Ikigai -->
+                    <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                        <h3 class="font-bold text-emerald-800 text-xs flex items-center gap-1">✨ IKIGAI (Semua Kriteria Terpenuhi)</h3>
+                        <div id="box-ikigai" class="mt-2 flex flex-wrap gap-1.5 text-xs"></div>
+                    </div>
+
+                    <!-- Card 2: Passion -->
+                    <div class="p-4 rounded-xl bg-rose-50 border border-rose-200">
+                        <h3 class="font-bold text-rose-800 text-xs flex items-center gap-1">🔥 Passion (Suka + Mahir)</h3>
+                        <div id="box-passion" class="mt-2 flex flex-wrap gap-1.5 text-xs"></div>
+                    </div>
+
+                    <!-- Card 3: Profession -->
+                    <div class="p-4 rounded-xl bg-indigo-50 border border-indigo-200">
+                        <h3 class="font-bold text-indigo-800 text-xs flex items-center gap-1">💼 Profession (Mahir + Dibayar)</h3>
+                        <div id="box-profession" class="mt-2 flex flex-wrap gap-1.5 text-xs"></div>
+                    </div>
+
+                    <!-- Card 4: Mission -->
+                    <div class="p-4 rounded-xl bg-teal-50 border border-teal-200">
+                        <h3 class="font-bold text-teal-800 text-xs flex items-center gap-1">🌱 Mission (Suka + Dibutuhkan)</h3>
+                        <div id="box-mission" class="mt-2 flex flex-wrap gap-1.5 text-xs"></div>
+                    </div>
+
+                    <!-- Card 5: Vocation -->
+                    <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                        <h3 class="font-bold text-amber-800 text-xs flex items-center gap-1">🎯 Vocation (Dibutuhkan + Dibayar)</h3>
+                        <div id="box-vocation" class="mt-2 flex flex-wrap gap-1.5 text-xs"></div>
+                    </div>
+
+                    <!-- Card 6: Parsial / Lainnya -->
+                    <div class="p-4 rounded-xl bg-slate-100 border border-slate-200">
+                        <h3 class="font-bold text-slate-700 text-xs flex items-center gap-1">🧩 Parsial / Kriteria Tunggal</h3>
+                        <div id="box-other" class="mt-2 flex flex-wrap gap-1.5 text-xs"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<style>
+    /* Menggunakan tag scoped style bawaan Astro */
+    .act-tag {
+        font-size: 9px;
+        font-weight: bold;
+        fill: #1e293b;
+        background: rgba(255, 255, 255, 0.85);
+        paint-order: stroke;
+        stroke: #ffffff;
+        stroke-width: 3px;
+        stroke-linejoin: round;
+    }
+</style>
+
+<script>
+    // Script ini akan dipacking otomatis oleh Astro dan berjalan penuh di browser (Client-side)
+    let activities: any[] = [];
+
+    // Inisialisasi awal saat DOM siap
+    loadFromLocalStorage();
+
+    // Mengamankan inisialisasi DOM setelah Astro memuat script
+    function init() {
+        const form = document.getElementById('ikigai-form');
+        if (form) {
+            form.addEventListener('submit', addActivity);
+        }
+        document.getElementById('btn-toggle-json')?.addEventListener('click', toggleJsonSection);
+        document.getElementById('btn-import-json')?.addEventListener('click', importFromJson);
+        document.getElementById('btn-export-json')?.addEventListener('click', exportToJson);
+        document.getElementById('btn-clear-json')?.addEventListener('click', clearJsonInput);
+        document.getElementById('btn-reset-data')?.addEventListener('click', resetToDefault);
+        renderAll();
+    }
+
+    // Mendaftarkan fungsi delete secara global di objek window agar bisa dipanggil dari string template HTML
+    (window as any).deleteActivity = function(id: number) {
+        activities = activities.filter(act => act.id !== id);
+        saveToLocalStorage();
+        renderAll();
+    }
+
+    function addActivity(e: Event) {
+        e.preventDefault();
+        
+        const nameInput = document.getElementById('act-name') as HTMLInputElement;
+        const love = (document.getElementById('p-love') as HTMLInputElement).checked;
+        const good = (document.getElementById('p-good') as HTMLInputElement).checked;
+        const need = (document.getElementById('p-need') as HTMLInputElement).checked;
+        const paid = (document.getElementById('p-paid') as HTMLInputElement).checked;
+
+        if (!nameInput) return;
+
+        const newAct = {
+            id: Date.now(),
+            name: nameInput.value.trim(),
+            love: love,
+            good: good,
+            need: need,
+            paid: paid
+        };
+
+        activities.push(newAct);
+        
+        // Reset Form Input
+        nameInput.value = '';
+        (document.getElementById('p-love') as HTMLInputElement).checked = false;
+        (document.getElementById('p-good') as HTMLInputElement).checked = false;
+        (document.getElementById('p-need') as HTMLInputElement).checked = false;
+        (document.getElementById('p-paid') as HTMLInputElement).checked = false;
+
+        saveToLocalStorage();
+        renderAll();
+    }
+
+    function renderAll() {
+        renderList();
+        renderVennLabels();
+        renderCardsGrid();
+    }
+
+    function renderList() {
+        const listContainer = document.getElementById('activity-list');
+        if (!listContainer) return;
+
+        if (activities.length === 0) {
+            listContainer.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-6">Belum ada aktivitas.</p>';
+            return;
+        }
+
+        listContainer.innerHTML = activities.map(act => `
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                <div class="truncate mr-2">
+                    <span class="font-bold text-slate-700 block truncate">${act.name}</span>
+                </div>
+                <button onclick="deleteActivity(${act.id})" class="text-rose-500 hover:text-rose-700 font-medium shrink-0 transition text-[11px]">
+                    Hapus
+                </button>
+            </div>
+        `).join('');
+    }
+
+    function renderVennLabels() {
+        const groupContainer = document.getElementById('dynamic-labels-group');
+        if (!groupContainer) return;
+        
+        groupContainer.innerHTML = ''; 
+        const slotTracker: Record<string, number> = {};
+
+        activities.forEach(act => {
+            const regionKey = `${act.love ? '1' : '0'}${act.good ? '1' : '0'}${act.need ? '1' : '0'}${act.paid ? '1' : '0'}`;
+            let coords = getRegionCoordinates(regionKey);
+            
+            if (!coords) return;
+
+            if (!slotTracker[regionKey]) slotTracker[regionKey] = 0;
+            const offset = slotTracker[regionKey] * 11; 
+            slotTracker[regionKey]++;
+
+            const textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            textElement.setAttribute("x", coords.x.toString());
+            textElement.setAttribute("y", (coords.y + offset).toString());
+            textElement.setAttribute("text-anchor", "middle");
+            textElement.setAttribute("class", "act-tag");
+            textElement.textContent = act.name;
+
+            groupContainer.appendChild(textElement);
+        });
+    }
+
+    function renderCardsGrid() {
+        const boxes: Record<string, HTMLElement | null> = {
+            ikigai: document.getElementById('box-ikigai'),
+            passion: document.getElementById('box-passion'),
+            profession: document.getElementById('box-profession'),
+            mission: document.getElementById('box-mission'),
+            vocation: document.getElementById('box-vocation'),
+            other: document.getElementById('box-other')
+        };
+
+        Object.values(boxes).forEach(box => {
+            if (box) box.innerHTML = '';
+        });
+
+        activities.forEach(act => {
+            const badge = `<span class="bg-white border border-slate-200 px-2 py-0.5 rounded shadow-sm text-slate-700 font-medium">${act.name}</span>`;
+            
+            if (act.love && act.good && act.need && act.paid) {
+                if (boxes.ikigai) boxes.ikigai.innerHTML += badge;
+            } else if (act.love && act.good) {
+                if (boxes.passion) boxes.passion.innerHTML += badge;
+            } else if (act.good && act.paid) {
+                if (boxes.profession) boxes.profession.innerHTML += badge;
+            } else if (act.love && act.need) {
+                if (boxes.mission) boxes.mission.innerHTML += badge;
+            } else if (act.need && act.paid) {
+                if (boxes.vocation) boxes.vocation.innerHTML += badge;
+            } else {
+                let subLabels = [];
+                if (act.love) subLabels.push('Suka');
+                if (act.good) subLabels.push('Mahir');
+                if (act.need) subLabels.push('Butuh');
+                if (act.paid) subLabels.push('Dibayar');
+                const labelText = subLabels.length > 0 ? ` (${subLabels.join('+')})` : ' (Kosong)';
+                
+                const specBadge = `<span class="bg-white border border-slate-200 px-2 py-0.5 rounded shadow-sm text-slate-700 font-medium">${act.name}<span class="text-[10px] text-slate-400 font-normal">${labelText}</span></span>`;
+                if (boxes.other) boxes.other.innerHTML += specBadge;
+            }
+        });
+
+        Object.keys(boxes).forEach(key => {
+            const box = boxes[key];
+            if (box && box.innerHTML === '') {
+                box.innerHTML = '<span class="text-slate-400 italic text-[11px]">Belum ada aktivitas</span>';
+            }
+        });
+    }
+
+    function getRegionCoordinates(key: string) {
+        const map: Record<string, {x: number, y: number}> = {
+            '1111': { x: 200, y: 205 },
+            '1110': { x: 200, y: 160 },
+            '1101': { x: 155, y: 195 },
+            '1011': { x: 245, y: 195 },
+            '0111': { x: 200, y: 245 },
+            '1100': { x: 145, y: 145 },
+            '1010': { x: 255, y: 145 },
+            '0101': { x: 145, y: 275 },
+            '0011': { x: 255, y: 275 },
+            '1001': { x: 200, y: 180 },
+            '0110': { x: 200, y: 225 },
+            '1000': { x: 200, y: 85 },
+            '0100': { x: 90, y: 210 },
+            '0010': { x: 310, y: 210 },
+            '0001': { x: 200, y: 325 }
+        };
+        return map[key] || null;
+    }
+
+    // Fungsi menyimpan data ke localStorage
+    function saveToLocalStorage() {
+        localStorage.setItem('ikigaiData', JSON.stringify(activities));
+    }
+
+    // Fungsi memuat data dari localStorage
+    function loadFromLocalStorage() {
+        const savedData = localStorage.getItem('ikigaiData');
+        if (savedData) {
+            try {
+                activities = JSON.parse(savedData);
+            } catch (e) {
+                console.error('Error loading from localStorage:', e);
+                activities = [];
+            }
+        }
+    }
+
+    // Fungsi reset ke default
+    function resetToDefault() {
+        if (!confirm('Apakah Anda yakin ingin mereset semua data ke kondisi default? Data yang tersimpan akan dihapus.')) {
+            return;
+        }
+
+        // Hapus data dari localStorage
+        localStorage.removeItem('ikigaiData');
+
+        // Reset activities
+        activities = [];
+        renderAll();
+    }
+
+    // Fungsi toggle section JSON
+    function toggleJsonSection() {
+        const jsonSection = document.getElementById('json-section');
+        if (jsonSection) {
+            jsonSection.classList.toggle('hidden');
+        }
+    }
+
+    // Fungsi export data ke JSON
+    function exportToJson() {
+        const data = { activities };
+        const jsonInput = document.getElementById('json-input') as HTMLTextAreaElement;
+        if (jsonInput) {
+            jsonInput.value = JSON.stringify(data, null, 2);
+        }
+    }
+
+    // Fungsi import data dari JSON
+    function importFromJson() {
+        const jsonInput = document.getElementById('json-input') as HTMLTextAreaElement;
+        const errorEl = document.getElementById('json-error');
+        
+        if (!jsonInput || !jsonInput.value.trim()) {
+            if (errorEl) {
+                errorEl.textContent = 'JSON input tidak boleh kosong';
+                errorEl.classList.remove('hidden');
+            }
+            return;
+        }
+
+        try {
+            const data = JSON.parse(jsonInput.value);
+            
+            // Validasi struktur JSON
+            if (!data.activities || !Array.isArray(data.activities)) {
+                throw new Error('Struktur JSON tidak valid. Harus mengandung activities array');
+            }
+
+            // Validasi setiap activity
+            data.activities.forEach((act: any) => {
+                if (!act.name || typeof act.love !== 'boolean' || typeof act.good !== 'boolean' || 
+                    typeof act.need !== 'boolean' || typeof act.paid !== 'boolean') {
+                    throw new Error('Struktur activity tidak valid. Harus memiliki name, love, good, need, paid');
+                }
+            });
+
+            activities = data.activities;
+            saveToLocalStorage();
+            renderAll();
+            
+            // Hide error jika ada
+            if (errorEl) {
+                errorEl.classList.add('hidden');
+            }
+
+            // Hide JSON section setelah import berhasil
+            const jsonSection = document.getElementById('json-section');
+            if (jsonSection) {
+                jsonSection.classList.add('hidden');
+            }
+
+            alert('Data berhasil di-import dari JSON!');
+
+        } catch (e) {
+            if (errorEl) {
+                errorEl.textContent = `Error: ${(e as Error).message}`;
+                errorEl.classList.remove('hidden');
+            }
+        }
+    }
+
+    // Fungsi clear JSON input
+    function clearJsonInput() {
+        const jsonInput = document.getElementById('json-input') as HTMLTextAreaElement;
+        const errorEl = document.getElementById('json-error');
+        
+        if (jsonInput) {
+            jsonInput.value = '';
+        }
+        if (errorEl) {
+            errorEl.classList.add('hidden');
+        }
+    }
+
+    // Jalankan inisialisasi script saat DOM siap
+    init();
+    // Mendukung transisi halaman jika kamu menggunakan Astro View Transitions
+    document.addEventListener('astro:page-load', init);
+</script>
