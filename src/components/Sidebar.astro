@@ -1,10 +1,5 @@
 ---
-interface MenuItem {
-    name: string;
-    href?: string;
-    icon?: string;
-    children?: MenuItem[];
-}
+import { menuItems, type MenuItem } from '../lib/menuConfig';
 
 interface Props {
     currentPath: string;
@@ -15,119 +10,6 @@ const { currentPath } = Astro.props;
 // Fungsi helper untuk menghapus trailing slash agar perbandingan konsisten di prod & dev
 const cleanPath = (path: string) => path.replace(/\/$/, "");
 const normalizedCurrentPath = cleanPath(currentPath);
-
-const menuItems: MenuItem[] = [
-    {
-        name: "Simulasi Investasi",
-        icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>`,
-        children: [
-            {
-                name: "Fire",
-                href: "/fire",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>`
-            },
-            {
-                name: "KPR",
-                href: "/kpr",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>`
-            },
-            {
-                name: "Saham",
-                href: "/saham",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>`
-            },
-            {
-                name: "Property Undervalue",
-                href: "/property_undervalue",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>`
-            },
-        ]
-    },
-    {
-        name: "Kelola Keuangan",
-        icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-        </svg>`,
-        children: [
-             {
-                name: "Dana Darurat",
-                href: "/dana_darurat",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>`
-            },
-            {
-                name: "Buy vs Rent",
-                href: "/buy_vs_rent",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>`
-            },
-            {
-                name: "Split Bill",
-                href: "/split_bill",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 012 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>`
-            },
-            {
-                name: "Shopping Assistant",
-                href: "/shopping_assistant",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>`
-            },
-            {
-                name: "Cooking Planner Budgeting",
-                href: "/cooking_planner",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253M8 21h8m-4-4v4m-4-16h.01" />
-                </svg>`
-            },
-        ]
-    },
-    {
-        name: "Decision Making",
-        icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-        </svg>`,
-        children: [
-            {
-                name: "MCDA",
-                href: "/mcda",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>`
-            },
-            {
-                name: "CBA",
-                href: "/cba",
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>`
-            },
-            // {
-            //     name: "7 Rings of Relationship",
-            //     href: "/7rings",
-            //     icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            //         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17l6-6-6-6" />
-            //         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v18" />
-            //         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l7-7 7 7v11a2 2 0 01-2 2H7a2 2 0 01-2-2V8z" />
-            //     </svg>`
-            // }
-        ]
-    }
-];
 ---
 
 <button id="mobileMenuToggle" class="fixed top-4 left-4 z-50 md:hidden bg-green-700 text-white p-3 rounded-lg shadow-lg">
@@ -174,8 +56,8 @@ const menuItems: MenuItem[] = [
                                     {item.children.map((child) => {
                                         const isActive = child.href && cleanPath(child.href) === normalizedCurrentPath;
                                         return (
-                                            <li>
-                                                <a href={child.href} class={`flex items-center p-2 rounded-lg transition-colors ${isActive ? 'bg-green-100 text-green-700' : 'text-gray-600 hover:bg-green-50 hover:text-green-700'}`}>
+                                            <li data-requires-auth={child.requiresAuth ? 'true' : 'false'} data-href={child.href || ''}>
+                                                <a href={child.href} data-auth-link="true" class={`flex items-center p-2 rounded-lg transition-colors ${isActive ? 'bg-green-100 text-green-700' : 'text-gray-600 hover:bg-green-50 hover:text-green-700'}`}>
                                                     <Fragment set:html={child.icon} />
                                                     <span class="sidebar-text ml-2 whitespace-nowrap text-sm transition-opacity duration-300">{child.name}</span>
                                                 </a>
@@ -195,6 +77,18 @@ const menuItems: MenuItem[] = [
             })}
         </ul>
     </nav>
+    
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
+        <button
+            id="authBtn"
+            class="w-full flex items-center justify-center p-3 rounded-lg transition-colors bg-green-700 text-white hover:bg-green-800"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+            </svg>
+            <span class="sidebar-text">Login</span>
+        </button>
+    </div>
 </aside>
 
 <script>
@@ -206,6 +100,7 @@ const menuItems: MenuItem[] = [
     const sidebarTitle = document.getElementById('sidebarTitle');
     const sidebarTexts = document.querySelectorAll('.sidebar-text');
     const menuToggles = document.querySelectorAll('.menu-toggle');
+    const authBtn = document.getElementById('authBtn');
     
     let isMinimized = false;
 
@@ -251,6 +146,77 @@ const menuItems: MenuItem[] = [
         }
     }
 
+    // Check authentication and hide menu items that require auth
+    function checkAuthAndHideMenuItems() {
+        const isAuthenticated = localStorage.getItem('authenticated') === 'true';
+        const authRequiredItems = document.querySelectorAll('[data-requires-auth="true"]');
+        
+        authRequiredItems.forEach((item) => {
+            if (!isAuthenticated) {
+                (item as HTMLElement).style.display = 'none';
+            } else {
+                (item as HTMLElement).style.display = '';
+            }
+        });
+
+        // Update auth button
+        updateAuthButton();
+    }
+
+    // Update auth button based on authentication status
+    function updateAuthButton() {
+        const isAuthenticated = localStorage.getItem('authenticated') === 'true';
+        const btnText = authBtn?.querySelector('.sidebar-text');
+        const btnIcon = authBtn?.querySelector('svg');
+        
+        if (isAuthenticated) {
+            if (btnText) btnText.textContent = 'Logout';
+            if (btnIcon) {
+                btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />';
+            }
+            authBtn?.classList.remove('bg-green-700', 'hover:bg-green-800');
+            authBtn?.classList.add('bg-red-600', 'hover:bg-red-700');
+        } else {
+            if (btnText) btnText.textContent = 'Login';
+            if (btnIcon) {
+                btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />';
+            }
+            authBtn?.classList.remove('bg-red-600', 'hover:bg-red-700');
+            authBtn?.classList.add('bg-green-700', 'hover:bg-green-800');
+        }
+    }
+
+    // Handle auth button click
+    authBtn?.addEventListener('click', () => {
+        const isAuthenticated = localStorage.getItem('authenticated') === 'true';
+        
+        if (isAuthenticated) {
+            // Logout
+            localStorage.removeItem('authenticated');
+            localStorage.removeItem('userEmail');
+            window.location.href = '/login';
+        } else {
+            // Go to login page
+            window.location.href = '/login';
+        }
+    });
+
+    // Handle auth-protected menu links
+    document.querySelectorAll('[data-auth-link="true"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const parentLi = link.closest('li');
+            const requiresAuth = parentLi?.getAttribute('data-requires-auth') === 'true';
+            
+            if (requiresAuth) {
+                const isAuthenticated = localStorage.getItem('authenticated') === 'true';
+                if (!isAuthenticated) {
+                    e.preventDefault();
+                    window.location.href = '/login';
+                }
+            }
+        });
+    });
+
     mobileMenuToggle?.addEventListener('click', toggleSidebar);
     sidebarOverlay?.addEventListener('click', toggleSidebar);
     minimizeBtn?.addEventListener('click', toggleMinimize);
@@ -258,4 +224,10 @@ const menuItems: MenuItem[] = [
     menuToggles.forEach(toggle => {
         toggle.addEventListener('click', () => toggleMenu(toggle as HTMLElement));
     });
+
+    // Run auth check on load
+    checkAuthAndHideMenuItems();
+
+    // Listen for storage changes (for logout in other tabs)
+    window.addEventListener('storage', checkAuthAndHideMenuItems);
 </script>

@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { menuItems } from '../lib/menuConfig';
 ---
 
 <Layout title="Utilitas Hub">
@@ -8,56 +9,21 @@ import Layout from '../layouts/Layout.astro';
 			<h1 class="text-green-700 text-3xl font-bold mb-4">Selamat Datang di Utilitas Hub</h1>
 			<p class="text-slate-600 text-lg mb-6">Kumpulan alat bantu dan kalkulator keuangan</p>
 			
-			<!-- Simulasi Investasi -->
-			<div class="mb-8">
-				<h2 class="text-green-700 text-xl font-bold mb-4">Simulasi Investasi</h2>
-				<div class="flex flex-col sm:flex-row gap-4 justify-center">
-					<a href="/fire" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
-						Kalkulator FIRE
-					</a>
-					<a href="/kpr" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
-						Kalkulator KPR
-					</a>
-					<a href="/saham" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
-						Kalkulator Saham
-					</a>
-					<a href="/property_undervalue" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
-						Kalkulator Property Undervalue
-					</a>
+			{menuItems.map((item) => (
+				<div class="mb-8">
+					<h2 class="text-green-700 text-xl font-bold mb-4">{item.name}</h2>
+					<div class="flex flex-col sm:flex-row gap-4 justify-center">
+						{item.children?.filter(child => !child.requiresAuth).map((child) => (
+							<a 
+								href={child.href} 
+								class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors"
+							>
+								{child.name}
+							</a>
+						))}
+					</div>
 				</div>
-			</div>
-
-			<!-- Kelola Keuangan -->
-			<div class="mb-8">
-				<h2 class="text-green-700 text-xl font-bold mb-4">Kelola Keuangan</h2>
-				<div class="flex flex-col sm:flex-row gap-4 justify-center">
-					<a href="/dana_darurat" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
-						Dana Darurat
-					</a>
-					<a href="/split_bill" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
-						Split Bill
-					</a>
-					<a href="/shopping_assistant" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
-						Shopping Assistant
-					</a>
-					<a href="/cooking_planner" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
-						Cooking Planner Budgeting
-					</a>
-				</div>
-			</div>
-
-			<!-- Decision Making -->
-			<div>
-				<h2 class="text-green-700 text-xl font-bold mb-4">Decision Making</h2>
-				<div class="flex flex-col sm:flex-row gap-4 justify-center">
-					<a href="/mcda" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
-						MCDA
-					</a>
-					<a href="/cba" class="border-2 border-green-700 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
-						CBA
-					</a>
-				</div>
-			</div>
+			))}
 		</div>
 	</div>
 </Layout>

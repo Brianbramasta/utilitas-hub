@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ujian Essay & Soal Cerita Aman</title>
+    <style>
+        /* Memblokir seleksi/blok teks di seluruh halaman */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f9;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+        }
+        .container {
+            max-width: 700px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        /* Desain Box Soal Cerita */
+        .story-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-style: italic;
+            line-height: 1.6;
+        }
+        .question {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        /* Desain Textarea untuk Jawaban */
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ced4da;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 15px;
+            resize: none;
+        }
+        textarea:focus {
+            border-color: #80bdff;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="question">Bacalah cerita di bawah ini untuk menjawab soal!</div>
+        
+        <!-- Soal Cerita (Aman dari Copy-Paste karena CSS user-select) -->
+        <div class="story-box">
+            "Pada suatu hari di sebuah desa terpencil, hiduplah seorang petani tua yang bijaksana. 
+            Setiap pagi ia membawa keranjang kosong ke hutan. Penduduk desa heran karena ia selalu 
+            kembali dengan keranjang yang tetap kosong, namun wajahnya selalu terlihat sangat bahagia..."
+        </div>
+
+        <div class="question">Soal: Menurut pendapat Anda, mengapa petani tersebut merasa bahagia?</div>
+        
+        <!-- Text Area Essay (Hanya menerima ketikan teks manual) -->
+        <textarea id="essay-input" rows="6" placeholder="Ketik jawaban Anda di sini secara manual..."></textarea>
+    </div>
+
+    <script>
+        const textarea = document.getElementById('essay-input');
+
+        // ==========================================
+        // PROTEKSI 1: FILTER KEYBOARD PADA TEXTAREA
+        // ==========================================
+        textarea.addEventListener('keydown', function(e) {
+            
+            // 1. Izinkan tombol navigasi dasar & pengetikan normal
+            const allowedKeys = [
+                'Backspace', 'Delete', 'Enter', 'Spacebar', ' ', 
+                'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'
+            ];
+
+            // 2. Blokir jika mencoba menggunakan tombol Tab di dalam textarea
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                return;
+            }
+
+            // 3. Blokir semua kombinasi tombol Ctrl / Cmd (Anti Ctrl+V, Ctrl+C, Ctrl+A, Ctrl+U)
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                alert("Kombinasi tombol pintas (Ctrl/Cmd) dilarang!");
+                return;
+            }
+
+            // 4. Blokir tombol F12 untuk DevTools
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return;
+            }
+            
+            // Jika bukan tombol teks biasa dan tidak ada di daftar allowedKeys, blokir!
+            // (Ini mengamankan jika ada tombol makro / keyboard gaming aneh)
+            if (e.key.length > 1 && !allowedKeys.includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+
+        // ==========================================
+        // PROTEKSI 2: ANTI PASTE (COPAS) TOTAL
+        // ==========================================
+        // Jika user menggunakan klik kanan mouse untuk paste, cara ini akan memblokirnya
+        textarea.addEventListener('paste', function(e) {
+            e.preventDefault();
+            alert("Dilarang melakukan PASTE (Copas) jawaban!");
+        });
+
+        // Blokir fitur drag and drop teks dari luar ke dalam textarea
+        textarea.addEventListener('drop', function(e) {
+            e.preventDefault();
+        });
+
+
+        // ==========================================
+        // PROTEKSI 3: KEAMANAN GLOBAL HALAMAN
+        // ==========================================
+        
+        // Blokir klik kanan di seluruh halaman
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Blokir shortcut DevTools global di level dokumen
+        document.addEventListener('keydown', function(e) {
+            if (
+                e.key === "F12" || 
+                (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "C" || e.key === "J")) || 
+                (e.ctrlKey && e.key === "U")
+            ) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

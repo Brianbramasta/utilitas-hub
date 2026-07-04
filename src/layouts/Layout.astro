@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Sidebar from '../components/Sidebar.astro';
+import { getProtectedPaths } from '../lib/menuConfig';
 
 interface Props {
     title?: string;
@@ -14,6 +15,7 @@ const shouldShowSidebar = !no_sidebar && !noSidebarFromUrl;
 
 // --- PERBAIKAN DI SINI: Ambil pathname saat ini ---
 const currentPath = Astro.url.pathname;
+const protectedPaths = getProtectedPaths();
 ---
 
 <!doctype html>
@@ -38,5 +40,17 @@ const currentPath = Astro.url.pathname;
             </main>
         </div>
 
+        <script define:vars={{ currentPath, protectedPaths }}>
+            // Check if current path requires authentication
+            const cleanPath = currentPath.replace(/\/$/, '');
+            const isProtected = protectedPaths.includes(cleanPath);
+            
+            if (isProtected) {
+                const isAuthenticated = localStorage.getItem('authenticated') === 'true';
+                if (!isAuthenticated) {
+                    window.location.href = '/login';
+                }
+            }
+        </script>
     </body>
 </html>
