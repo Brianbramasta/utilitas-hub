@@ -1,0 +1,235 @@
+---
+// Perjalanan evaluasi hipotesis (Astro Component Frontmatter)
+// Anda bisa menambahkan props jika ingin mengirim data hipotesis default dari luar
+---
+
+<main class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 my-10">
+    <!-- Bagian Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white text-center">
+        <h1 class="text-2xl font-bold mb-2">🔍 Analisator Hipotesis</h1>
+        <p class="text-blue-100 text-sm">Uji apakah pernyataan Anda berbasis Fakta yang kuat atau masih berupa Asumsi.</p>
+    </div>
+
+    <!-- Bagian Form / Konten Utama -->
+    <div class="p-6 space-y-8">
+        <!-- Input Teks Hipotesis -->
+        <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Tuliskan Hipotesis / Pernyataan Anda:</label>
+            <input type="text" id="hypothesisInput" placeholder="Contoh: Produktivitas karyawan meningkat jika jam kerja dipangkas menjadi 6 jam sehari." 
+                class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-700">
+        </div>
+
+        <hr class="border-slate-100">
+
+        <!-- Parameter Penilaian Menggunakan Pilihan Terbuka -->
+        <div class="space-y-8">
+            <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider">Parameter Penilaian</h3>
+
+            <!-- Kriteria 1: Data -->
+            <div class="space-y-3 font-hypothesis-criteria">
+                <label class="block text-base font-bold text-slate-800">1. Ketersediaan Data Pendukung</label>
+                <div class="grid grid-cols-1 gap-2">
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critData" value="0" checked class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 0:</strong> Belum ada data sama sekali, murni tebakan.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critData" value="1" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 1:</strong> Ada bukti anekdot (katanya / pengalaman satu orang).</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critData" value="2" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 2:</strong> Ada data internal informal atau statistik dasar umum.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critData" value="3" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 3:</strong> Didukung oleh riset terstruktur atau studi kasus industri.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critData" value="4" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 4:</strong> Didukung data ilmiah yang kuat, valid, dan diakui khalayak luas.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Kriteria 2: Logika -->
+            <div class="space-y-3 font-hypothesis-criteria">
+                <label class="block text-base font-bold text-slate-800">2. Lompatan Logika (Celah Informasi)</label>
+                <div class="grid grid-cols-1 gap-2">
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critLogic" value="0" checked class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 0:</strong> Banyak loncatan logika yang tidak tersambung.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critLogic" value="1" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 1:</strong> Hubungan sebab-akibat terasa dipaksakan.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critLogic" value="2" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 2:</strong> Logika masuk akal, namun masih ada celah variabel lain.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critLogic" value="3" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 3:</strong> Rantai sebab-akibat logis dan minim celah argumen.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critLogic" value="4" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 4:</strong> Logika sangat solid, runtut, dan tidak memiliki celah bantahan.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Kriteria 3: Objektivitas -->
+            <div class="space-y-3 font-hypothesis-criteria">
+                <label class="block text-base font-bold text-slate-800">3. Tingkat Objektivitas</label>
+                <div class="grid grid-cols-1 gap-2">
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critObject" value="0" checked class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 0:</strong> Sangat subjektif, dipengaruhi opini pribadi / emosi.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critObject" value="1" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 1:</strong> Biasanya didasarkan pada bias konfirmasi sepihak.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critObject" value="2" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 2:</strong> Mulai netral, namun masih ada keterikatan kepentingan.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critObject" value="3" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 3:</strong> Sangat objektif, didasarkan atas sudut pandang netral.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critObject" value="4" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 4:</strong> Mutlak objektif, bebas dari preferensi personal atau emosi.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Kriteria 4: Verifikasi -->
+            <div class="space-y-3 font-hypothesis-criteria">
+                <label class="block text-base font-bold text-slate-800">4. Potensi Replikasi / Pengujian</label>
+                <div class="grid grid-cols-1 gap-2">
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critVerify" value="0" checked class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 0:</strong> Mustahil atau sangat sulit untuk diuji secara ilmiah.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critVerify" value="1" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 1:</strong> Bisa diuji, tapi butuh biaya / sumber daya yang tidak realistis.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critVerify" value="2" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 2:</strong> Bisa diuji dengan eksperimen atau survei terukur.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critVerify" value="3" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 3:</strong> Mudah diuji dan hasilnya kemungkinan besar konsisten.</span>
+                    </label>
+                    <label class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <input type="radio" name="critVerify" value="4" class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                        <span class="text-sm text-slate-700"><strong>Poin 4:</strong> Sudah berulang kali diuji dan hasilnya selalu konsisten (Replikabel).</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bagian Hasil Analisis (Dinamis) -->
+        <div class="mt-8 p-6 bg-slate-900 text-white rounded-2xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-blue-400">📊 Hasil Analisis</h3>
+                <div class="text-xs font-semibold px-2 py-1 bg-slate-800 text-slate-400 rounded border border-slate-700">Skor: <span id="totalScore">0</span>/16</div>
+            </div>
+
+            <!-- Indikator Batang Kemajuan (Asumsi vs Fakta) -->
+            <div class="space-y-1">
+                <div class="flex justify-between text-xs font-medium px-1">
+                    <span class="text-amber-400">Asumsi (<span id="pctAsumsi">100</span>%)</span>
+                    <span class="text-emerald-400">Fakta (<span id="pctFakta">0</span>%)</span>
+                </div>
+                <div class="w-full bg-amber-500 h-4 rounded-full overflow-hidden flex">
+                    <div id="progressBar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Output Kesimpulan & Rekomendasi -->
+            <div class="pt-2">
+                <div class="text-xs text-slate-400 uppercase tracking-wider font-bold">Kesimpulan & Status:</div>
+                <div id="verdictText" class="text-xl font-black text-amber-400 mt-1">❌ ASUMSI MURNI</div>
+                <p id="recommendationText" class="text-sm text-slate-300 mt-2 leading-relaxed">Pernyataan ini belum didukung oleh fondasi ilmiah atau data empiris. Diperlukan riset awal atau pencarian literatur untuk membangun dasar kebenaran.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Logika di dalam <script> Astro diproses di client-side secara default (is:inline tidak wajib kecuali dibutuhkan)
+    function initEvaluator() {
+        const elements = {
+            totalScore: document.getElementById('totalScore'),
+            pctAsumsi: document.getElementById('pctAsumsi'),
+            pctFakta: document.getElementById('pctFakta'),
+            progressBar: document.getElementById('progressBar'),
+            verdictText: document.getElementById('verdictText'),
+            recommendationText: document.getElementById('recommendationText')
+        };
+
+        function updateEvaluator() {
+            const vData = parseInt(document.querySelector('input[name="critData"]:checked')?.value || '0');
+            const vLogic = parseInt(document.querySelector('input[name="critLogic"]:checked')?.value || '0');
+            const vObject = parseInt(document.querySelector('input[name="critObject"]:checked')?.value || '0');
+            const vVerify = parseInt(document.querySelector('input[name="critVerify"]:checked')?.value || '0');
+
+            const total = vData + vLogic + vObject + vVerify;
+            const maxScore = 16;
+            const percentageFakta = Math.round((total / maxScore) * 100);
+            const percentageAsumsi = 100 - percentageFakta;
+
+            if (!elements.totalScore) return; // Guard clause untuk keamanan lifecycle Astro
+
+            elements.totalScore.innerText = total.toString();
+            elements.pctFakta.innerText = percentageFakta.toString();
+            elements.pctAsumsi.innerText = percentageAsumsi.toString();
+            elements.progressBar.style.width = percentageFakta + "%";
+
+            let verdict = "";
+            let recommendation = "";
+
+            if (total <= 4) {
+                verdict = "❌ ASUMSI MURNI";
+                recommendation = "Pernyataan ini tidak memiliki landasan objektif. Ubah kalimatnya menjadi pertanyaan terbuka untuk riset terlebih dahulu, jangan dijadikan dasar keputusan.";
+                elements.verdictText.className = "text-xl font-black text-amber-500 mt-1";
+            } else if (total <= 8) {
+                verdict = "⚠️ ASUMSI TERDIDIK (Educated Guess)";
+                recommendation = "Hipotesis Anda masuk akal secara logika, namun masih miskin data empiris. Kumpulkan data awal melalui kuesioner atau studi literatur singkat untuk menguatkannya.";
+                elements.verdictText.className = "text-xl font-black text-yellow-400 mt-1";
+            } else if (total <= 12) {
+                verdict = "💡 HIPOTESIS BERBASIS FAKTA";
+                recommendation = "Pernyataan yang kuat! Hipotesis ini sudah bersandar pada logika objektif dan data yang lumayan. Lakukan pengujian formal (uji statistik/eksperimen) untuk mengubahnya menjadi fakta mutlak.";
+                elements.verdictText.className = "text-xl font-black text-cyan-400 mt-1";
+            } else {
+                verdict = "✅ FAKTA YANG SOLID";
+                recommendation = "Pernyataan ini bukan lagi sekadar hipotesis, melainkan kesimpulan berbasis fakta. Sudah teruji, memiliki data kuat, dan sangat objektif untuk dijadikan pijakan valid.";
+                elements.verdictText.className = "text-xl font-black text-emerald-400 mt-1";
+            }
+
+            elements.verdictText.innerText = verdict;
+            elements.recommendationText.innerText = recommendation;
+        }
+
+        const allRadios = document.querySelectorAll('input[type="radio"]');
+        allRadios.forEach(radio => {
+            radio.addEventListener('change', updateEvaluator);
+        });
+
+        // Inisialisasi visual awal
+        updateEvaluator();
+    }
+
+    // Mendukung View Transitions bawaan Astro jika aplikasi Anda menggunakannya
+    document.addEventListener('astro:page-load', initEvaluator);
+    // Fallback jika tidak memakai View Transitions
+    if (!window.astroPageLoadBound) {
+        initEvaluator();
+    }
+</script>
