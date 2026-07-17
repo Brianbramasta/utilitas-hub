@@ -1,0 +1,142 @@
+---
+// Di sini Anda bisa menambahkan impor komponen atau style lain jika dibutuhkan
+// Karena simulasi ini murni interaktif di sisi klien, logika kalkulasi ditempatkan di dalam tag <script> di bawah.
+---
+
+<div class="max-w-xl mx-auto bg-slate-900 rounded-2xl border border-slate-800 p-6 shadow-2xl space-y-6 text-slate-100">
+    
+    <!-- Header -->
+    <div class="text-center">
+        <h1 class="text-2xl font-extrabold text-emerald-400 tracking-tight">Kalkulator Dividen per Lot</h1>
+        <p class="text-xs text-slate-400 mt-1">Hitung estimasi dividen masuk rekening berdasarkan kepemilikan saham Anda</p>
+    </div>
+
+    <!-- Form Input -->
+    <div class="space-y-4">
+        
+        <!-- Harga Saham -->
+        <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Harga Saham saat ini (per Lembar)</label>
+            <div class="relative rounded-lg shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span class="text-slate-500 sm:text-sm">Rp</span>
+                </div>
+                <input type="number" id="stockPrice" value="5000" class="block w-full pl-10 pr-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition duration-150">
+            </div>
+        </div>
+
+        <!-- Jumlah Lot -->
+        <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Jumlah Kepemilikan (Lot)</label>
+            <div class="relative rounded-lg shadow-sm">
+                <input type="number" id="lotCount" value="10" class="block w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition duration-150">
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <span class="text-slate-500 sm:text-sm">Lot</span>
+                </div>
+            </div>
+            <p class="text-xs text-slate-500 mt-1" id="shareCountText">Setara dengan 1.000 lembar saham</p>
+        </div>
+
+        <!-- Dividen per Lembar (DPS) -->
+        <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Dividen per Lembar / DPS (Rupiah)</label>
+            <div class="relative rounded-lg shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span class="text-slate-500 sm:text-sm">Rp</span>
+                </div>
+                <input type="number" id="dividendPerShare" value="250" class="block w-full pl-10 pr-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition duration-150">
+            </div>
+            <p class="text-xs text-slate-500 mt-1">Nilai rupiah dividen yang dibagikan per satu lembar saham</p>
+        </div>
+
+    </div>
+
+    <!-- Hasil Output (Kartu Informasi) -->
+    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-4">
+        
+        <!-- Estimasi Modal -->
+        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+            <span class="text-sm text-slate-400">Total Nilai Portofolio (Modal)</span>
+            <span id="totalCapital" class="font-bold text-slate-100">Rp 5.000.000</span>
+        </div>
+
+        <!-- Dividend Yield -->
+        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+            <span class="text-sm text-slate-400">Dividend Yield</span>
+            <span id="dividendYield" class="font-bold text-sky-400">5.00%</span>
+        </div>
+
+        <!-- Total Dividen Kotor -->
+        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+            <span class="text-sm text-slate-400">Dividen Kotor yang Diterima</span>
+            <span id="grossDividend" class="font-bold text-emerald-400 text-lg">Rp 250.000</span>
+        </div>
+
+        <!-- Pajak & Dividen Bersih -->
+        <div class="space-y-1">
+            <div class="flex justify-between items-center text-xs text-slate-500">
+                <span>Pajak Dividen (PPH Final 10%*)</span>
+                <span id="taxValue">Rp 25.000</span>
+            </div>
+            <div class="flex justify-between items-center pt-2 border-t border-dashed border-slate-800">
+                <span class="text-sm font-semibold text-slate-300">Estimasi Dividen Bersih</span>
+                <span id="netDividend" class="font-extrabold text-emerald-400 text-xl">Rp 225.000</span>
+            </div>
+            <p class="text-[10px] text-slate-500 italic mt-1 text-right">*Bisa 0% jika diinvestasikan kembali di NKRI dalam 3 tahun.</p>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Client-side Script untuk Kalkulasi Dinamis -->
+<script>
+    const stockPriceInput = document.getElementById('stockPrice') as HTMLInputElement;
+    const lotCountInput = document.getElementById('lotCount') as HTMLInputElement;
+    const dividendInput = document.getElementById('dividendPerShare') as HTMLInputElement;
+
+    const shareCountText = document.getElementById('shareCountText');
+    const totalCapitalOutput = document.getElementById('totalCapital');
+    const yieldOutput = document.getElementById('dividendYield');
+    const grossOutput = document.getElementById('grossDividend');
+    const taxOutput = document.getElementById('taxValue');
+    const netOutput = document.getElementById('netDividend');
+
+    function formatRupiah(number: number) {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(number);
+    }
+
+    function calculate() {
+        const price = parseFloat(stockPriceInput.value) || 0;
+        const lots = parseFloat(lotCountInput.value) || 0;
+        const dps = parseFloat(dividendInput.value) || 0;
+
+        const shares = lots * 100;
+        const totalCapital = shares * price;
+        const grossDividend = shares * dps;
+        const tax = grossDividend * 0.10; 
+        const netDividend = grossDividend - tax;
+        
+        const divYield = price > 0 ? (dps / price) * 100 : 0;
+
+        if (shareCountText) shareCountText.textContent = `Setara dengan ${shares.toLocaleString('id-ID')} lembar saham`;
+        if (totalCapitalOutput) totalCapitalOutput.textContent = formatRupiah(totalCapital);
+        if (yieldOutput) yieldOutput.textContent = `${divYield.toFixed(2)}%`;
+        if (grossOutput) grossOutput.textContent = formatRupiah(grossDividend);
+        if (taxOutput) taxOutput.textContent = formatRupiah(tax);
+        if (netOutput) netOutput.textContent = formatRupiah(netDividend);
+    }
+
+    // Pasang event listener
+    [stockPriceInput, lotCountInput, dividendInput].forEach(input => {
+        input?.addEventListener('input', calculate);
+    });
+
+    // Jalankan kalkulasi perdana saat script dimuat
+    calculate();
+</script>
