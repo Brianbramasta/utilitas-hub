@@ -1,0 +1,222 @@
+---
+// Component: StrategicDecisionFramework.astro
+// Anda bisa mengimpor style tambahan atau mendefinisikan properti jika diperlukan di sini.
+---
+
+<div class="max-w-7xl mx-auto p-8">
+
+    <h1 class="text-3xl font-bold mb-6">
+        Strategic Decision Framework
+    </h1>
+
+    <!-- CONFIG -->
+    <div class="bg-white rounded-xl shadow p-6 mb-8">
+        <h2 class="text-xl font-bold mb-4">Configuration</h2>
+        <div class="grid grid-cols-5 gap-4">
+            <div>
+                <label class="font-semibold block mb-1">Impact Weight (%)</label>
+                <input id="wImpact" type="number" value="35" class="w-full border rounded p-2 config-input">
+            </div>
+            <div>
+                <label class="font-semibold block mb-1">Probability Weight (%)</label>
+                <input id="wProbability" type="number" value="20" class="w-full border rounded p-2 config-input">
+            </div>
+            <div>
+                <label class="font-semibold block mb-1">Durability Weight (%)</label>
+                <input id="wDurability" type="number" value="20" class="w-full border rounded p-2 config-input">
+            </div>
+            <div>
+                <label class="font-semibold block mb-1">Effort Weight (%)</label>
+                <input id="wEffort" type="number" value="15" class="w-full border rounded p-2 config-input">
+            </div>
+            <div>
+                <label class="font-semibold block mb-1">Value Weight (%)</label>
+                <input id="wValue" type="number" value="10" class="w-full border rounded p-2 config-input">
+            </div>
+        </div>
+
+        <hr class="my-6">
+
+        <h2 class="text-xl font-bold mb-4">Threshold</h2>
+        <div class="grid grid-cols-5 gap-4">
+            <div>
+                <label class="block mb-1">Impact ≥</label>
+                <input id="tImpact" type="number" value="7" class="w-full border rounded p-2 config-input">
+            </div>
+            <div>
+                <label class="block mb-1">Probability ≥</label>
+                <input id="tProbability" type="number" value="6" class="w-full border rounded p-2 config-input">
+            </div>
+            <div>
+                <label class="block mb-1">Durability ≥</label>
+                <input id="tDurability" type="number" value="6" class="w-full border rounded p-2 config-input">
+            </div>
+            <div>
+                <label class="block mb-1">Effort ≤</label>
+                <input id="tEffort" type="number" value="8" class="w-full border rounded p-2 config-input">
+            </div>
+            <div>
+                <label class="block mb-1">Value ≥</label>
+                <input id="tValue" type="number" value="7" class="w-full border rounded p-2 config-input">
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="mb-4 flex justify-between items-center">
+        <h2 class="text-xl font-bold">Alternatives Matrix</h2>
+        <button id="addAltBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition">
+            + Tambah Alternatif
+        </button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="bg-white rounded-xl shadow overflow-auto">
+        <table class="min-w-full text-sm">
+            <thead class="bg-slate-800 text-white">
+                <tr>
+                    <th class="p-3 text-left">Alternatif</th>
+                    <th class="p-3 text-center w-24">Impact (1-10)</th>
+                    <th class="p-3 text-center w-24">Probability (1-10)</th>
+                    <th class="p-3 text-center w-24">Durability (1-10)</th>
+                    <th class="p-3 text-center w-24">Effort (1-10)</th>
+                    <th class="p-3 text-center w-24">Value (1-10)</th>
+                    <th class="p-3 text-center w-52">Status</th>
+                    <th class="p-3 text-center w-32">Weighted Score</th>
+                    <th class="p-3 text-center w-20">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                <!-- Diisi manual oleh user di client-side -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Memastikan skrip dieksekusi di lingkungan browser / client-side aman
+    document.addEventListener('DOMContentLoaded', () => {
+        const tbody = document.getElementById("tbody");
+        const addAltBtn = document.getElementById("addAltBtn");
+
+        if (addAltBtn) {
+            addAltBtn.addEventListener("click", () => addAlternativeRow());
+        }
+
+        function addAlternativeRow() {
+            if (!tbody) return;
+            const tr = document.createElement("tr");
+            tr.className = "border-b hover:bg-slate-50 transition data-row";
+            
+            tr.innerHTML = `
+                <td class="p-3">
+                    <input type="text" placeholder="Nama alternatif..." class="w-full border rounded p-1.5 font-semibold row-name">
+                </td>
+                <td class="p-3 text-center">
+                    <input type="number" value="5" min="1" max="10" class="w-16 border rounded p-1.5 text-center row-impact">
+                </td>
+                <td class="p-3 text-center">
+                    <input type="number" value="5" min="1" max="10" class="w-16 border rounded p-1.5 text-center row-probability">
+                </td>
+                <td class="p-3 text-center">
+                    <input type="number" value="5" min="1" max="10" class="w-16 border rounded p-1.5 text-center row-durability">
+                </td>
+                <td class="p-3 text-center">
+                    <input type="number" value="5" min="1" max="10" class="w-16 border rounded p-1.5 text-center row-effort">
+                </td>
+                <td class="p-3 text-center">
+                    <input type="number" value="5" min="1" max="10" class="w-16 border rounded p-1.5 text-center row-value">
+                </td>
+                <td class="p-3 text-center font-bold row-status"></td>
+                <td class="p-3 text-center font-bold text-slate-700 row-score"></td>
+                <td class="p-3 text-center">
+                    <button class="text-red-500 hover:text-red-700 font-medium delete-btn">Hapus</button>
+                </td>
+            `;
+            
+            // Event listener untuk hapus baris
+            tr.querySelector(".delete-btn")?.addEventListener("click", (e) => {
+                const btn = e.target as HTMLElement;
+                btn.closest("tr")?.remove();
+                calculate();
+            });
+
+            // Event listener live-update input baris
+            tr.querySelectorAll("input").forEach(input => {
+                input.addEventListener("input", calculate);
+            });
+            
+            tbody.appendChild(tr);
+            calculate();
+        }
+
+        function calculate() {
+            const wImpact = Number((document.getElementById("wImpact") as HTMLInputElement)?.value) || 0;
+            const wProbability = Number((document.getElementById("wProbability") as HTMLInputElement)?.value) || 0;
+            const wDurability = Number((document.getElementById("wDurability") as HTMLInputElement)?.value) || 0;
+            const wEffort = Number((document.getElementById("wEffort") as HTMLInputElement)?.value) || 0;
+            const wValue = Number((document.getElementById("wValue") as HTMLInputElement)?.value) || 0;
+
+            const tImpact = Number((document.getElementById("tImpact") as HTMLInputElement)?.value) || 0;
+            const tProbability = Number((document.getElementById("tProbability") as HTMLInputElement)?.value) || 0;
+            const tDurability = Number((document.getElementById("tDurability") as HTMLInputElement)?.value) || 0;
+            const tEffort = Number((document.getElementById("tEffort") as HTMLInputElement)?.value) || 0;
+            const tValue = Number((document.getElementById("tValue") as HTMLInputElement)?.value) || 0;
+
+            document.querySelectorAll(".data-row").forEach(row => {
+                const impact = Number((row.querySelector(".row-impact") as HTMLInputElement)?.value) || 0;
+                const probability = Number((row.querySelector(".row-probability") as HTMLInputElement)?.value) || 0;
+                const durability = Number((row.querySelector(".row-durability") as HTMLInputElement)?.value) || 0;
+                const effort = Number((row.querySelector(".row-effort") as HTMLInputElement)?.value) || 0;
+                const value = Number((row.querySelector(".row-value") as HTMLInputElement)?.value) || 0;
+
+                let failedThresholds = 0;
+                if (impact < tImpact) failedThresholds++;
+                if (probability < tProbability) failedThresholds++;
+                if (durability < tDurability) failedThresholds++;
+                if (effort > tEffort) failedThresholds++;
+                if (value < tValue) failedThresholds++;
+
+                const score = 
+                    (impact * wImpact) +
+                    (probability * wProbability) +
+                    (durability * wDurability) +
+                    ((10 - effort) * wEffort) +
+                    (value * wValue);
+
+                const finalScore = Number((score / 100).toFixed(2));
+                let statusHTML = "";
+                
+                if (failedThresholds === 0 && finalScore >= 7.0) {
+                    statusHTML = `<span class="text-green-600 block text-xs">🟢 Recommended</span>
+                                  <span class="text-[10px] text-gray-400 font-normal block leading-tight">Lolos threshold & skor tinggi</span>`;
+                } 
+                else if (failedThresholds <= 1 && finalScore >= 5.0) {
+                    statusHTML = `<span class="text-yellow-600 block text-xs">🟡 Consider</span>
+                                  <span class="text-[10px] text-gray-400 font-normal block leading-tight">Tidak lolos sedikit / skor sedang</span>`;
+                } 
+                else if (failedThresholds > 1 && finalScore >= 6.0) {
+                    statusHTML = `<span class="text-orange-500 block text-xs">🟠 Risky</span>
+                                  <span class="text-[10px] text-gray-400 font-normal block leading-tight">Skor bagus tapi gagal threshold penting</span>`;
+                } 
+                else {
+                    statusHTML = `<span class="text-red-600 block text-xs">🔴 Not Recommended</span>
+                                  <span class="text-[10px] text-gray-400 font-normal block leading-tight">Skor rendah & banyak gagal threshold</span>`;
+                }
+
+                const statusCell = row.querySelector(".row-status");
+                const scoreCell = row.querySelector(".row-score");
+                if (statusCell) statusCell.innerHTML = statusHTML;
+                if (scoreCell) scoreCell.textContent = finalScore.toFixed(2);
+            });
+        }
+
+        // Event listener konfigurasi global
+        document.querySelectorAll(".config-input").forEach(input => {
+            input.addEventListener("input", calculate);
+        });
+
+        // Inisialisasi baris pertama saat render awal
+        addAlternativeRow();
+    });
+</script>
